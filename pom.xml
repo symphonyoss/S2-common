@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+        Copyright 2016-2017 Symphony Communication Services, LLC.
+
+        All Rights Reserved.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.symphony.pom</groupId>
+	  <artifactId>symphony-super-pom</artifactId>
+	  <version>1.0.0-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>com.symphony.s2.common</groupId>
+	<artifactId>S2-common</artifactId>
+	<version>1.0.0-SNAPSHOT</version> <!-- Ignore warning of duplicate version, we don't inherit our version from the symphony super pom -->
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<source.code.version>1.7</source.code.version>
+		<target.code.version>1.7</target.code.version>
+		
+		<protogen.group.id>com.symphony.s2.protogen</protogen.group.id>
+		<protogen.artifact.id>S2-protogen</protogen.artifact.id>
+		<protogen.version>1.0.0-SNAPSHOT</protogen.version>
+		
+		<protogen.template.groupid>${protogen.group.id}</protogen.template.groupid>
+		<protogen.template.version>${protogen.version}</protogen.template.version>
+	</properties>
+	
+
+	<modules>
+		<module>S2-common-core</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${source.code.version}</source>
+					<target>${target.code.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	
+
+	<dependencies>
+    <dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+		</dependency>
+	</dependencies>
+</project>
