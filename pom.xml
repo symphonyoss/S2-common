@@ -14,7 +14,7 @@
 	
 	<groupId>com.symphony.s2.common</groupId>
 	<artifactId>S2-common</artifactId>
-	<version>1.0.1-SNAPSHOT</version> <!-- Ignore warning of duplicate version, we don't inherit our version from the symphony super pom -->
+	<version>1.0.2-SNAPSHOT</version> <!-- Ignore warning of duplicate version, we don't inherit our version from the symphony super pom -->
 	<packaging>pom</packaging>
 
 	<repositories>
