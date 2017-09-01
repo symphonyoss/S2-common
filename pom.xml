@@ -42,12 +42,13 @@
 		<source.code.version>1.7</source.code.version>
 		<target.code.version>1.7</target.code.version>
 		
-		<protogen.group.id>com.symphony.s2.protogen</protogen.group.id>
+		<!-- Not needed as yet, maybe never.... -->
+		<!-- <protogen.group.id>com.symphony.s2.protogen</protogen.group.id>
 		<protogen.artifact.id>S2-protogen</protogen.artifact.id>
-		<protogen.version>1.0.0-SNAPSHOT</protogen.version>
+		<protogen.version>1.0.1</protogen.version>
 		
 		<protogen.template.groupid>${protogen.group.id}</protogen.template.groupid>
-		<protogen.template.version>${protogen.version}</protogen.template.version>
+		<protogen.template.version>${protogen.version}</protogen.template.version> -->
 	</properties>
 	
 
