@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<!--
 		~
 		~ Copyright 2017 Symphony Communication Services, LLC.
@@ -33,7 +32,7 @@
 
 	<groupId>org.symphonyoss.s2.common</groupId>
 	<artifactId>S2-common</artifactId>
-	<version>0.1.2-SNAPSHOT</version>
+	<version>0.1.2</version>
 	<packaging>pom</packaging>
 
 	<url>https://github.com/SymphonyOSF/S2-common</url>
@@ -51,7 +50,8 @@
 		<connection>scm:git:git://github.com/SymphonyOSF/S2-common.git</connection>
 		<developerConnection>scm:git:git@github.com:SymphonyOSF/S2-common.git</developerConnection>
 		<url>https://github.com/SymphonyOSF/S2-common</url>
-	</scm>
+	  <tag>S2-common-0.1.2</tag>
+  </scm>
 
 	<developers>
 		<developer>
