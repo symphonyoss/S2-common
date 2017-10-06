@@ -50,9 +50,9 @@ public class TransactionFault extends AbstractFault
    * TransientTransactionExceptions then the result is also a 
    * TransientTransactionException, otherwise it is a TransactionException.
    * 
-   * @param message
-   * @param parallelCauses
-   * @return
+   * @param message A message for the combined fault.
+   * @param parallelCauses  A Collection of parallel causes.
+   * @return A TransactionFault reflecting a number of parallel causes.
    */
   public static TransactionFault  create(String message, Collection<Exception> parallelCauses)
   {

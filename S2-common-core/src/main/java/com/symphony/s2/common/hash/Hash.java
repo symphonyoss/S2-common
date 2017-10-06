@@ -212,7 +212,7 @@ public class Hash implements JsonSerializable, Comparable<Hash>
   /**
    * Create a Hash object from the ByteString representation.
    * 
-   * @param hashBytes    The ByteString representation of a Hash.
+   * @param byteString    The ByteString representation of a Hash.
    * @throws BadFormatException  If the given value is not a valid hash representation.
    */
   public Hash(ByteString byteString) throws BadFormatException
@@ -297,7 +297,7 @@ public class Hash implements JsonSerializable, Comparable<Hash>
   /**
    * Create a Hash object from the Hex string representation.
    * 
-   * @param hashString    The string representation of an Hash.
+   * @param hashHexString    The hex representation of an Hash.
    * @throws BadFormatException  If the given string is not a valid hash representation.
    */
   public Hash(String hashHexString) throws BadFormatException
@@ -388,6 +388,13 @@ public class Hash implements JsonSerializable, Comparable<Hash>
     return hashString_;
   }
 
+  /**
+   * Return the ByteString representation of this Hash.
+   * 
+   * Does not involve a copy operation.
+   * 
+   * @return The ByteString representation of this Hash.
+   */
   public @Nonnull ByteString toByteString()
   {
     return hashByteString_;
@@ -405,6 +412,7 @@ public class Hash implements JsonSerializable, Comparable<Hash>
     return false;
   }
 
+  @Deprecated
   public boolean matches(ByteString other)
   {
     if(other.size() != hashBytes_.length)

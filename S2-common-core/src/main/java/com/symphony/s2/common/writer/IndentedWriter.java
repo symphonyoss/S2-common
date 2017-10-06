@@ -69,20 +69,21 @@ public class IndentedWriter extends PrintWriter
 		linePrefixIndent_ = linePrefix == null ? 9999 : indent_;
 	}
 
-	/** 
-	 * Takes an array of strings to be aligned in separate columns, and adds them to the alignedblock 
-	 */
-	public	void	align(Object... s)
+	/**
+   * Add a row to an aligned block, each Object represents a piece of text which should be aligned.
+   * @param args    Variable number of values to align.
+   */
+	public void	align(Object... args)
 	{
 		if(alignedBlock_ == null)
 		{
 			alignedBlock_ = new AlignedBlock(this);
 		}
-		alignedBlock_.align(s);
+		alignedBlock_.align(args);
 	}
 	
 	/**
-	 * Prints the alignedblock, with all strings aligned in columns dependent on the order in which they were declared in Align
+	 * Prints the aligned block, with all strings aligned in columns dependent on the order in which they were declared in Align
 	 * @param separator text added to the end of each line except the last line
 	 * @param terminator text added to the end of the last line of the block
 	 */
@@ -502,7 +503,7 @@ public class IndentedWriter extends PrintWriter
 
 	/**
 	 * print an object with no indent
-	 * @param b object to print
+	 * @param obj object to print
 	 */
 	@Override
   public void print(Object obj)
@@ -647,42 +648,47 @@ public class IndentedWriter extends PrintWriter
 
 	/**
 	 * Convenience method for calling string.format and printing
-	 * @param pattern
-	 * @param arguments
+	 * @param pattern A format string as per String.format(), a null value is equivalent to ""
+	 * @param arguments Additional arguments to be formatted.
 	 */
 	public void print(String pattern, Object... arguments)
 	{
-		print(String.format(pattern, arguments));
+	  if(pattern != null)
+	    print(String.format(pattern, arguments));
 	}
 	
 	/**
 	 * Convenience method for calling string.format and printing 
 	 * with line breaks
-	 * @param pattern
-	 * @param arguments
-	 */
+	 * @param pattern A format string as per String.format(), a null value is equivalent to ""
+   * @param arguments Additional arguments to be formatted.
+   */
 	public void println(String pattern, Object... arguments)
 	{
-		println(String.format(pattern, arguments));
+	  if(pattern == null)
+	    println();
+	  else
+	    println(String.format(pattern, arguments));
 	}
 	
 	/**
 	 * Calls string.format, indents and prints
-	 * @param indent
-	 * @param pattern
-	 * @param arguments
-	 */
+	 * 
+	 * @param indent   The number of indent stops to apply at the start of a line.
+	 * @param pattern A format string as per String.format(), a null value is equivalent to ""
+   * @param arguments Additional arguments to be formatted.
+   */
 	public void print(int indent, String pattern, Object... arguments)
 	{
-		print(indent, String.format(pattern, arguments));
+		print(indent, pattern == null ? "" : String.format(pattern, arguments));
 	}
 	
 	/**
 	 * Calls string.format, indents and prints with line break
-	 * @param indent
-	 * @param pattern
-	 * @param arguments
-	 */
+	 * @param indent   The number of indent stops to apply at the start of a line.
+   * @param pattern A format string as per String.format(), a null value is equivalent to ""
+   * @param arguments Additional arguments to be formatted.
+   */
 	public void println(int indent, String pattern, Object... arguments)
 	{
 		println(indent, String.format(pattern, arguments));

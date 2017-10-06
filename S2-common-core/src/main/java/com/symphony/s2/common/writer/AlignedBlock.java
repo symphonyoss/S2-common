@@ -51,17 +51,17 @@ public class AlignedBlock
 	}
 	
 	/**
-	 * Add a row to the block, each String represents a piece of text which should be aligned.
-	 * @param s		Variable number of Strings to align.
+	 * Add a row to the block, each Object represents a piece of text which should be aligned.
+	 * @param args		Variable number of values to align.
 	 */
-	public	void	align(Object... o)
+	public	void	align(Object... args)
 	{
 		int		i=0;
-		String	s[] = new String[o.length];
+		String	s[] = new String[args.length];
 		
-		for(int ii=0 ; ii<o.length ; ii++)
-			if(o[ii] != null)
-				s[ii] = o[ii].toString();
+		for(int ii=0 ; ii<args.length ; ii++)
+			if(args[ii] != null)
+				s[ii] = args[ii].toString();
 		
 		while(i<s.length && i<maxColumnLength_.size())
 		{
