@@ -99,6 +99,7 @@
 
 	<modules>
 		<module>S2-common-core</module>
+		<module>S2-common-crypto</module>
 	</modules>
 
 	<build>
