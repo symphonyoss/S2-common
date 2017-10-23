@@ -21,11 +21,10 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-
-import com.symphony.s2.common.exception.BadFormatException;
-import com.symphony.s2.common.fault.CodingFault;
-import com.symphony.s2.common.fault.ProgramFault;
-import com.symphony.s2.common.fault.TransactionFault;
+import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.fault.CodingFault;
+import org.symphonyoss.s2.common.fault.ProgramFault;
+import org.symphonyoss.s2.common.fault.TransactionFault;
 
 /**
  * General certificate utility functions.
