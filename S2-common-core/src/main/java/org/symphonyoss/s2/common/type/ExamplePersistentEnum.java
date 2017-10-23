@@ -21,14 +21,14 @@
  * under the License.
  */
 
-package com.symphony.s2.common.type;
+package org.symphonyoss.s2.common.type;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.symphony.s2.common.fault.CodingFault;
+import org.symphonyoss.s2.common.fault.CodingFault;
 
 /**
  * A minimal example implementation of IPersistentEnum

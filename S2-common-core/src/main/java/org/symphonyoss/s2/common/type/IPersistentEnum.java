@@ -21,7 +21,7 @@
  * under the License.
  */
 
-package com.symphony.s2.common.type;
+package org.symphonyoss.s2.common.type;
 
 /**
  * An enum which can be persisted as an integer value.
