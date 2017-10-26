@@ -37,7 +37,6 @@ import java.util.Enumeration;
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
-import org.symphonyoss.s2.common.exception.BadFormatException;
 
 /**
  * Public factory class for Certificates.
@@ -53,7 +52,7 @@ public class CertificateFactory
    * @param certChain A sequence of X509Certificate objects in PEM format.
    * 
    * @return  An ICertificate.
-   * @throws BadFormatException           If the input is invalid.
+   * @throws CertificateException           If the input is invalid.
    * @throws UnknownCipherSuiteException  If the certificate is not a supported type.
    */
   public static ICertificate loadCertificate(String certChain) throws CertificateException, UnknownCipherSuiteException

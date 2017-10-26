@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -35,8 +36,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -161,18 +162,35 @@ import org.bouncycastle.operator.OperatorCreationException;
 	}
 
   @Override
-  public int getKeySize(PublicKey key) throws UnknownCipherSuiteException
+  public int getKeySize(PublicKey key) throws InvalidKeyException
   {
     if(key instanceof ECPublicKey)
     {
       ECParameterSpec spec = ((ECPublicKey)key).getParams();
       
       if(spec == null)
-        throw new UnknownCipherSuiteException("Key has null parameter spec");
+        throw new InvalidKeyException("Key has null parameter spec");
       
       return spec.getOrder().bitLength();
     }
     
-    throw new UnknownCipherSuiteException("Not an Elliptic Curve Key");
+    throw new InvalidKeyException("Not an Elliptic Curve Key");
   }
+
+  @Override
+  public int getKeySize(PrivateKey key) throws InvalidKeyException
+  {
+    if(key instanceof ECPrivateKey)
+    {
+      ECParameterSpec spec = ((ECPrivateKey)key).getParams();
+      
+      if(spec == null)
+        throw new InvalidKeyException("Key has null parameter spec");
+      
+      return spec.getOrder().bitLength();
+    }
+    
+    throw new InvalidKeyException("Not an Elliptic Curve Key");
+  }
+  
 }

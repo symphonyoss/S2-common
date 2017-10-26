@@ -42,7 +42,7 @@ public interface IMasterCertificate extends IIntermediateCertificate
    * NB the certType will be forced to Intermediate by this method.
    * 
    * @return A certificate signing certificate.
-   * @throws CertificateException
+   * @throws CertificateException If the request fails.
    */
   IIntermediateCertificate createIntermediateCert(CertificateBuilder builder) throws CertificateException;
 }

@@ -24,6 +24,7 @@
 package org.symphonyoss.s2.common.crypto.cipher;
 
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -31,6 +32,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.Cipher;
@@ -108,13 +110,24 @@ import org.bouncycastle.operator.OperatorCreationException;
 	}
 
   @Override
-  public int getKeySize(PublicKey key) throws UnknownCipherSuiteException
+  public int getKeySize(PublicKey key) throws InvalidKeyException
   {
     if(key instanceof RSAPublicKey)
     {
       return ((RSAPublicKey)key).getModulus().bitLength();
     }
     
-    throw new UnknownCipherSuiteException("Not an RSA Key");
+    throw new InvalidKeyException("Not an RSA Key");
+  }
+  
+  @Override
+  public int getKeySize(PrivateKey key) throws InvalidKeyException
+  {
+    if(key instanceof RSAPrivateKey)
+    {
+      return ((RSAPrivateKey)key).getModulus().bitLength();
+    }
+    
+    throw new InvalidKeyException("Not an RSA Key");
   }
 }

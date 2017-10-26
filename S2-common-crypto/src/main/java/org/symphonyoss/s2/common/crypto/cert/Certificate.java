@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -198,7 +199,7 @@ import com.google.protobuf.ByteString;
   {
     IOpenCertificate cert = builder
         .withCertType(CertType.Intermediate)
-        .build((IIntermediateCertificate) this);
+        .build();
     
     return (IIntermediateCertificate) cert;
   }
@@ -207,7 +208,7 @@ import com.google.protobuf.ByteString;
   {
     IOpenCertificate cert = builder
         .withCertType(CertType.UserSigning)
-        .build((IIntermediateCertificate) this);
+        .build();
     
     return (ISigningCertificate) cert;
   }

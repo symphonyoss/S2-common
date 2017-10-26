@@ -26,11 +26,25 @@ package org.symphonyoss.s2.common.crypto.cipher;
 import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 
+/**
+ * The super-interface of symmetric and public key CipherSuites.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public interface ICipherSuite
 {
+  /**
+   * Return the name of the KeyAlgorithm used by this CipherSuite.
+   * @return The name of the KeyAlgorithm used by this CipherSuite.
+   */
 	String getKeyAlgorithm();
 
 	Cipher getCipher() throws GeneralSecurityException;
 
+	/**
+	 * 
+	 * @return The size of the keys used by this CipherSuite, in bits.
+	 */
 	int getKeySize();
 }

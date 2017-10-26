@@ -24,8 +24,9 @@
 package org.symphonyoss.s2.common.crypto.cert;
 
 import java.math.BigInteger;
+import java.net.URL;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,13 +39,41 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameStyle;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.cert.CertIOException;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
+import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.time.DateUtils;
 
+/**
+ * A builder for certificates.
+ * 
+ * The builder maintains a complete set of parameters for creating new certificates.
+ * All parameters have valid defaults so 
+ * 
+ * <code>
+ * new CertificateBuilder(signingCert).build();
+ * </code>
+ * 
+ * will not fail, but it would be unwise to rely on the defaults and callers should
+ * carefully consider initializing all values.
+ * 
+ * CertificateBuilder instances are reusable and the <code>withXXX()</code> methods
+ * all return the existing builder, not a copy.
+ * 
+ * Each certificate should have a unique serial number. The build method
+ * increments the serial number so if you use the same builder to create several
+ * certificates then they will have consecutive serial numbers.
+ * 
+ * You can provide a KeyPair to the builder, or if you do not it will generate
+ * one. The KeyPair is automatically cleared by the build method to prevent the
+ * same key being used for multiple certificate inadvertently.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public class CertificateBuilder
 {
+  private final IIntermediateCertificate signingCert_;
+  
   private X500NameStyle   template_     = BCStyle.INSTANCE;
   private List<RDN>       rdns_         = new ArrayList<>();
   private Date            notBefore_    = new Date();
@@ -57,8 +86,18 @@ public class CertificateBuilder
   private String          commonName_;
   private CertType        certType_     = CertType.UserSigning;
   private KeyPair         keyPair_;
-  private String          ocspUrl_;
-  
+  private URL             ocspUrl_;
+
+  /**
+   * Create a CertificateBuilder for the given certificate signing certificate.
+   * 
+   * @param signingCert a certificate signing certificate.
+   */
+  public CertificateBuilder(IIntermediateCertificate signingCert)
+  {
+    signingCert_ = signingCert;
+  }
+
   public CertificateBuilder withCertType(CertType certType)
   {
     certType_ = certType;
@@ -138,9 +177,27 @@ public class CertificateBuilder
     return this;
   }
   
-  public CertificateBuilder  withOcspUrl(String ocspUrl)
+  public CertificateBuilder  withOcspUrl(URL ocspUrl)
   {
     ocspUrl_ = ocspUrl;
+    return this;
+  }
+  
+  /**
+   * Set the KeyPair to be used for the next certificate creation.
+   * 
+   * @param keyPair The KeyPair which is to be bound to the certificate.
+   * 
+   * @return  The current CertificateBuilder. (Fluent interface)
+   * 
+   * @throws InvalidKeyException If the given KeyPair is incompatible with the
+   * CipherSuirte of the signing cert associated with this builder.
+   */
+  public CertificateBuilder  withKeyPair(KeyPair keyPair) throws InvalidKeyException
+  {
+    signingCert_.getAsymmetricCipherSuite().validateKey(keyPair);
+    
+    keyPair_ = keyPair;
     return this;
   }
 
@@ -233,45 +290,47 @@ public class CertificateBuilder
     return keyPair_;
   }
 
-  public String getOcspUrl()
+  public URL getOcspUrl()
   {
     return ocspUrl_;
   }
 
-  public IOpenCertificate build(IIntermediateCertificate signingCert) throws CertificateException
+  public IOpenCertificate build()
   {
     if(keyPair_ == null)
-      keyPair_ = signingCert.getAsymmetricCipherSuite().generateKeyPair();
+      keyPair_ = signingCert_.getAsymmetricCipherSuite().generateKeyPair();
     
     X500Name principal = buildX500Name();
     
     GeneralName[] subjectAlternativeNames = null;
     
-    List<X509Certificate> signerCerts = signingCert.getX509CertificateChain();
+    List<X509Certificate> signerCerts = signingCert_.getX509CertificateChain();
     X509Certificate[] certs = new X509Certificate[1 + signerCerts.size()];
     
     for(int index=0 ; index<signerCerts.size() ; index++)
       certs[index+1] = signerCerts.get(index);
     
+
     try
     {
-      certs[0] = signingCert.getAsymmetricCipherSuite().createCert(subjectAlternativeNames,
+      certs[0] = signingCert_.getAsymmetricCipherSuite().createCert(subjectAlternativeNames,
           keyPair_.getPublic(), principal, 
           notBefore_, notAfter_, 
           ocspUrl_,
-          signingCert.getPrivateKey(), 
-          signingCert.getX509Certificate(), 
+          signingCert_.getPrivateKey(), 
+          signingCert_.getX509Certificate(), 
           serial_,
           //S2Oid.getOid(Policy.Internal), S2Oid.getUrl(Policy.Internal),
           null, null,
           certType_);
     }
-    catch (CertIOException | OperatorCreationException e)
+    catch (InvalidKeyException e)
     {
-      throw new CertificateException(e);
+      throw new CodingFault(e);
     }
     
-    ICertificate result = CertificateFactory.typedCertificate(new Certificate(signingCert.getAsymmetricCipherSuite(), certs, keyPair_));
+    
+    ICertificate result = CertificateFactory.typedCertificate(new Certificate(signingCert_.getAsymmetricCipherSuite(), certs, keyPair_));
           
     keyPair_ = null;
     serial_ = serial_.add(BigInteger.ONE);

@@ -40,7 +40,7 @@ public interface IIntermediateCertificate extends IOpenCertificate
    * NB the certType will be forced to UserSigning by this method.
    * 
    * @return A certificate signing certificate.
-   * @throws CertificateException
+   * @throws CertificateException If the request fails.
    */
   ISigningCertificate createUserSigningCert(CertificateBuilder builder) throws CertificateException;
 }

@@ -24,34 +24,38 @@
 package org.symphonyoss.s2.common.crypto.cipher;
 
 /**
- * The requested CipherSuite does not exist.
+ * A CipherSuite compatibility exception.
+ * Caused by using the wrong type of key with an operation for example.
  * 
  * @author Bruce Skingle
  *
  */
 @SuppressWarnings("javadoc")
-public class UnknownCipherSuiteException extends CipherSuiteException
+public class CipherSuiteMismatchException extends CipherSuiteException
 {
   private static final long serialVersionUID = 1L;
 
-  public UnknownCipherSuiteException()
+  public CipherSuiteMismatchException()
   {
-    super();
   }
 
-  public UnknownCipherSuiteException(String message, Throwable cause)
-  {
-    super(message, cause);
-  }
-
-  public UnknownCipherSuiteException(String message)
+  public CipherSuiteMismatchException(String message)
   {
     super(message);
   }
 
-  public UnknownCipherSuiteException(Throwable cause)
+  public CipherSuiteMismatchException(Throwable cause)
   {
     super(cause);
   }
 
+  public CipherSuiteMismatchException(String message, Throwable cause)
+  {
+    super(message, cause);
+  }
+
+  public CipherSuiteMismatchException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+  {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

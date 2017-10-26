@@ -24,34 +24,37 @@
 package org.symphonyoss.s2.common.crypto.cipher;
 
 /**
- * The requested CipherSuite does not exist.
+ * A general CipherSuite exception.
  * 
  * @author Bruce Skingle
  *
  */
 @SuppressWarnings("javadoc")
-public class UnknownCipherSuiteException extends CipherSuiteException
+public class CipherSuiteException extends Exception
 {
   private static final long serialVersionUID = 1L;
 
-  public UnknownCipherSuiteException()
+  public CipherSuiteException()
   {
-    super();
   }
 
-  public UnknownCipherSuiteException(String message, Throwable cause)
-  {
-    super(message, cause);
-  }
-
-  public UnknownCipherSuiteException(String message)
+  public CipherSuiteException(String message)
   {
     super(message);
   }
 
-  public UnknownCipherSuiteException(Throwable cause)
+  public CipherSuiteException(Throwable cause)
   {
     super(cause);
   }
 
+  public CipherSuiteException(String message, Throwable cause)
+  {
+    super(message, cause);
+  }
+
+  public CipherSuiteException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+  {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

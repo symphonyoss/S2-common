@@ -22,6 +22,7 @@
 package org.symphonyoss.s2.common.crypto.cipher;
 
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
@@ -58,9 +59,9 @@ public class CipherSuite
   private static final List<ISymmetricCipherSuite>                       secretList_;
   private static final ISymmetricCipherSuite                             defaultSymmetricCipherSuite_;
   private static final IAsymmetricCipherSuite                            defaultAsymmetricCipherSuite_;
-  
-  private static List<IAsymmetricCipherSuite>                      publicBuildList_        = new ArrayList<>();
-  private static List<ISymmetricCipherSuite>                       secretBuildList_        = new ArrayList<>();
+
+  private static List<IAsymmetricCipherSuite>                            publicBuildList_   = new ArrayList<>();
+  private static List<ISymmetricCipherSuite>                             secretBuildList_   = new ArrayList<>();
 
   static
   {
@@ -143,7 +144,7 @@ public class CipherSuite
    * 
    * @param key A PublicKey
    * @return The implementation of the required cipher suite.
-   * @throws UnknownCipherSuiteException if the key does not match any cipher suite
+   * @throws UnknownCipherSuiteException If the given key does not match any known CipherSuite
    */
   public static @Nonnull IAsymmetricCipherSuite get(PublicKey key) throws UnknownCipherSuiteException
   {
@@ -152,7 +153,16 @@ public class CipherSuite
     if(cipherSuite == null)
       throw new UnknownCipherSuiteException("Unknown algorithm \"" + key.getAlgorithm() + "\"");
     
-    int keySize = cipherSuite.getKeySize(key);
+    int keySize;
+    try
+    {
+      keySize = cipherSuite.getKeySize(key);
+    }
+    catch (InvalidKeyException e)
+    {
+      throw new UnknownCipherSuiteException("Unsupported key size \"" + key.getAlgorithm() + "\"");
+
+    }
     cipherSuite = publicAlgoSizeMap_.get(key.getAlgorithm()).get(keySize);
         
     if(cipherSuite == null)
@@ -232,11 +242,19 @@ public class CipherSuite
     return defaultSymmetricCipherSuite_;
   }
 
+  /**
+   * 
+   * @return an UnModifiableList of all AsymetricCipherSuites
+   */
   public static List<IAsymmetricCipherSuite> getAllAsymetricCipherSuites()
   {
     return publicList_;
   }
 
+  /**
+   * 
+   * @return an UnModifiableList of all SymetricCipherSuites
+   */
   public static List<ISymmetricCipherSuite> getAllSymetricCipherSuites()
   {
     return secretList_;
