@@ -41,10 +41,10 @@ import org.bouncycastle.util.Arrays;
 
 /* package */ class AesCipherSuite extends AbstractSymmetricCipherSuite
 {
-	private static final String	KEY_ALGORITHM										  = "AES";
-	private static final String	PROVIDER										     	= "BC";
-	protected static final String	AES_CBC_PKCS7Padding_CIPHER			= "AES/CBC/PKCS7Padding";
-	protected static final String	AES_GCM_NoPadding_CIPHER	      = "AES/GCM/NoPadding";
+  private static final String   KEY_ALGORITHM               = "AES";
+  private static final String   PROVIDER                    = "BC";
+  protected static final String AES_CBC_PKCS7Padding_CIPHER = "AES/CBC/PKCS7Padding";
+  protected static final String AES_GCM_NoPadding_CIPHER    = "AES/GCM/NoPadding";
 
 	private String 			    cipher_;
 	private int					   keySize_;
@@ -198,14 +198,20 @@ import org.bouncycastle.util.Arrays;
     return cipher.wrap(key);
 	}
 	
-	@Override
-	public PrivateKey unwrap(byte[] cipherText, SecretKey userKey, IAsymmetricCipherSuite cipherSuite) throws GeneralSecurityException
-	{
-		Cipher	cipher = getCipher();
-        
-        cipher.init(Cipher.UNWRAP_MODE, userKey, rand_);
-        
-        return (PrivateKey)cipher.unwrap(cipherText, cipherSuite.getKeyAlgorithm(), Cipher.PRIVATE_KEY);
-	}
+  @Override
+  public PrivateKey unwrap(byte[] cipherText, SecretKey userKey, IAsymmetricCipherSuite cipherSuite)
+      throws GeneralSecurityException
+  {
+    Cipher cipher = getCipher();
 
+    cipher.init(Cipher.UNWRAP_MODE, userKey, rand_);
+
+    return (PrivateKey) cipher.unwrap(cipherText, cipherSuite.getKeyAlgorithm(), Cipher.PRIVATE_KEY);
+  }
+
+  @Override
+  public int getKeySize(SecretKey key)
+  {
+    return key.getEncoded().length * 8;
+  }
 }

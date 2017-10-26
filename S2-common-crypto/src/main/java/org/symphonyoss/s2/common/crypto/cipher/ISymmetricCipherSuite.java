@@ -90,4 +90,6 @@ public interface ISymmetricCipherSuite extends ICipherSuite
 	 * @throws GeneralSecurityException
 	 */
 	PrivateKey unwrap(byte[] cipherText, SecretKey userKey, IAsymmetricCipherSuite cipherSuite) throws GeneralSecurityException;
+
+  int getKeySize(SecretKey key);
 }

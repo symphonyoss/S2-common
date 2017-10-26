@@ -31,6 +31,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -105,4 +106,15 @@ import org.bouncycastle.operator.OperatorCreationException;
     
     return (SecretKey)cipher.unwrap(cipherText, symmetricCipherSuite.getKeyAlgorithm(), Cipher.SECRET_KEY);
 	}
+
+  @Override
+  public int getKeySize(PublicKey key) throws UnknownCipherSuiteException
+  {
+    if(key instanceof RSAPublicKey)
+    {
+      return ((RSAPublicKey)key).getModulus().bitLength();
+    }
+    
+    throw new UnknownCipherSuiteException("Not an RSA Key");
+  }
 }

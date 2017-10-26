@@ -35,7 +35,10 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -123,10 +126,10 @@ import org.bouncycastle.operator.OperatorCreationException;
 	@Override
   public PublicKey		publicKeyFromDER(String der) throws IOException, GeneralSecurityException
 	{
-		StringReader			reader = new StringReader(der);
-		PEMParser				pemParser = new PEMParser(reader);
-		
-		try
+	  try(
+        StringReader    reader = new StringReader(der);
+        PEMParser       pemParser = new PEMParser(reader);
+    )
 		{
 			Object o = pemParser.readObject();
 			
@@ -137,19 +140,15 @@ import org.bouncycastle.operator.OperatorCreationException;
 			
 			return  KeyFactory.getInstance("EC", "BC").generatePublic(new X509EncodedKeySpec(((SubjectPublicKeyInfo)o).getEncoded()));
 		}
-		finally
-		{
-			pemParser.close();
-		}
 	}
 	
 	@Override
   public PrivateKey		privateKeyFromDER(String der) throws IOException, GeneralSecurityException
 	{
-		StringReader			reader = new StringReader(der);
-		PEMParser				pemParser = new PEMParser(reader);
-		
-		try
+		try(
+		    StringReader    reader = new StringReader(der);
+		    PEMParser       pemParser = new PEMParser(reader);
+		)
 		{
 			Object o = pemParser.readObject();
 			
@@ -159,9 +158,21 @@ import org.bouncycastle.operator.OperatorCreationException;
 	        }
 			return  KeyFactory.getInstance("EC", "BC").generatePrivate(new PKCS8EncodedKeySpec(((PEMKeyPair)o).getPrivateKeyInfo().getEncoded()));
 		}
-		finally
-		{
-			pemParser.close();
-		}
 	}
+
+  @Override
+  public int getKeySize(PublicKey key) throws UnknownCipherSuiteException
+  {
+    if(key instanceof ECPublicKey)
+    {
+      ECParameterSpec spec = ((ECPublicKey)key).getParams();
+      
+      if(spec == null)
+        throw new UnknownCipherSuiteException("Key has null parameter spec");
+      
+      return spec.getOrder().bitLength();
+    }
+    
+    throw new UnknownCipherSuiteException("Not an Elliptic Curve Key");
+  }
 }

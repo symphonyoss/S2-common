@@ -42,9 +42,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.symphonyoss.s2.common.exception.BadFormatException;
 import org.symphonyoss.s2.common.fault.CodingFault;
-import org.symphonyoss.s2.common.fault.ProgramFault;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 
 /**
@@ -53,7 +51,7 @@ import org.symphonyoss.s2.common.fault.TransactionFault;
  * @author bruce.skingle
  *
  */
-public class CertificateUtils
+/* package */ class CertificateUtils
 {
   private static      JcaX509CertificateConverter   x509Converter_  = new JcaX509CertificateConverter().setProvider("BC");
 
@@ -90,9 +88,9 @@ public class CertificateUtils
    * 
    * @return The corresponding X509Certificate objects.
    * 
-   * @throws BadFormatException If the input is invalid.
+   * @throws CertificateException If the input is invalid.
    */
-  public static X509Certificate[]  decode(String certData) throws BadFormatException
+  public static List<X509Certificate>  decode(String certData) throws CertificateException
   {
     try( PEMParser pemReader = new PEMParser(new StringReader(certData)) )
     {
@@ -111,18 +109,14 @@ public class CertificateUtils
           }
         }
         else
-          throw new ProgramFault("Certificate decode resulted in " + certificate.getClass());
+          throw new CertificateException("Certificate decode resulted in " + certificate.getClass());
 
       }
-      return result.toArray(new X509Certificate[result.size()]);
+      return result;
     }
     catch(IOException e)
     {
       throw new TransactionFault("Failed to decode certificate", e);
-    }
-    catch(CertificateException e)
-    {
-      throw new BadFormatException("Failed to decode certificate", e);
     }
   }
   

@@ -304,4 +304,6 @@ public interface IAsymmetricCipherSuite extends ICipherSuite
 	String		privateKeyToDER(PrivateKey key) throws IOException, GeneralSecurityException;
 	
 	PrivateKey		privateKeyFromDER(String der) throws IOException, GeneralSecurityException;
+
+  int getKeySize(PublicKey key) throws UnknownCipherSuiteException;
 }
