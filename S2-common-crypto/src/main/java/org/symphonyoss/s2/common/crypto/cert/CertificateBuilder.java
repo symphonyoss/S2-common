@@ -98,6 +98,27 @@ public class CertificateBuilder
     signingCert_ = signingCert;
   }
 
+  /**
+   * Create a CertificateBuilder for the given certificate signing certificate.
+   * 
+   * @param signingCert a certificate signing certificate.
+   * @param other Another CertificateBuilder from which other parameters should be initialized.
+   */
+  public CertificateBuilder(IIntermediateCertificate signingCert, CertificateBuilder other)
+  {
+    signingCert_ = signingCert;
+    notBefore_ = other.notBefore_;
+    notAfter_ = other.notAfter_;
+    serial_ = other.serial_;
+    countryName_ = other.countryName_;
+    stateName_ = other.stateName_;
+    orgName_ = other.orgName_;
+    orgUnitNames_.addAll(other.orgUnitNames_);
+    commonName_ = other.commonName_;
+    certType_ = other.certType_;
+    ocspUrl_ = other.ocspUrl_;
+  }
+
   public CertificateBuilder withCertType(CertType certType)
   {
     certType_ = certType;

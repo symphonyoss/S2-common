@@ -58,7 +58,7 @@ public class GenerateUserCert
     try
     {
       intCert = CertificateFactory.load(
-          new File("/Volumes/BRUCE/symphony/corporate-all-users/certs/emailIntCert.p12"), 
+          new File("src/test/resources/int-cert.p12"), 
           storeType , alias, password);
     }
     catch (IOException | GeneralSecurityException | UnknownCipherSuiteException e)
@@ -116,6 +116,7 @@ public class GenerateUserCert
         
         .build();
 
+    System.out.println("Created cert " + userCert.getX509Certificate());
     
     // Now save the cert as a regular keystore.
     

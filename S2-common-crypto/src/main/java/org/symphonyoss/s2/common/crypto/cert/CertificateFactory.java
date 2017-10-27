@@ -26,6 +26,7 @@ package org.symphonyoss.s2.common.crypto.cert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -185,12 +186,19 @@ public class CertificateFactory
   
   public static ICertificate load(File file, String storeType, @Nullable String alias, char[] password) throws IOException, GeneralSecurityException, UnknownCipherSuiteException
   {
-    KeyStore keyStore = KeyStore.getInstance(storeType);
-    
     try(FileInputStream in = new FileInputStream(file))
     {
-      keyStore.load(in, password);
+      return load(in, storeType, alias, password);
     }
+  }
+  
+
+  
+  public static ICertificate load(InputStream in, String storeType, @Nullable String alias, char[] password) throws IOException, GeneralSecurityException, UnknownCipherSuiteException
+  {
+    KeyStore keyStore = KeyStore.getInstance(storeType);
+    
+    keyStore.load(in, password);
     
     if(alias == null)
     {

@@ -29,18 +29,14 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
 import java.util.Date;
 
-import org.bouncycastle.asn1.x500.X500NameBuilder;
-import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
 import org.symphonyoss.s2.common.crypto.cipher.CipherSuite;
 import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
 import org.symphonyoss.s2.common.exception.BadFormatException;
-import org.symphonyoss.s2.common.time.DateUtils;
 
 public class TestCertificateUtils
 {
@@ -116,7 +112,7 @@ public class TestCertificateUtils
     
     printCert("Master Cert", masterCert);
     
-    CertificateBuilder builder = new CertificateBuilder(masterCert)
+    CertificateBuilder masterBuilder = new CertificateBuilder(masterCert)
         .withCertType(CertType.Intermediate)
         .withCountryName("US")
         .withStateName("CA")
@@ -127,33 +123,23 @@ public class TestCertificateUtils
         .withValidityMonths(12)
         .withSerial(BigInteger.ONE);
     
-    IIntermediateCertificate intCert = (IIntermediateCertificate) builder.build();
+    IIntermediateCertificate intCert = (IIntermediateCertificate) masterBuilder.build();
     
     printCert("Intermediate Cert", intCert);
     
     intCert.storeUserKeystore(new File("/tmp/intCert.p12"), "changeit".toCharArray());
     
-    builder = new CertificateBuilder(intCert)
-        .withCertType(CertType.Intermediate)
-        .withCountryName("US")
-        .withStateName("CA")
-        .withOrganizationName("Symphony Communication Services, LLC.")
-        .withOrgUnitName("TestCertificateUtils")
-        .withCommonName("Intermediate Signing Authority")
-        .withNotBefore(new Date())
-        .withValidityMonths(12)
-        .withSerial(BigInteger.ONE);
-    
-    ISigningCertificate userCert = (ISigningCertificate) builder
+    CertificateBuilder intBuilder = new CertificateBuilder(intCert, masterBuilder)
         .withCertType(CertType.UserSigning)
-        .withCommonName("test.user")
-        .build();
+        .withCommonName("test.user");
+    
+    ISigningCertificate userCert = (ISigningCertificate) intBuilder.build();
     
     printCert("User Cert", userCert);
     
     userCert.storeUserKeystore(new File("/tmp/userCert.p12"), "changeit".toCharArray());
     
-    assertEquals(BigInteger.valueOf(3), builder.getSerial());
+    assertEquals(BigInteger.valueOf(3), intBuilder.getSerial());
   }
   
   private void printCert(String name, IOpenCertificate cert)
@@ -162,18 +148,5 @@ public class TestCertificateUtils
     System.out.println("CERT=" + cert.getX509Certificate());
     System.out.println("KEY= " + cert.getPrivateKey());
     System.out.println();
-  }
-
-  private X500NameBuilder createNameBuilder(String OUName, String commonName)
-  {
-    X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
-
-    nameBuilder.addRDN(BCStyle.C,   "US");
-    nameBuilder.addRDN(BCStyle.ST,  "CA");
-    nameBuilder.addRDN(BCStyle.O,   "Symphony Communication Services LLC.");
-    nameBuilder.addRDN(BCStyle.OU,  OUName);
-    nameBuilder.addRDN(BCStyle.CN,  commonName);
-
-    return nameBuilder;
   }
 }
