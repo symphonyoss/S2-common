@@ -23,6 +23,8 @@
 
 package org.symphonyoss.s2.common.type;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 
@@ -61,15 +63,15 @@ public class TypeHelper
   
   public static Instant newInstant(ByteString byteString)
   {
-    if(byteString.size() != 16)
-      throw new TransactionFault("Instant must be 16 bytes");
+    if(byteString.size() != 12)
+      throw new TransactionFault("Instant must be 12 bytes");
     
-    ByteBuffer  bytes = ByteBuffer.allocate(16);
+    ByteBuffer  bytes = ByteBuffer.allocate(12);
     
     byteString.copyTo(bytes);
     bytes.flip();
 
-    return Instant.ofEpochSecond(bytes.getLong(), bytes.getLong());
+    return Instant.ofEpochSecond(getLong(byteString, 0), getInt(byteString, 8));
   }
   
   public static ByteString convertToByteString(Instant instant)
@@ -77,12 +79,11 @@ public class TypeHelper
     return convertToInstantByteString(instant.getEpochSecond(), instant.getNano());
   }
   
-  public static ByteString convertToInstantByteString(long secs, long nanos)
+  public static ByteString convertToInstantByteString(long secs, int nanos)
   {
-    ByteBuffer  bytes = ByteBuffer.allocate(16);
-    bytes.putLong(secs);
-    bytes.putLong(nanos);
-    bytes.flip();
+    byte[]  bytes = new byte[12];
+    put(secs, bytes, 0);
+    put(nanos, bytes, 8);
     
     return ByteString.copyFrom(bytes);
   }
@@ -96,7 +97,7 @@ public class TypeHelper
     
     try
     {
-      return Instant.ofEpochSecond(Long.parseLong(parts[0]), Long.parseLong(parts[0]));
+      return Instant.ofEpochSecond(Long.parseLong(parts[0]), Integer.parseInt(parts[0]));
     }
     catch(NumberFormatException e)
     {
@@ -112,5 +113,155 @@ public class TypeHelper
   public static String convertToInstantString(long secs, long nanos)
   {
     return String.format("%d.%d", secs, nanos);
+  }
+
+  public static URL newURL(String url)
+  {
+    try
+    {
+      return new URL(url);
+    }
+    catch (MalformedURLException e)
+    {
+      throw new TransactionFault("Invalid URL value \"" + url + "\"", e);
+    }
+  }
+  
+  /**
+   * Return the given value as a sequence of bytes, MSB first.
+   * 
+   * @param value   A long value.
+   * @return        A newly allocated byte array containing the given value.
+   */
+  public static byte[] convertToByteArray(long value)
+  {
+    byte[] buf = new byte[8];
+    
+    put(value, buf, 0);
+    
+    return buf;
+  }
+  
+  /**
+   * Put the given value as a sequence of bytes, MSB first to the given buffer at the given offset.
+   * Note that the caller must ensure that there is enough space in the buffer, otherwise an
+   * ArrayIndexOutOfBounds exception will result.
+   * 
+   * @param value   A long value.   
+   * @param buf     A byte array buffer.
+   * @param offset  The starting offset within buf where the value should be written.
+   */
+  public static void put(long value, byte[] buf, int offset)
+  {
+    for (int i = offset+7; i >= offset; i--)
+    {
+      buf[i] = (byte) (value & 0xFF);
+      value >>= 8;
+    }
+  }
+
+  /**
+   * Read a long value from the given buffer starting at the given offset.
+   * The data is expected to be encoded MSB first.
+   * @param buf     A byte array containing the required value
+   * @param offset  The offset from within the buffer of the first byte of the data
+   * @return        The required value.
+   */
+  public static long getLong(byte[] buf, int offset)
+  {
+    long result = 0;
+    for (int i = offset; i < offset+8; i++)
+    {
+      result <<= 8;
+      result |= (buf[i] & 0xFF);
+    }
+    return result;
+  }
+  
+  /**
+   * Read a long value from the given buffer starting at the given offset.
+   * The data is expected to be encoded MSB first.
+   * @param buf     A ByteString containing the required value
+   * @param offset  The offset from within the buffer of the first byte of the data
+   * @return        The required value.
+   */
+  public static long getLong(ByteString buf, int offset)
+  {
+    long result = 0;
+    for (int i = offset; i < offset+8; i++)
+    {
+      result <<= 8;
+      result |= (buf.byteAt(i) & 0xFF);
+    }
+    return result;
+  }
+  
+  /**
+   * Return the given value as a sequence of bytes, MSB first.
+   * 
+   * @param value   A long value.
+   * @return        A newly allocated byte array containing the given value.
+   */
+  public static byte[] convertToByteArray(int value)
+  {
+    byte[] buf = new byte[4];
+    
+    put(value, buf, 0);
+    
+    return buf;
+  }
+  
+  /**
+   * Put the given value as a sequence of bytes, MSB first to the given buffer at the given offset.
+   * Note that the caller must ensure that there is enough space in the buffer, otherwise an
+   * ArrayIndexOutOfBounds exception will result.
+   * 
+   * @param value   A long value.   
+   * @param buf     A byte array buffer.
+   * @param offset  The starting offset within buf where the value should be written.
+   */
+  public static void put(int value, byte[] buf, int offset)
+  {
+    for (int i = offset+3; i >= offset; i--)
+    {
+      buf[i] = (byte) (value & 0xFF);
+      value >>= 8;
+    }
+  }
+
+  /**
+   * Read an int value from the given buffer starting at the given offset.
+   * The data is expected to be encoded MSB first.
+   * @param buf     A byte array containing the required value
+   * @param offset  The offset from within the buffer of the first byte of the data
+   * @return        The required value.
+   */
+  public static int getInt(byte[] buf, int offset)
+  {
+    int result = 0;
+    for (int i = offset; i < offset+4; i++)
+    {
+      result <<= 8;
+      result |= (buf[i] & 0xFF);
+    }
+    return result;
+  }
+  
+  /**
+   * Read an int value from the given buffer starting at the given offset.
+   * The data is expected to be encoded MSB first.
+   * @param buf     A ByteString containing the required value
+   * @param offset  The offset from within the buffer of the first byte of the data
+   * @return        The required value.
+   */
+  public static int getInt(ByteString buf, int offset)
+  {
+    int result = 0;
+    for (int i = offset; i < offset+4; i++)
+    {
+      result <<= 8;
+      result |= (buf.byteAt(i) & 0xFF);
+    }
+    return result;
   }
 }
