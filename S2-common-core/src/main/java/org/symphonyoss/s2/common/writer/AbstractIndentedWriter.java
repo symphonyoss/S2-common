@@ -28,6 +28,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * A PrintWriter with added indenting functionality.
@@ -37,18 +38,18 @@ import java.util.Collection;
  */
 public class AbstractIndentedWriter<T extends AbstractIndentedWriter<T>> extends PrintWriter
 {
-  public static final int newlineLength_    = System.getProperty("line.separator").length();
+  public static final int          newlineLength_     = System.getProperty("line.separator").length();
 
-  private boolean         startOfLine_      = true;
-  private int             indent_           = 0;
-  private AlignedBlock    alignedBlock_     = null;
-  private boolean         printOffsets_     = false;
-  private boolean         oNlCr_            = false;
-  private String          linePrefix_;
-  private int             linePrefixIndent_ = 9999;
-  private final boolean   closeFlag_;
-  private final String    indentString_;
-  private final int       tabSize_;
+  private boolean                  startOfLine_       = true;
+  private int                      indent_            = 0;
+  private LinkedList<AlignedBlock> alignedBlockStack_ = new LinkedList<>();
+  private boolean                  printOffsets_      = false;
+  private boolean                  oNlCr_             = false;
+  private String                   linePrefix_;
+  private int                      linePrefixIndent_  = 9999;
+  private final boolean            closeFlag_;
+  private final String             indentString_;
+  private final int                tabSize_;
 
   public abstract static class Builder<T>
   {
@@ -142,11 +143,20 @@ public class AbstractIndentedWriter<T extends AbstractIndentedWriter<T>> extends
    */
   public void align(Object... args)
   {
-    if (alignedBlock_ == null)
+    if (alignedBlockStack_.isEmpty())
     {
-      alignedBlock_ = new AlignedBlock(this, tabSize_);
+      throw new NullPointerException("No aligned block, call startAlignedBlock?");
     }
-    alignedBlock_.align(args);
+    alignedBlockStack_.peek().align(args);
+  }
+  
+  public AlignedBlock startAlignedBlock()
+  {
+    AlignedBlock block = new AlignedBlock(this, tabSize_);
+    
+    alignedBlockStack_.push(block);
+    
+    return block;
   }
 
   /**
@@ -160,11 +170,12 @@ public class AbstractIndentedWriter<T extends AbstractIndentedWriter<T>> extends
    */
   public void printAlignedBlock(String separator, String terminator)
   {
-    if (alignedBlock_ != null)
+    if (alignedBlockStack_.isEmpty())
     {
-      alignedBlock_.print(separator, terminator);
-      alignedBlock_ = null;
+      throw new NullPointerException("No aligned block, call startAlignedBlock?");
     }
+    
+    alignedBlockStack_.pop().print(separator, terminator);
   }
 
   /**
@@ -885,8 +896,10 @@ public class AbstractIndentedWriter<T extends AbstractIndentedWriter<T>> extends
   @Override
   public void close()
   {
-    if (closeFlag_)
+    if(closeFlag_)
       super.close();
+    else
+      flush();
   }
 
   public long getOffset()
