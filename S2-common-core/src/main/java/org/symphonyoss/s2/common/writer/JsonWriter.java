@@ -26,22 +26,53 @@ package org.symphonyoss.s2.common.writer;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public class JSONWriter extends IndentedWriter
+public class JsonWriter extends AbstractIndentedWriter<JsonWriter>
 {
-
-  public JSONWriter(OutputStream out)
+  public JsonWriter(Writer out, boolean closeFlag, int tabSize, String indentString)
   {
-    super(out);
+    super(out, closeFlag, tabSize, indentString);
+  }
+  
+  public static class Builder extends AbstractIndentedWriter.Builder<JsonWriter>
+  {
+    public Builder(Writer writer)
+    {
+      super(writer);
+    }
+
+    public Builder(OutputStream out)
+    {
+      super(out);
+    }
+
+    @Override
+    public JsonWriter build()
+    {
+      return new JsonWriter(getWriter(), isCloseFlag(), getTabSize(), getIndentString());
+    }
+  }
+  
+  public static Builder newBuilder(Writer writer)
+  {
+    return new Builder(writer);
+  }
+  
+  public static Builder newBuilder(OutputStream out)
+  {
+    return new Builder(out);
   }
 
-  public JSONWriter(Writer out)
+  public void alignUnquotedAttribute(String name, Object value)
   {
-    super(out);
+    align("\"" + escape(name) + "\":", value);
   }
 
   public void alignAttribute(String name, Object value)
   {
-    align("\"" + escape(name) + "\":", "\"" + (value == null ? "" : escape(value)) + "\"");
+    if(value instanceof Number)
+      align("\"" + escape(name) + "\":", value);
+    else
+      align("\"" + escape(name) + "\":", (value == null ? "null" : "\"" + escape(value) + "\""));
   }
   
   public void openAttribute(String name)

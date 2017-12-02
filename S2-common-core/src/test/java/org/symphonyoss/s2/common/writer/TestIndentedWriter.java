@@ -23,49 +23,38 @@
 
 package org.symphonyoss.s2.common.writer;
 
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * A Writer based on IndentedWriter which adds functions to format XML.
- * 
- * @author Bruce Skingle
- *
- */
-public class XmlWriter extends AbstractXmlWriter<XmlWriter>
+public class TestIndentedWriter
 {
-  public XmlWriter(Writer out, boolean closeFlag, int tabSize, String indentString)
+  @Test
+  public void testBuilder()
   {
-    super(out, closeFlag, tabSize, indentString);
-  }
-  
-  public static class Builder extends AbstractXmlWriter.Builder<XmlWriter>
-  {
-    public Builder(Writer writer)
-    {
-      super(writer);
-    }
-
-    public Builder(OutputStream out)
-    {
-      super(out);
-    }
-
-    @Override
-    public XmlWriter build()
-    {
-      return new XmlWriter(getWriter(), isCloseFlag(), getTabSize(), getIndentString());
-    }
-  }
-  
-  public static Builder newBuilder(Writer writer)
-  {
-    return new Builder(writer);
-  }
-  
-  public static Builder newBuilder(OutputStream out)
-  {
-    return new Builder(out);
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    OutputStreamWriter writer = new OutputStreamWriter(bout);
+    
+    IndentedWriter out = IndentedWriter.newBuilder(writer).build();
+    
+    out.openBlock("test");
+    out.println("This is a test");
+    out.closeBlock();
+    out.close();
+    
+    Assert.assertTrue("test\n{\n  This is a test\n}\n".equals(bout.toString()));
+    
+    bout = new ByteArrayOutputStream();
+    writer = new OutputStreamWriter(bout);
+    out = IndentedWriter.newBuilder(writer).withTabSize(8).build();
+    
+    out.openBlock("test");
+    out.println("This is a test");
+    out.closeBlock();
+    out.close();
+    
+    Assert.assertTrue("test\n{\n        This is a test\n}\n".equals(bout.toString()));
   }
 }

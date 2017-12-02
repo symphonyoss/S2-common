@@ -23,6 +23,7 @@
 
 package org.symphonyoss.s2.common.writer;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -34,20 +35,20 @@ import java.util.ArrayList;
  */
 public class AlignedBlock
 {
-	private static final int										TAB_SIZE	= 8;
-
-	private		IndentedWriter									out_;
-	private		ArrayList<Integer>									maxColumnLength_ = new ArrayList<Integer>();
-	private		ArrayList<String[]>									rows_ = new ArrayList<String[]>();
+  private PrintWriter         out_;
+  private final int           tabSize_;
+  private ArrayList<Integer>  maxColumnLength_ = new ArrayList<Integer>();
+  private ArrayList<String[]> rows_            = new ArrayList<String[]>();
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param out	An IndentedWriter to which the block will be output.
 	 */
-	public AlignedBlock(IndentedWriter out)
+	public AlignedBlock(AbstractIndentedWriter<?> out, int tabSize)
 	{
 		out_ = out;
+		tabSize_ = tabSize;
 	}
 	
 	/**
@@ -94,7 +95,7 @@ public class AlignedBlock
 	{
 		for(int i=0 ; i<maxColumnLength_.size() ; i++)
 		{
-			maxColumnLength_.set(i, (((maxColumnLength_.get(i) / TAB_SIZE) + 1) * TAB_SIZE));
+			maxColumnLength_.set(i, (((maxColumnLength_.get(i) / tabSize_) + 1) * tabSize_));
 		}
 		
 		for(int r=0 ; r<rows_.size() ; r++)

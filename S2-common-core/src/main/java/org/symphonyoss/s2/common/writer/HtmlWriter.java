@@ -28,18 +28,42 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HtmlWriter extends XmlWriter
+public class HtmlWriter extends AbstractXmlWriter<HtmlWriter>
 {
   private Map<Class<?>, ITableCellFormatter<?>> tableCellFormatterMap_ = new HashMap<>();
   
-  public HtmlWriter(OutputStream out)
+  public HtmlWriter(Writer out, boolean closeFlag, int tabSize, String indentString)
   {
-    super(out);
+    super(out, closeFlag, tabSize, indentString);
   }
-
-  public HtmlWriter(Writer outputStream)
+  
+  public static class Builder extends AbstractIndentedWriter.Builder<HtmlWriter>
   {
-    super(outputStream);
+    public Builder(Writer writer)
+    {
+      super(writer);
+    }
+
+    public Builder(OutputStream out)
+    {
+      super(out);
+    }
+
+    @Override
+    public HtmlWriter build()
+    {
+      return new HtmlWriter(getWriter(), isCloseFlag(), getTabSize(), getIndentString());
+    }
+  }
+  
+  public static Builder newBuilder(Writer writer)
+  {
+    return new Builder(writer);
+  }
+  
+  public static Builder newBuilder(OutputStream out)
+  {
+    return new Builder(out);
   }
   
   public <T> void addTableCellFormatter(Class<T> type, ITableCellFormatter<T> formatter)
