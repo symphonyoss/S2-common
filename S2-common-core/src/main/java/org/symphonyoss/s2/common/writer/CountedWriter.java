@@ -28,15 +28,13 @@ import java.io.Writer;
 
 public class CountedWriter extends Writer
 {
-  private final Writer  out_;
-  private final boolean closeFlag_;
-  private long          offset_  = 0L;
-  private int           counted_ = 0;
+	private	long			offset_ = 0L;
+	private Writer	  out_;
+	private int				counted_ = 0;
 	
-	public	CountedWriter(Writer out, boolean closeFlag)
+	public	CountedWriter(Writer out)
 	{
 		out_ = out;
-		closeFlag_ = closeFlag;
 	}
 	
 	@Override
@@ -90,8 +88,7 @@ public class CountedWriter extends Writer
 	@Override
 	public void close() throws IOException
 	{
-	  if(closeFlag_)
-	    out_.close();
+		out_.close();
 	}
 
 	@Override
