@@ -23,7 +23,10 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-public class JsonString extends JsonValue<String>
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+public class JsonString extends JsonValue<String, JsonString>
 {
   public JsonString(String value)
   {

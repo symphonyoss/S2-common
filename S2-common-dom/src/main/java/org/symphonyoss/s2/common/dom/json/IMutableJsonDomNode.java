@@ -21,16 +21,12 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom;
+package org.symphonyoss.s2.common.dom.json;
 
-public abstract class Dom extends DomNode
+import org.symphonyoss.s2.common.dom.IMutableDomNode;
+
+public interface IMutableJsonDomNode extends IJsonDomNode, IMutableDomNode
 {
-
-//  @Override
-//  void writeTo(DomWriter writer, @Nullable String terminator) throws IOException
-//  {
-//    writeChildrenTo(writer);
-//    if(terminator != null)
-//      writer.write(terminator);
-//  }
+  @Override
+  IImmutableJsonDomNode immutify();
 }

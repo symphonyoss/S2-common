@@ -23,13 +23,51 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import javax.annotation.concurrent.Immutable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+import org.symphonyoss.s2.common.dom.IImmutableDomNode;
+import org.symphonyoss.s2.common.dom.IMutableDomNode;
+
+public class MutableJsonDom extends JsonDom<IJsonDomNode> implements IMutableDomNode
 {
-  public JsonBoolean(Boolean value)
+  private List<IJsonDomNode>  children_ = new LinkedList<>();
+  
+  public MutableJsonDom add(IJsonDomNode node)
   {
-    super(value, String.valueOf(value));
+    children_.add(node);
+    
+    return this;
+  }
+
+  @Override
+  public int size()
+  {
+    return children_.size();
+  }
+
+  @Override
+  public boolean isEmpty()
+  {
+    return children_.isEmpty();
+  }
+
+  @Override
+  public IJsonDomNode getFirst()
+  {
+    return children_.get(0);
+  }
+
+  @Override
+  public Iterator<IJsonDomNode> iterator()
+  {
+    return children_.iterator();
+  }
+
+  @Override
+  public IImmutableDomNode immutify()
+  {
+    return new ImmutableJsonDom(children_);
   }
 }

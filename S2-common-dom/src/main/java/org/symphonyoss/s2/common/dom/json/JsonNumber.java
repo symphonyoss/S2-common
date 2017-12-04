@@ -23,20 +23,23 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-public class JsonNumber extends JsonValue<Double>
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+public class JsonNumber extends JsonValue<Double, JsonNumber>
 {
   public JsonNumber(Double value)
   {
-    super(value, String.format("%g", value));
+    super(value, String.valueOf(value));
   }
   
   public JsonNumber(Long value)
   {
-    super(value == null ? null : (double)value, String.format("%d", value));
+    super((double)value, String.valueOf(value));
   }
   
   public JsonNumber(Float value)
   {
-    super(value == null ? null : (double)value, String.format("%g", value));
+    super((double)value, String.valueOf(value));
   }
 }

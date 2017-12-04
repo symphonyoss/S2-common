@@ -52,7 +52,7 @@ public class DomWriter extends DomConsumer<DomWriter> implements IDomWriterOrBui
   private DomWriter(Writer out, boolean doNotClose, boolean compactMode, boolean canonicalMode)
   {
     super(compactMode, canonicalMode);
-    out_ = compactMode ? new CompactWriter(out) : new IndentedWriter(out);
+    out_ = compactMode || canonicalMode ? new CompactWriter(out) : new IndentedWriter(out);
     doNotClose_ = doNotClose;
   }
   
@@ -130,7 +130,7 @@ public class DomWriter extends DomConsumer<DomWriter> implements IDomWriterOrBui
     return doNotClose_;
   }
 
-  public DomWriter write(DomNode node) throws IOException
+  public DomWriter write(IDomNode node) throws IOException
   {
     node.writeTo(this, null);
     return this;
@@ -192,7 +192,7 @@ public class DomWriter extends DomConsumer<DomWriter> implements IDomWriterOrBui
     return this;
   }
 
-  public DomWriter closeBlock(String s, String terminator) throws IOException
+  public DomWriter closeBlock(String s, @Nullable String terminator) throws IOException
   {
     out_.closeBlock(s, terminator);
     return this;

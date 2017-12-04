@@ -21,15 +21,13 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+import javax.annotation.Nullable;
+
+public interface IDomNode
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
+  IDomNode writeTo(DomWriter writer, @Nullable String terminator) throws IOException;
 }

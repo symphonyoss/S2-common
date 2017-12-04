@@ -25,11 +25,15 @@ package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+
 import org.symphonyoss.s2.common.dom.DomWriter;
 
-public class JsonValue<T> extends JsonDomNode
+@Immutable
+public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomNode
 {
-  private final T value_;
+  private final T      value_;
   private final String quotedValue_;
   
   public JsonValue(T value, String quotedValue)
@@ -48,10 +52,11 @@ public class JsonValue<T> extends JsonDomNode
     return quotedValue_;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public void writeTo(DomWriter writer, String terminator) throws IOException
+  public N writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
     writer.writeItem(quotedValue_, terminator);
+    return (N) this;
   }
-
 }

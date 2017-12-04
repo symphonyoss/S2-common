@@ -27,12 +27,20 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
+import org.symphonyoss.s2.common.dom.json.ImmutableJsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonBoolean;
-import org.symphonyoss.s2.common.dom.json.JsonDom;
 import org.symphonyoss.s2.common.dom.json.JsonInteger;
 import org.symphonyoss.s2.common.dom.json.JsonNumber;
-import org.symphonyoss.s2.common.dom.json.JsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonString;
+import org.symphonyoss.s2.common.dom.json.MutableJsonArray;
+import org.symphonyoss.s2.common.dom.json.MutableJsonDom;
+import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
+import org.symphonyoss.s2.common.dom.json.jackson.JacksonAdaptor;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestDom
 {
@@ -41,10 +49,10 @@ public class TestDom
   {
     DomSerializer serializer = DomSerializer.newBuilder().build();
        
-    test("{}\n", serializer.serialize(new JsonDom()));
+    test("{}\n", serializer.serialize(new MutableJsonDom()));
     test("[\n" + 
         "  \"Hello World\"\n" + 
-        "]\n", serializer.serialize(new JsonDom().add(new JsonString("Hello World"))));
+        "]\n", serializer.serialize(new MutableJsonDom().add(new JsonString("Hello World"))));
     test("{\n" + 
         "  \"Bruce\":                      \"Skingle\",\n" + 
         "  \"Mike\":                       \"Harmon\",\n" + 
@@ -79,28 +87,117 @@ public class TestDom
         .withCanonicalMode(true)
         .build();
     
-    test("{}", serializer.serialize(new JsonDom()));
-    test("[\"Hello World\"]", serializer.serialize(new JsonDom().add(new JsonString("Hello World"))));
-    test("[0]", serializer.serialize(new JsonDom().add(new JsonInteger(0))));
-    test("[9223372036854775807]", serializer.serialize(new JsonDom().add(new JsonInteger(Long.MAX_VALUE))));
-    test("[-9223372036854775808]", serializer.serialize(new JsonDom().add(new JsonInteger(Long.MIN_VALUE))));
-    test("[9223372036854775807]", serializer.serialize(new JsonDom().add(new JsonNumber(Long.MAX_VALUE))));
-    test("[-9223372036854775808]", serializer.serialize(new JsonDom().add(new JsonNumber(Long.MIN_VALUE))));
-    test("[1.79769e+308]", serializer.serialize(new JsonDom().add(new JsonNumber(Double.MAX_VALUE))));
-    test("[4.90000e-324]", serializer.serialize(new JsonDom().add(new JsonNumber(Double.MIN_VALUE))));
-    test("[true]", serializer.serialize(new JsonDom().add(new JsonBoolean(true))));
-    test("[false]", serializer.serialize(new JsonDom().add(new JsonBoolean(false))));
+    test("{}", serializer.serialize(new MutableJsonDom()));
+    test("[\"Hello World\"]", serializer.serialize(new MutableJsonDom().add(new JsonString("Hello World"))));
+    test("[0]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(0))));
+    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(Long.MAX_VALUE))));
+    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(Long.MIN_VALUE))));
+    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Long.MAX_VALUE))));
+    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Long.MIN_VALUE))));
+    test("[1.7976931348623157E308]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Double.MAX_VALUE))));
+    test("[4.9E-324]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Double.MIN_VALUE))));
+    test("[true]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(true))));
+    test("[false]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(false))));
     test("{\"Bruce\":\"Skingle\",\"MauritzioVeryLongNameDude\":\"Green\",\"Mike\":\"Harmon\"}", serializer.serialize(getJsonDom()));
     test("[{\"Bruce\":\"Skingle\",\"MauritzioVeryLongNameDude\":\"Green\",\"Mike\":\"Harmon\"},\"Another String\"]", serializer.serialize(getJsonDom().add(new JsonString("Another String"))));
   }
 
-  private JsonDom getJsonDom()
+  private MutableJsonDom getJsonDom()
   {
-    JsonDom dom = new JsonDom()
-        .add(new JsonObject().add("Bruce", new JsonString("Skingle"))
+    MutableJsonDom dom = new MutableJsonDom()
+        .add(new MutableJsonObject().add("Bruce", new JsonString("Skingle"))
             .add("Mike", new JsonString("Harmon"))
             .add("MauritzioVeryLongNameDude", new JsonString("Green")));
     
     return dom;
+}
+  
+  @Test
+  public void testImmutify()
+  {
+    DomSerializer serializer = DomSerializer.newBuilder()
+        .withCanonicalMode(true)
+        .build();
+    
+    MutableJsonObject mutableObject = createObject(1);
+    
+    String expected = "{\"1 four\":true,\"1 one\":1,\"1 three\":[3,4],\"1 two\":\"2\"}";
+    
+    test(expected, 
+        serializer.serialize(mutableObject));
+    
+    ImmutableJsonObject immutableObject = mutableObject.immutify();
+    
+    test(expected, 
+        serializer.serialize(immutableObject));
+  }
+  
+  @Test
+  public void testJackson() throws JsonProcessingException, IOException
+  {
+    DomSerializer serializer = DomSerializer.newBuilder()
+        .withCanonicalMode(true)
+        .build();
+    
+    String json = serializer.serialize(createObject(2));
+    
+    System.out.println("Canonical JSON:");
+    System.out.println(json);
+    
+    ObjectMapper mapper = new ObjectMapper();
+    
+    JsonNode tree = mapper.readTree(json.getBytes());
+    
+    System.out.println("Jackson DOM:");
+    System.out.println(tree);
+    
+    IJsonDomNode adaptor = JacksonAdaptor.adapt(tree);
+    
+    test(json, 
+        serializer.serialize(adaptor));
+  }
+  
+  @Test
+  public void testNested()
+  {
+     DomSerializer serializer = DomSerializer.newBuilder()
+         .withCanonicalMode(true)
+         .build();
+     
+     String expected = "{\"3 one\":{\"2 one\":{\"1 four\":true,\"1 one\":1,\"1 three\":[3,4],\"1 two\":\"2\"},\"2 three\":[{\"1 four\":true,\"1 one\":9,\"1 three\":[11,12],\"1 two\":\"10\"},{\"1 four\":true,\"1 one\":13,\"1 three\":[15,16],\"1 two\":\"14\"}],\"2 two\":{\"1 four\":true,\"1 one\":5,\"1 three\":[7,8],\"1 two\":\"6\"}},\"3 three\":[{\"2 one\":{\"1 four\":true,\"1 one\":33,\"1 three\":[35,36],\"1 two\":\"34\"},\"2 three\":[{\"1 four\":true,\"1 one\":41,\"1 three\":[43,44],\"1 two\":\"42\"},{\"1 four\":true,\"1 one\":45,\"1 three\":[47,48],\"1 two\":\"46\"}],\"2 two\":{\"1 four\":true,\"1 one\":37,\"1 three\":[39,40],\"1 two\":\"38\"}},{\"2 one\":{\"1 four\":true,\"1 one\":49,\"1 three\":[51,52],\"1 two\":\"50\"},\"2 three\":[{\"1 four\":true,\"1 one\":57,\"1 three\":[59,60],\"1 two\":\"58\"},{\"1 four\":true,\"1 one\":61,\"1 three\":[63,64],\"1 two\":\"62\"}],\"2 two\":{\"1 four\":true,\"1 one\":53,\"1 three\":[55,56],\"1 two\":\"54\"}}],\"3 two\":{\"2 one\":{\"1 four\":true,\"1 one\":17,\"1 three\":[19,20],\"1 two\":\"18\"},\"2 three\":[{\"1 four\":true,\"1 one\":25,\"1 three\":[27,28],\"1 two\":\"26\"},{\"1 four\":true,\"1 one\":29,\"1 three\":[31,32],\"1 two\":\"30\"}],\"2 two\":{\"1 four\":true,\"1 one\":21,\"1 three\":[23,24],\"1 two\":\"22\"}}}";
+     
+     MutableJsonObject mutableObject = createObject(3);
+     
+     test(expected, 
+         serializer.serialize(mutableObject));
+     
+     ImmutableJsonObject immutableObject = mutableObject.immutify();
+     
+     test(expected, 
+         serializer.serialize(immutableObject));
+  }
+  
+  private int nestCount = 1;
+  
+  private MutableJsonObject createObject(int l)
+  {
+    if(l == 1)
+    {
+      return new MutableJsonObject()
+          .addIfNotNull(l + " one", nestCount++)
+          .addIfNotNull(l + " two", String.valueOf(nestCount++))
+          .add(l + " three", new MutableJsonArray()
+              .add(nestCount++)
+              .add(nestCount++))
+          .addIfNotNull(l + " four", Boolean.TRUE);
+    }
+    
+    return new MutableJsonObject()
+        .add(l + " one", createObject(l - 1))
+        .add(l + " two", createObject(l - 1))
+        .add(l + " three", new MutableJsonArray()
+            .add(createObject(l - 1))
+            .add(createObject(l - 1)));
+      
   }
 }

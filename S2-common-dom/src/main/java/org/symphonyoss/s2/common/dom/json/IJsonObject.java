@@ -23,13 +23,14 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import javax.annotation.concurrent.Immutable;
+import java.util.Iterator;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+import javax.annotation.Nullable;
+
+public interface IJsonObject<N extends IJsonDomNode> extends IJsonDomNode
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
+  @Nullable N  get(String name);
+  Iterator<String> getSortedNameIterator();
+  Iterator<String> getNameIterator();
+  int getMaxNameLen();
 }

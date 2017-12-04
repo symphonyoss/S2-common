@@ -21,15 +21,14 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
-
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+/**
+ * A generic Dom instance.
+ * 
+ * @author Bruce Skingle
+ *
+ */
+public interface IDom extends IDomNode
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
 }

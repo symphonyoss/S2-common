@@ -23,13 +23,26 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import java.io.IOException;
+
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import org.symphonyoss.s2.common.dom.DomWriter;
+
 @Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+public class JsonNull implements IImmutableJsonDomNode
 {
-  public JsonBoolean(Boolean value)
+  public static final JsonNull  INSTANCE = new JsonNull();
+  
+  private JsonNull()
   {
-    super(value, String.valueOf(value));
+  }
+
+  @Override
+  public JsonNull writeTo(DomWriter writer, @Nullable String terminator) throws IOException
+  {
+    writer.writeItem("null", terminator);
+    return this;
   }
 }

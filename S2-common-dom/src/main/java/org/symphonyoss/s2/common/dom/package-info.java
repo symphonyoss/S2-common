@@ -21,15 +21,15 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+/**
+ * @author Bruce Skingle
+ *
+ */
+@javax.annotation.ParametersAreNonnullByDefault
+@DefaultQualifier(value = Nonnull.class, locations = TypeUseLocation.ALL)
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.Nonnull;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
-{
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
-}
+import org.checkerframework.framework.qual.DefaultQualifier;
+import org.checkerframework.framework.qual.TypeUseLocation;

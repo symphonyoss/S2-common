@@ -25,34 +25,33 @@ package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 
-public class JsonArray extends JsonDomNode
+public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
 {
-  private LinkedList<JsonDomNode> children_    = new LinkedList<>();
-  
-  public JsonArray add(JsonDomNode child)
+  @Override
+  public JsonArray<N> writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
-    children_.add(child);
+    if(isEmpty())
+    {
+      writer.writeItem("[]", terminator);
+    }
+    else
+    {
+      Iterator<N>  it = iterator();
+      writer.openBlock("[");
+      
+      while(it.hasNext())
+      {
+        it.next().writeTo(writer, it.hasNext() ? "," : null);
+      }
+      writer.closeBlock("]", terminator);
+    }
     
     return this;
-  }
-
-  @Override
-  public void writeTo(DomWriter writer, @Nullable String terminator) throws IOException
-  {
-    Iterator<JsonDomNode>  it = children_.iterator();
-    writer.openBlock("[");
-    
-    while(it.hasNext())
-    {
-      it.next().writeTo(writer, it.hasNext() ? "," : null);
-    }
-    writer.closeBlock("]", terminator);
   }
 
 }

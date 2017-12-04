@@ -23,13 +23,9 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import javax.annotation.concurrent.Immutable;
+import org.symphonyoss.s2.common.dom.IImmutableDomNode;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+public interface IImmutableJsonDomNode extends IJsonDomNode, IImmutableDomNode
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
+
 }

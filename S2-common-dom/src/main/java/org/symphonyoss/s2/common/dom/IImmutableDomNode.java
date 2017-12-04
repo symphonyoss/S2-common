@@ -21,15 +21,20 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * Any type of IDomNode which is <B>immutable</B>.
+ * 
+ * N.B. The mutable form of this is called IMutableDomNode
+ * 
+ * @author Bruce Skingle
+ *
+ */
 @Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+public interface IImmutableDomNode extends IDomNode
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
+
 }

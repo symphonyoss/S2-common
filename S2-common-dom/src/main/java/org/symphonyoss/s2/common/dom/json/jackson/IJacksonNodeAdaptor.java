@@ -21,10 +21,14 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom.json.jackson;
 
-import org.symphonyoss.s2.common.dom.DomNode;
+import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
 
-public abstract class JsonDomNode extends DomNode
+import com.fasterxml.jackson.databind.JsonNode;
+
+@FunctionalInterface
+public interface IJacksonNodeAdaptor
 {
+  IJsonDomNode adapt(JsonNode node);
 }

@@ -24,60 +24,37 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 
-public class JsonObject extends JsonDomNode
+public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<N>
 {
-  private static final String      OPEN_QUOTE   = "\"";
-  private static final String      CLOSE_QUOTE  = "\":";
-  private static final int         QUOTE_MARGIN = OPEN_QUOTE.length() + CLOSE_QUOTE.length() + 1;
-
-  private Map<String, JsonDomNode> children_    = new HashMap<>();
-  private LinkedList<String>       names_       = new LinkedList<>();
-  private TreeSet<String>          sortedNames_ = new TreeSet<>();
-  
-  public JsonObject add(String name, JsonDomNode child)
-  {
-    if(sortedNames_.add(name))
-    {
-      names_.add(name);
-    }
-    children_.put(name, child);
-    
-    return this;
-  }
+  public static final String      OPEN_QUOTE   = "\"";
+  public static final String      CLOSE_QUOTE  = "\":";
+  public static final int         QUOTE_MARGIN = OPEN_QUOTE.length() + CLOSE_QUOTE.length() + 1;
 
   @Override
-  public void writeTo(DomWriter writer, @Nullable String terminator) throws IOException
+  public JsonObject<N> writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
     Iterator<String>  it;
-    int               maxNameLen = 0;
+    int maxNameLen;
     
     if(writer.isCanonicalMode())
     {
-      it = sortedNames_.iterator();
+      it = getSortedNameIterator();
+      maxNameLen = 0;
     }
     else
     {
-      for(String name : names_)
-      {
-        maxNameLen = Math.max(maxNameLen, name.length());
-      }
-      
-      maxNameLen += QUOTE_MARGIN;
+      maxNameLen = getMaxNameLen();
       
       while(maxNameLen % writer.getTabSize() != 0)
         maxNameLen++;
       
-      it = names_.iterator();
+      it = getNameIterator();
     }
     
     writer.openBlock("{");
@@ -86,9 +63,22 @@ public class JsonObject extends JsonDomNode
     {
       String name = it.next();
       writer.writeColumn(OPEN_QUOTE, name, CLOSE_QUOTE, maxNameLen);
-      children_.get(name).writeTo(writer, it.hasNext() ? "," : null);
+      
+      nullSafeGet(name).writeTo(writer, it.hasNext() ? "," : null);
     }
     writer.closeBlock("}", terminator);
+    
+    return this;
   }
-
+  
+  /*
+   * We only call this method with keys which we know to be present as they are 
+   * iterated from one of the lists of keys. This method is needed to avoid a compile
+   * error from the checker framework (build with the checker maven profile).
+   */
+  @SuppressWarnings("nullness")
+  private IJsonDomNode nullSafeGet(String name)
+  {
+    return get(name);
+  }
 }

@@ -23,13 +23,46 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.annotation.concurrent.Immutable;
 
+import com.google.common.collect.ImmutableList;
+
 @Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean>
+public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
-  public JsonBoolean(Boolean value)
+  private final ImmutableList<IImmutableJsonDomNode> children_;
+  
+  public ImmutableJsonArray(Collection<IJsonDomNode> children)
   {
-    super(value, String.valueOf(value));
+    ArrayList<IImmutableJsonDomNode> c = new ArrayList<>(children.size());
+    
+    for(IJsonDomNode child : children)
+    {
+      if(child instanceof IImmutableJsonDomNode)
+      {
+        c.add((IImmutableJsonDomNode) child);
+      }
+      else
+      {
+        c.add(((IMutableJsonDomNode)child).immutify());
+      }
+    }
+    children_ = ImmutableList.copyOf(c);
+  }
+
+  @Override
+  public boolean isEmpty()
+  {
+    return children_.isEmpty();
+  }
+
+  @Override
+  public Iterator<IImmutableJsonDomNode> iterator()
+  {
+    return children_.iterator();
   }
 }

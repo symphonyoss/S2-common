@@ -61,7 +61,7 @@ public class DomSerializer extends DomConsumer<DomSerializer>
     return new Builder(initial);
   }
   
-  public String serialize(DomNode node)
+  public String serialize(IDomNode node)
   {
     try
     {

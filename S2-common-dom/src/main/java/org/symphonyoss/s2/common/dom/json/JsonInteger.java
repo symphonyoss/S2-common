@@ -23,15 +23,18 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-public class JsonInteger extends JsonValue<Long>
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+public class JsonInteger extends JsonValue<Long, JsonInteger>
 {
   public JsonInteger(Long value)
   {
-    super(value, String.format("%d", value));
+    super(value, String.valueOf(value));
   }
   
   public JsonInteger(Integer value)
   {
-    super(value == null ? null : (long)value, String.format("%d", value));
+    super((long)value, String.valueOf(value));
   }
 }

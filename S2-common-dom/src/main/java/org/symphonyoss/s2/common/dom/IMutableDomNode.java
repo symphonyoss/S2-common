@@ -23,28 +23,15 @@
 
 package org.symphonyoss.s2.common.dom;
 
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
-public abstract class DomNode
+/**
+ * Any type of IDomNode which is <B>mutable</B>.
+ * 
+ * N.B. The Interface prefix makes this look a bit like it says "immutable".
+ * 
+ * @author Bruce Skingle
+ *
+ */
+public interface IMutableDomNode extends IDomNode
 {
-  public abstract void writeTo(DomWriter writer, @Nullable String terminator) throws IOException;
-  
-  protected String getTerminator()
-  {
-    return null;
-  }
-
-  protected String getSeparator()
-  {
-    return null;
-  }
-
-  protected void  separator(DomWriter writer)
-  {}
-  
-  protected void  terminator(DomWriter writer)
-  {}
-  
+  IImmutableDomNode immutify();
 }
