@@ -102,6 +102,7 @@
 		<module>S2-common-crypto</module>
 		<module>S2-legacy</module>
 		<module>S2-common-dom</module>
+		<module>S2-common-dom-jackson</module>
 	</modules>
 
 	<build>
@@ -121,12 +122,6 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

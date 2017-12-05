@@ -65,4 +65,10 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
   {
     return children_.iterator();
   }
+
+  @Override
+  public IImmutableJsonDomNode immutify()
+  {
+    return this;
+  }
 }

@@ -33,4 +33,5 @@ public interface IJsonObject<N extends IJsonDomNode> extends IJsonDomNode
   Iterator<String> getSortedNameIterator();
   Iterator<String> getNameIterator();
   int getMaxNameLen();
+  boolean containsKey(String name);
 }

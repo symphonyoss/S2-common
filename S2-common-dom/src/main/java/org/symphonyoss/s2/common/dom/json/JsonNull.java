@@ -40,6 +40,12 @@ public class JsonNull implements IImmutableJsonDomNode
   }
 
   @Override
+  public IImmutableJsonDomNode immutify()
+  {
+    return this;
+  }
+
+  @Override
   public JsonNull writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
     writer.writeItem("null", terminator);

@@ -28,6 +28,13 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ * @author Bruce Skingle
+ *
+ * @deprecated Use org.symphonyoss.s2.common.dom instead
+ */
+@Deprecated
 public class HtmlWriter extends XmlWriter
 {
   private Map<Class<?>, ITableCellFormatter<?>> tableCellFormatterMap_ = new HashMap<>();

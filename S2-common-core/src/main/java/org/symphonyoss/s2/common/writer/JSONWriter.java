@@ -26,6 +26,13 @@ package org.symphonyoss.s2.common.writer;
 import java.io.OutputStream;
 import java.io.Writer;
 
+/**
+ * 
+ * @author Bruce Skingle
+ *
+ * @deprecated Use org.symphonyoss.s2.common.dom instead
+ */
+@Deprecated
 public class JSONWriter extends IndentedWriter
 {
 

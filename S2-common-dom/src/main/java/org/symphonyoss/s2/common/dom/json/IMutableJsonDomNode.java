@@ -27,6 +27,5 @@ import org.symphonyoss.s2.common.dom.IMutableDomNode;
 
 public interface IMutableJsonDomNode extends IJsonDomNode, IMutableDomNode
 {
-  @Override
-  IImmutableJsonDomNode immutify();
+
 }

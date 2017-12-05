@@ -21,23 +21,9 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
-
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
-
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public interface IFloatProvider
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
-
-  @Override
-  public Boolean asBoolean()
-  {
-    return getValue();
-  }
+  Float asFloat();
 }

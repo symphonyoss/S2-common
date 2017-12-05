@@ -21,23 +21,12 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
+import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
+import org.symphonyoss.s2.common.exception.BadFormatException;
 
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
-
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public interface ITypeAdaptor<T>
 {
-  public JsonBoolean(Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
-
-  @Override
-  public Boolean asBoolean()
-  {
-    return getValue();
-  }
+  T adapt(IJsonDomNode node) throws BadFormatException;
 }

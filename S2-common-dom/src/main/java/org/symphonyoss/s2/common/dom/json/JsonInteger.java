@@ -25,16 +25,26 @@ package org.symphonyoss.s2.common.dom.json;
 
 import javax.annotation.concurrent.Immutable;
 
+import org.symphonyoss.s2.common.dom.IIntegerProvider;
+import org.symphonyoss.s2.common.dom.ILongProvider;
+
 @Immutable
-public class JsonInteger extends JsonValue<Long, JsonInteger>
+public class JsonInteger extends JsonValue<Integer, JsonInteger> implements ILongProvider, IIntegerProvider
 {
-  public JsonInteger(Long value)
+  public JsonInteger(Integer value)
   {
     super(value, String.valueOf(value));
   }
-  
-  public JsonInteger(Integer value)
+
+  @Override
+  public Integer asInteger()
   {
-    super((long)value, String.valueOf(value));
+    return getValue();
+  }
+
+  @Override
+  public Long asLong()
+  {
+    return (long)getValue();
   }
 }

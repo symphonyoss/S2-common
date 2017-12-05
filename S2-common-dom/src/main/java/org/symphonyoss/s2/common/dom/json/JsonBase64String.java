@@ -23,21 +23,26 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import javax.annotation.concurrent.Immutable;
+import org.apache.commons.codec.binary.Base64;
+import org.symphonyoss.s2.common.dom.IByteStringProvider;
 
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
+import com.google.protobuf.ByteString;
 
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public class JsonBase64String extends JsonString implements IByteStringProvider
 {
-  public JsonBoolean(Boolean value)
+  private ByteString byteString_;
+
+  public JsonBase64String(String value)
   {
-    super(value, String.valueOf(value));
+    super(value);
+    
+    byteString_ = ByteString.copyFrom(Base64.decodeBase64(value));
   }
 
   @Override
-  public Boolean asBoolean()
+  public ByteString asByteString()
   {
-    return getValue();
+    return byteString_;
   }
+
 }

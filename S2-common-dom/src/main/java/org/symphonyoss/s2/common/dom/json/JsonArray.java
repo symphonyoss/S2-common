@@ -24,11 +24,20 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
+import org.symphonyoss.s2.common.dom.TypeAdaptor;
+import org.symphonyoss.s2.common.exception.BadFormatException;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
 {
@@ -52,6 +61,37 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
     }
     
     return this;
+  }
+
+  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws BadFormatException
+  {
+    Set<T> set = new HashSet<>();
+    
+    Iterator<N>  it = iterator();
+    
+    while(it.hasNext())
+    {
+      T value = TypeAdaptor.adapt(type, it.next());
+      
+      if(!set.add(value))
+        throw new BadFormatException("Duplicate value in set input.");
+    }
+    return  ImmutableSet.copyOf(set);
+  }
+  
+  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws BadFormatException
+  {
+    List<T> list = new LinkedList<>();
+    
+    Iterator<N>  it = iterator();
+    
+    while(it.hasNext())
+    {
+      T value = TypeAdaptor.adapt(type, it.next());
+      
+      list.add(value);
+    }
+    return  ImmutableList.copyOf(list);
   }
 
 }

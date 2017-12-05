@@ -21,25 +21,9 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.dom;
 
-import javax.annotation.concurrent.Immutable;
-
-@Immutable
-public class JsonNumber extends JsonValue<Double, JsonNumber>
+public interface ILongProvider
 {
-  public JsonNumber(Double value)
-  {
-    super(value, String.valueOf(value));
-  }
-  
-  public JsonNumber(Long value)
-  {
-    super((double)value, String.valueOf(value));
-  }
-  
-  public JsonNumber(Float value)
-  {
-    super((double)value, String.valueOf(value));
-  }
+  Long asLong();
 }

@@ -33,5 +33,5 @@ package org.symphonyoss.s2.common.dom;
  */
 public interface IMutableDomNode extends IDomNode
 {
-  IImmutableDomNode immutify();
+  
 }

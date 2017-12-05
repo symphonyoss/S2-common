@@ -25,18 +25,23 @@ package org.symphonyoss.s2.common.dom.json;
 
 import javax.annotation.concurrent.Immutable;
 
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
+import org.symphonyoss.s2.common.dom.ILongProvider;
 
 @Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public class JsonLong extends JsonValue<Long, JsonLong> implements ILongProvider
 {
-  public JsonBoolean(Boolean value)
+  public JsonLong(Long value)
   {
     super(value, String.valueOf(value));
   }
+  
+  public JsonLong(Integer value)
+  {
+    super((long)value, String.valueOf(value));
+  }
 
   @Override
-  public Boolean asBoolean()
+  public Long asLong()
   {
     return getValue();
   }

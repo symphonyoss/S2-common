@@ -35,7 +35,9 @@ import java.util.Stack;
  * 
  * @author Bruce Skingle
  *
+ * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
+@Deprecated
 public class XmlWriter extends IndentedWriter
 {
 	private		Stack<String>		elementStack_ = new Stack<String>();

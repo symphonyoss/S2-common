@@ -27,11 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.symphonyoss.s2.common.dom.IImmutableDomNode;
-
 import com.google.common.collect.ImmutableList;
 
-public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements IImmutableDomNode
+public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
   private final ImmutableList<IImmutableJsonDomNode>  children_;
   
@@ -51,6 +49,12 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
       }
     }
     children_ = ImmutableList.copyOf(c);
+  }
+
+  @Override
+  public IImmutableJsonDomNode immutify()
+  {
+    return this;
   }
   
   @Override

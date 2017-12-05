@@ -25,19 +25,26 @@ package org.symphonyoss.s2.common.dom.json;
 
 import javax.annotation.concurrent.Immutable;
 
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
+import org.symphonyoss.s2.common.dom.IFloatProvider;
+import org.symphonyoss.s2.common.dom.IDoubleProvider;
 
 @Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public class JsonFloat extends JsonValue<Float, JsonFloat> implements IDoubleProvider, IFloatProvider
 {
-  public JsonBoolean(Boolean value)
+  public JsonFloat(Float value)
   {
     super(value, String.valueOf(value));
   }
 
   @Override
-  public Boolean asBoolean()
+  public Float asFloat()
   {
     return getValue();
+  }
+
+  @Override
+  public Double asDouble()
+  {
+    return getValue().doubleValue();
   }
 }

@@ -29,5 +29,6 @@ import javax.annotation.Nullable;
 
 public interface IDomNode
 {
+  IImmutableDomNode immutify();
   IDomNode writeTo(DomWriter writer, @Nullable String terminator) throws IOException;
 }

@@ -33,4 +33,6 @@ import org.symphonyoss.s2.common.dom.IDomNode;
  */
 public interface IJsonDomNode extends IDomNode
 {
+  @Override
+  IImmutableJsonDomNode immutify();
 }

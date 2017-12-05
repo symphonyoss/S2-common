@@ -25,8 +25,10 @@ package org.symphonyoss.s2.common.dom.json;
 
 import javax.annotation.concurrent.Immutable;
 
+import org.symphonyoss.s2.common.dom.IStringProvider;
+
 @Immutable
-public class JsonString extends JsonValue<String, JsonString>
+public class JsonString extends JsonValue<String, JsonString> implements IStringProvider
 {
   public JsonString(String value)
   {
@@ -51,5 +53,11 @@ public class JsonString extends JsonValue<String, JsonString>
     b.append('"');
     
     return b.toString();
+  }
+
+  @Override
+  public String asString()
+  {
+    return getValue();
   }
 }

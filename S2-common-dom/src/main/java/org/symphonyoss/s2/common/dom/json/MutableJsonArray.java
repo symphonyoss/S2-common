@@ -48,7 +48,7 @@ public class MutableJsonArray extends JsonArray<IJsonDomNode> implements IMutabl
   
   public MutableJsonArray add(Long value)
   {
-    return add(new JsonInteger(value));
+    return add(new JsonLong(value));
   }
   
   public MutableJsonArray add(Integer value)
@@ -58,12 +58,12 @@ public class MutableJsonArray extends JsonArray<IJsonDomNode> implements IMutabl
   
   public MutableJsonArray add(Double value)
   {
-    return add(new JsonNumber(value));
+    return add(new JsonDouble(value));
   }
   
   public MutableJsonArray add(Float value)
   {
-    return add(new JsonNumber(value));
+    return add(new JsonFloat(value));
   }
   
   public MutableJsonArray add(String value)

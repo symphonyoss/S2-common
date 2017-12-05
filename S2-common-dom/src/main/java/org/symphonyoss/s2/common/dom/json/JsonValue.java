@@ -42,6 +42,12 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
     quotedValue_ = quotedValue;
   }
 
+  @Override
+  public IImmutableJsonDomNode immutify()
+  {
+    return this;
+  }
+
   public T getValue()
   {
     return value_;

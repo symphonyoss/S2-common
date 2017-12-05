@@ -78,11 +78,23 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   }
 
   @Override
+  public IImmutableJsonDomNode immutify()
+  {
+    return this;
+  }
+
+  @Override
   public int getMaxNameLen()
   {
     return maxNameLen_;
   }
   
+  @Override
+  public boolean containsKey(String name)
+  {
+    return children_.containsKey(name);
+  }
+
   @Override
   public @Nullable IImmutableJsonDomNode  get(String name)
   {

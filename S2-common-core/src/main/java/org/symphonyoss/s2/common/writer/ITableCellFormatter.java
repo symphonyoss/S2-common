@@ -23,6 +23,15 @@
 
 package org.symphonyoss.s2.common.writer;
 
+/**
+ * 
+ * @author Bruce Skingle
+ *
+ * @param <T> type
+ *
+ * @deprecated Use org.symphonyoss.s2.common.dom instead
+ */
+@Deprecated
 @FunctionalInterface
 public interface ITableCellFormatter<T>
 {

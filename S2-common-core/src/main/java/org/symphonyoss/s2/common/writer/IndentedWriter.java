@@ -34,7 +34,9 @@ import java.util.Collection;
  * 
  * @author Bruce Skingle
  *
+ * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
+@Deprecated
 public class IndentedWriter extends PrintWriter
 {
   public static final int newlineLength_    = System.getProperty("line.separator").length();

@@ -27,20 +27,15 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
 import org.symphonyoss.s2.common.dom.json.ImmutableJsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonBoolean;
+import org.symphonyoss.s2.common.dom.json.JsonDouble;
 import org.symphonyoss.s2.common.dom.json.JsonInteger;
-import org.symphonyoss.s2.common.dom.json.JsonNumber;
+import org.symphonyoss.s2.common.dom.json.JsonLong;
 import org.symphonyoss.s2.common.dom.json.JsonString;
 import org.symphonyoss.s2.common.dom.json.MutableJsonArray;
 import org.symphonyoss.s2.common.dom.json.MutableJsonDom;
 import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
-import org.symphonyoss.s2.common.dom.json.jackson.JacksonAdaptor;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestDom
 {
@@ -90,12 +85,12 @@ public class TestDom
     test("{}", serializer.serialize(new MutableJsonDom()));
     test("[\"Hello World\"]", serializer.serialize(new MutableJsonDom().add(new JsonString("Hello World"))));
     test("[0]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(0))));
-    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(Long.MAX_VALUE))));
-    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(Long.MIN_VALUE))));
-    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Long.MAX_VALUE))));
-    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Long.MIN_VALUE))));
-    test("[1.7976931348623157E308]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Double.MAX_VALUE))));
-    test("[4.9E-324]", serializer.serialize(new MutableJsonDom().add(new JsonNumber(Double.MIN_VALUE))));
+    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MAX_VALUE))));
+    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MIN_VALUE))));
+    test("[9.223372036854776E18]", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MAX_VALUE))));
+    test("[-9.223372036854776E18]", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MIN_VALUE))));
+    test("[1.7976931348623157E308]", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MAX_VALUE))));
+    test("[4.9E-324]", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MIN_VALUE))));
     test("[true]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(true))));
     test("[false]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(false))));
     test("{\"Bruce\":\"Skingle\",\"MauritzioVeryLongNameDude\":\"Green\",\"Mike\":\"Harmon\"}", serializer.serialize(getJsonDom()));
@@ -130,31 +125,6 @@ public class TestDom
     
     test(expected, 
         serializer.serialize(immutableObject));
-  }
-  
-  @Test
-  public void testJackson() throws JsonProcessingException, IOException
-  {
-    DomSerializer serializer = DomSerializer.newBuilder()
-        .withCanonicalMode(true)
-        .build();
-    
-    String json = serializer.serialize(createObject(2));
-    
-    System.out.println("Canonical JSON:");
-    System.out.println(json);
-    
-    ObjectMapper mapper = new ObjectMapper();
-    
-    JsonNode tree = mapper.readTree(json.getBytes());
-    
-    System.out.println("Jackson DOM:");
-    System.out.println(tree);
-    
-    IJsonDomNode adaptor = JacksonAdaptor.adapt(tree);
-    
-    test(json, 
-        serializer.serialize(adaptor));
   }
   
   @Test

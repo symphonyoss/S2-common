@@ -64,6 +64,12 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
   }
   
   @Override
+  public boolean containsKey(String name)
+  {
+    return children_.containsKey(name);
+  }
+  
+  @Override
   public @Nullable IJsonDomNode  get(String name)
   {
     return children_.get(name);
@@ -105,7 +111,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     if(value == null)
       return this;
     
-    return add(name, new JsonInteger(value));
+    return add(name, new JsonLong(value));
   }
   
   public MutableJsonObject addIfNotNull(String name, Integer value)
@@ -121,7 +127,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     if(value == null)
       return this;
     
-    return add(name, new JsonNumber(value));
+    return add(name, new JsonDouble(value));
   }
   
   public MutableJsonObject addIfNotNull(String name, Float value)
@@ -129,7 +135,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     if(value == null)
       return this;
     
-    return add(name, new JsonNumber(value));
+    return add(name, new JsonFloat(value));
   }
   
   public MutableJsonObject addIfNotNull(String name, String value)

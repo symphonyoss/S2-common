@@ -23,8 +23,6 @@
 
 package org.symphonyoss.s2.common.hash;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -34,10 +32,6 @@ import org.symphonyoss.s2.common.exception.BadFormatException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializable;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.google.protobuf.ByteString;
 
 /**
@@ -90,9 +84,7 @@ import com.google.protobuf.ByteString;
  *
  */
 @Immutable
-//@SuppressFBWarnings(value="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS",
-//  justification="Immutable but with lazy instantiation")
-public class Hash implements JsonSerializable, Comparable<Hash>
+public class Hash implements Comparable<Hash>
 {
   /* package */ static final byte[]        NIL_BYTE_HASH       = new byte[] { 0 };
   public        static final String        NIL_STRING_HASH     = "0";
@@ -437,25 +429,6 @@ public class Hash implements JsonSerializable, Comparable<Hash>
     return hashString_.compareTo(o.toString());
   }
 
-  @Override
-  public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException
-  {
-    if(gen == null)
-      throw new NullPointerException("GsonGenerator may not be null");
-    
-    gen.writeString(toString());
-  }
-
-  @Override
-  public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer)
-      throws IOException
-  {
-    if(gen == null)
-      throw new NullPointerException("GsonGenerator may not be null");
-    
-    gen.writeString(toString());
-  }
-
   public static @Nullable Hash newNullableInstance(ByteString byteString) throws BadFormatException
   {
     if(byteString.isEmpty())
@@ -480,8 +453,6 @@ public class Hash implements JsonSerializable, Comparable<Hash>
       throw new TransactionFault(e);
     }
   }
-  
-
   
   public static @Nonnull Hash newInstance(byte[] bytes)
   {

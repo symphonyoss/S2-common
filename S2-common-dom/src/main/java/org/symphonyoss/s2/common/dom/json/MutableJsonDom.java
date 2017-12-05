@@ -27,10 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.symphonyoss.s2.common.dom.IImmutableDomNode;
-import org.symphonyoss.s2.common.dom.IMutableDomNode;
-
-public class MutableJsonDom extends JsonDom<IJsonDomNode> implements IMutableDomNode
+public class MutableJsonDom extends JsonDom<IJsonDomNode> implements IMutableJsonDomNode
 {
   private List<IJsonDomNode>  children_ = new LinkedList<>();
   
@@ -66,7 +63,7 @@ public class MutableJsonDom extends JsonDom<IJsonDomNode> implements IMutableDom
   }
 
   @Override
-  public IImmutableDomNode immutify()
+  public ImmutableJsonDom immutify()
   {
     return new ImmutableJsonDom(children_);
   }
