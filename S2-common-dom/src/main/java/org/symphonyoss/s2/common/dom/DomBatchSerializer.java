@@ -23,16 +23,25 @@
 
 package org.symphonyoss.s2.common.dom;
 
+import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.Reader;
 
 import org.symphonyoss.s2.common.fault.CodingFault;
 
-public class DomSerializer extends DomConsumer<DomSerializer>
+public class DomBatchSerializer extends DomConsumer<DomBatchSerializer> implements Closeable
 {
-  protected DomSerializer(boolean compactMode, boolean canonicalMode)
+  private CharArrayWriter out_;
+  private DomWriter writer_;
+
+  protected DomBatchSerializer(boolean compactMode, boolean canonicalMode)
   {
     super(compactMode, canonicalMode);
+    
+    out_ = new CharArrayWriter();
+    writer_ = DomWriter.newBuilder(out_, this).build();
   }
 
   public static class Builder extends DomConsumer.Builder<Builder>
@@ -45,9 +54,9 @@ public class DomSerializer extends DomConsumer<DomSerializer>
       super(initial);
     }
     
-    public DomSerializer build()
+    public DomBatchSerializer build()
     {
-      return new DomSerializer(isCompactMode(), isCanonicalMode());
+      return new DomBatchSerializer(isCompactMode(), isCanonicalMode());
     }
   }
   
@@ -61,20 +70,39 @@ public class DomSerializer extends DomConsumer<DomSerializer>
     return new Builder(initial);
   }
   
-  public String serialize(IDomNode node)
+  public void serialize(IDomNode node)
   {
     try
     {
-      CharArrayWriter out = new CharArrayWriter();
-      DomWriter writer = DomWriter.newBuilder(out, this).build();
-      writer.write(node);
-      writer.close();
-      
-      return out.toString();
+      writer_.write(node);
+      writer_.flush();
     }
     catch(IOException e)
     {
       throw new CodingFault(e);
     }
+  }
+
+  @Override
+  public void close() throws IOException
+  {
+    writer_.close();
+    out_.close();
+  }
+
+  public char[] toCharArray()
+  {
+    return out_.toCharArray();
+  }
+
+  @Override
+  public String toString()
+  {
+    return out_.toString();
+  }
+  
+  public Reader createReader()
+  {
+    return new CharArrayReader(out_.toCharArray());
   }
 }

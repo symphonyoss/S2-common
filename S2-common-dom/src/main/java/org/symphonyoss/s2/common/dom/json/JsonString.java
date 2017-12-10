@@ -35,7 +35,7 @@ public class JsonString extends JsonValue<String, JsonString> implements IString
     super(value, quote(value));
   }
 
-  private static String quote(String value)
+  public static String quote(String value)
   {
     if(value == null)
       return "null";
@@ -45,10 +45,22 @@ public class JsonString extends JsonValue<String, JsonString> implements IString
     b.append('"');
     for(char c : value.toCharArray())
     {
-      if(c == '\"')
-        b.append('\\');
-      
-      b.append(c);
+      switch(c)
+      {
+        case '\\':  b.append("\\\\");   break;
+        case '\"':  b.append("\\\"");   break;
+        case '\n':  b.append("\\n");   break;
+        case '\r':  b.append("\\r");   break;
+        case '\t':  b.append("\\t");   break;
+        case '\f':  b.append("\\f");   break;
+        case '\b':  b.append("\\b");   break;
+          
+        default:
+          if(c < ' ')
+            b.append(String.format("\\%04x", (int) c));
+          else
+            b.append(c);
+      }
     }
     b.append('"');
     

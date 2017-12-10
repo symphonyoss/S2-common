@@ -29,6 +29,8 @@ import java.util.Iterator;
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
+import org.symphonyoss.s2.common.dom.IStringProvider;
+import org.symphonyoss.s2.common.exception.BadFormatException;
 
 public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<N>
 {
@@ -80,5 +82,18 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
   private IJsonDomNode nullSafeGet(String name)
   {
     return get(name);
+  }
+  
+  public String getString(String name) throws BadFormatException
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new BadFormatException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IStringProvider)
+      return ((JsonString) node).getValue();
+    
+    throw new BadFormatException("\"" + name + "\" is not a String");
   }
 }
