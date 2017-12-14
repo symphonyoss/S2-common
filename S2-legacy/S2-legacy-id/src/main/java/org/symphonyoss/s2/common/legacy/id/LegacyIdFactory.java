@@ -101,7 +101,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for a MaestroMessage.
    * 
-   * @param payloadClassName  The type of the MaestroPayload.
+   * @param typeName          The type of the MaestroPayload.
    * @param fromPod           The originating pod id.
    * @param messageId         The message ID.
    * @param threadId          The thread ID.
