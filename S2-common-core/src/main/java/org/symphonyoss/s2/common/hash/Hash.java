@@ -500,4 +500,14 @@ public class Hash implements Comparable<Hash>
   {
     return hashStringBase64_;
   }
+
+  public static ByteString toByteString(Hash hash)
+  {
+    return hash.toByteString();
+  }
+  
+  public static Hash build(ByteString byteString) throws BadFormatException
+  {
+    return new Hash(byteString);
+  }
 }

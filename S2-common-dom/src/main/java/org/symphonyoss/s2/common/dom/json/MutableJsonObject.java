@@ -87,6 +87,14 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return names_.iterator();
   }
   
+  public MutableJsonObject addIfNotNull(String name, IJsonDomNode child)
+  {
+    if(child == null)
+      return this;
+    
+    return add(name, child);
+  }
+  
   public MutableJsonObject add(String name, IJsonDomNode child)
   {
     if(sortedNames_.add(name))

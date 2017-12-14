@@ -152,8 +152,9 @@ public class LinePartialReader extends PartialReader
   }
 
   @Override
-  public void close() throws IOException
+  public void close()
   {
+    setAtEof();
   }
 
   public static class Factory implements Closeable
