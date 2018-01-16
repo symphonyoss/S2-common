@@ -170,6 +170,16 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, value);
   }
   
+  public MutableJsonObject addCollectionOfDomNode(String name, Collection<? extends IJsonDomNodeProvider> value)
+  {
+    MutableJsonArray array = new MutableJsonArray();
+    
+    for(IJsonDomNodeProvider v : value)
+      array.add(v.getJsonDomNode());
+    
+    return add(name, array);
+  }
+  
   public MutableJsonObject addCollectionOfBoolean(String name, Collection<Boolean> value)
   {
     MutableJsonArray array = new MutableJsonArray();

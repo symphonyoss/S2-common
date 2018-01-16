@@ -67,7 +67,7 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
   }
 
   @Override
-  public IImmutableJsonDomNode immutify()
+  public ImmutableJsonArray immutify()
   {
     return this;
   }

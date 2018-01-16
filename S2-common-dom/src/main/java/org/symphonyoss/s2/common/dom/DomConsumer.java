@@ -23,6 +23,11 @@
 
 package org.symphonyoss.s2.common.dom;
 
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
+@Immutable
+@ThreadSafe
 public class DomConsumer<T extends DomConsumer<T>> implements IDomConsumerOrBuilder
 {
   private final boolean       compactMode_;

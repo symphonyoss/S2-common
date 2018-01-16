@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2018 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,10 +23,7 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-public interface IJsonArray<N extends IJsonDomNode> extends IJsonDomNode, Iterable<N>
+public interface IJsonDomNodeProvider
 {
-  @Override
-  ImmutableJsonArray immutify();
-  
-  boolean isEmpty();
+  IJsonDomNode  getJsonDomNode();
 }

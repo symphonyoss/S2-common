@@ -26,8 +26,13 @@ package org.symphonyoss.s2.common.dom;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import org.symphonyoss.s2.common.fault.CodingFault;
 
+@Immutable
+@ThreadSafe
 public class DomSerializer extends DomConsumer<DomSerializer>
 {
   protected DomSerializer(boolean compactMode, boolean canonicalMode)
