@@ -53,6 +53,60 @@ public class TypeAdaptor
           }
           throw new BadFormatException("String input is required.");
           }});
+    
+    adaptorMap_.put(String.class, 
+        new ITypeAdaptor<String>(){@Override public String adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof IStringProvider)
+          {
+            return ((IStringProvider)node).asString();
+          }
+          throw new BadFormatException("String input is required.");
+          }});
+    
+    adaptorMap_.put(Long.class, 
+        new ITypeAdaptor<Long>(){@Override public Long adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof ILongProvider)
+          {
+            return ((ILongProvider)node).asLong();
+          }
+          throw new BadFormatException("Long input is required.");
+          }});
+    
+    adaptorMap_.put(Integer.class, 
+        new ITypeAdaptor<Integer>(){@Override public Integer adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof IIntegerProvider)
+          {
+            return ((IIntegerProvider)node).asInteger();
+          }
+          throw new BadFormatException("Integer input is required.");
+          }});
+    
+    adaptorMap_.put(Double.class, 
+        new ITypeAdaptor<Double>(){@Override public Double adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof IDoubleProvider)
+          {
+            return ((IDoubleProvider)node).asDouble();
+          }
+          throw new BadFormatException("Double input is required.");
+          }});
+    
+    adaptorMap_.put(Float.class, 
+        new ITypeAdaptor<Float>(){@Override public Float adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof IFloatProvider)
+          {
+            return ((IFloatProvider)node).asFloat();
+          }
+          throw new BadFormatException("Float input is required.");
+          }});
+    
+    adaptorMap_.put(Boolean.class, 
+        new ITypeAdaptor<Boolean>(){@Override public Boolean adapt(IJsonDomNode node) throws BadFormatException{
+          if(node instanceof IBooleanProvider)
+          {
+            return ((IBooleanProvider)node).asBoolean();
+          }
+          throw new BadFormatException("Boolean input is required.");
+          }});
   }
 
   public static <T> T adapt(Class<T> type, IJsonDomNode node) throws BadFormatException
