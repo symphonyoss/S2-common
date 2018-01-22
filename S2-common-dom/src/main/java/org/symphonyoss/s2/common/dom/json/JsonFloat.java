@@ -23,6 +23,7 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.IFloatProvider;
@@ -31,19 +32,19 @@ import org.symphonyoss.s2.common.dom.IDoubleProvider;
 @Immutable
 public class JsonFloat extends JsonValue<Float, JsonFloat> implements IDoubleProvider, IFloatProvider
 {
-  public JsonFloat(Float value)
+  public JsonFloat(@Nonnull Float value)
   {
     super(value, String.valueOf(value));
   }
 
   @Override
-  public Float asFloat()
+  public @Nonnull Float asFloat()
   {
     return getValue();
   }
 
   @Override
-  public Double asDouble()
+  public @Nonnull Double asDouble()
   {
     return getValue().doubleValue();
   }

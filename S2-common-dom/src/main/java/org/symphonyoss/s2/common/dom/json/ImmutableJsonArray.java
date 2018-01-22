@@ -27,14 +27,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+
+import org.symphonyoss.s2.common.dom.DomSerializer;
 
 import com.google.common.collect.ImmutableList;
 
 @Immutable
 public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
+  protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
+
   private final ImmutableList<IImmutableJsonDomNode> children_;
+  private final String asString_;
   
   public ImmutableJsonArray(Collection<IJsonDomNode> children)
   {
@@ -52,6 +58,7 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
       }
     }
     children_ = ImmutableList.copyOf(c);
+    asString_ = SERIALIZER.serialize(this);
   }
 
   @Override
@@ -70,5 +77,20 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
   public ImmutableJsonArray immutify()
   {
     return this;
+  }@Override
+  public @Nonnull String toString()
+  {
+    return asString_;
+  }
+  
+  public @Nonnull String serialize()
+  {
+    return asString_;
+  }
+  
+  @Override
+  public int hashCode()
+  {
+    return asString_.hashCode();
   }
 }

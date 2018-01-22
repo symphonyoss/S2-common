@@ -23,6 +23,7 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.IBooleanProvider;
@@ -30,13 +31,13 @@ import org.symphonyoss.s2.common.dom.IBooleanProvider;
 @Immutable
 public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
 {
-  public JsonBoolean(Boolean value)
+  public JsonBoolean(@Nonnull Boolean value)
   {
     super(value, String.valueOf(value));
   }
 
   @Override
-  public Boolean asBoolean()
+  public @Nonnull Boolean asBoolean()
   {
     return getValue();
   }

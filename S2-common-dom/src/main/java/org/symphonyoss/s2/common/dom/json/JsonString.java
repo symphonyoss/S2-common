@@ -23,6 +23,7 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.IStringProvider;
@@ -30,7 +31,7 @@ import org.symphonyoss.s2.common.dom.IStringProvider;
 @Immutable
 public class JsonString extends JsonValue<String, JsonString> implements IStringProvider
 {
-  public JsonString(String value)
+  public JsonString(@Nonnull String value)
   {
     super(value, quote(value));
   }
@@ -68,7 +69,7 @@ public class JsonString extends JsonValue<String, JsonString> implements IString
   }
 
   @Override
-  public String asString()
+  public @Nonnull String asString()
   {
     return getValue();
   }

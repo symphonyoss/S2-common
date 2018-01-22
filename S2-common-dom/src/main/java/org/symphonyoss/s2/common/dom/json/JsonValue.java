@@ -25,6 +25,7 @@ package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -33,10 +34,10 @@ import org.symphonyoss.s2.common.dom.DomWriter;
 @Immutable
 public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomNode
 {
-  private final T      value_;
-  private final String quotedValue_;
+  private final @Nonnull T      value_;
+  private final @Nonnull String quotedValue_;
   
-  public JsonValue(T value, String quotedValue)
+  public JsonValue(@Nonnull T value, @Nonnull String quotedValue)
   {
     value_ = value;
     quotedValue_ = quotedValue;
@@ -48,12 +49,12 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
     return this;
   }
 
-  public T getValue()
+  public @Nonnull T getValue()
   {
     return value_;
   }
 
-  public String getQuotedValue()
+  public @Nonnull String getQuotedValue()
   {
     return quotedValue_;
   }

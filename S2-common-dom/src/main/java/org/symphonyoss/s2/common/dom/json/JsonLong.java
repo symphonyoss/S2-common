@@ -23,6 +23,7 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.ILongProvider;
@@ -30,18 +31,18 @@ import org.symphonyoss.s2.common.dom.ILongProvider;
 @Immutable
 public class JsonLong extends JsonValue<Long, JsonLong> implements ILongProvider
 {
-  public JsonLong(Long value)
+  public JsonLong(@Nonnull Long value)
   {
     super(value, String.valueOf(value));
   }
   
-  public JsonLong(Integer value)
+  public JsonLong(@Nonnull Integer value)
   {
     super((long)value, String.valueOf(value));
   }
 
   @Override
-  public Long asLong()
+  public @Nonnull Long asLong()
   {
     return getValue();
   }
