@@ -44,7 +44,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.symphonyoss.s2.common.fault.ProgramFault;
 
-public class HttpServerBuilder
+public class HttpServerBuilder implements IServletContainer
 {
   private Map<String, Servlet> servletMap_ = new HashMap<>();
   private int                  httpPort_   = -1;
@@ -53,6 +53,7 @@ public class HttpServerBuilder
   private String               keyStorePassword_;
   private Handler resourceHandler_ = new ResourceHandler();
   
+  @Override
   public HttpServerBuilder addServlet(String path, Servlet servlet)
   {
     if(servletMap_.containsKey(path))
@@ -63,6 +64,7 @@ public class HttpServerBuilder
     return this;
   }
   
+  @Override
   public HttpServerBuilder addServlet(IUrlPathServlet servlet)
   {
     if(servletMap_.containsKey(servlet.getUrlPath()))

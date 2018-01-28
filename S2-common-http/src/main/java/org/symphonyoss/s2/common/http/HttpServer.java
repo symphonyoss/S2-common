@@ -23,7 +23,9 @@
 
 package org.symphonyoss.s2.common.http;
 
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,5 +90,12 @@ public class HttpServer
   public ServletContextHandler getServletContextHandler()
   {
     return servletContextHandler_;
+  }
+
+  public int getLocalPort()
+  {
+    Connector[] c = getJettyServer().getConnectors();
+    
+    return ((ServerConnector)c[0]).getLocalPort();
   }
 }
