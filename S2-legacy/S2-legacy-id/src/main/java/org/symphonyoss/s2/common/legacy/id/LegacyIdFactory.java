@@ -32,14 +32,14 @@ import org.symphonyoss.s2.common.hash.HashProvider;
  * A factory to create inferred Hash values each of which is
  * a 2.0 ID which acts as a mirror for an object in the legacy (Symphony1.5) space.
  * 
- * Many methods take a podId which it uses to generate a globally unique ID for each
+ * Many methods take a tenantId which it uses to generate a globally unique ID for each
  * object across all pods. This means that if the same threadId happens to exist in 2
  * separate pods and we create a 2.0 Sequence to represent those two threads that the
  * 2.0 IDs will not collide in a multi tenant environment.
  * 
  * Note that where we refer to userId in this class that we expect the "external" userId
- * which already includes the podId and is already globally unique. In this case the 
- * podId is not included again.
+ * which already includes the tenantId and is already globally unique. In this case the 
+ * tenantId is not included again.
  * 
  * @author Bruce Skingle
  *
@@ -53,9 +53,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash messageId(byte[] messageId)
+  public Hash messageId(String tenantId, byte[] messageId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.MESSAGE_ID, messageId);
+    return HashProvider.getCompositeHashOf(LegacyId.MESSAGE_ID, tenantId, messageId);
   }
   
   /**
@@ -65,9 +65,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash threadId(byte[] threadId)
+  public Hash threadId(String tenantId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.THREAD_ID, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.THREAD_ID, tenantId, threadId);
   }
 
   /**
@@ -79,9 +79,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash readReceiptId(long userId, byte[] messageId, byte[] threadId)
+  public Hash readReceiptId(String tenantId, long userId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, userId, messageId, threadId);
   }
 
   /**
@@ -93,9 +93,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash deliveryReceiptId(long userId, byte[] messageId, byte[] threadId)
+  public Hash deliveryReceiptId(String tenantId, long userId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, userId, messageId, threadId);
   }
 
   /**
@@ -108,9 +108,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash maestroId(String typeName, Integer fromPod, byte[] messageId, @Nullable byte[] threadId)
+  public Hash maestroId(String tenantId, String typeName, Integer fromPod, byte[] messageId, @Nullable byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.MAESTRO_MESSAGE_ID, typeName,
+    return HashProvider.getCompositeHashOf(LegacyId.MAESTRO_MESSAGE_ID, tenantId, typeName,
         fromPod == null ? 0 : fromPod,
         messageId, threadId == null ? new byte[0] : threadId);
   }
@@ -126,9 +126,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash offlineNoticeId(long toUserId, byte[] messageId)
+  public Hash offlineNoticeId(String tenantId, long toUserId, byte[] messageId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.OFFLINE_NOTICE_ID, toUserId, messageId);
+    return HashProvider.getCompositeHashOf(LegacyId.OFFLINE_NOTICE_ID, tenantId, toUserId, messageId);
   }
 
   /**
@@ -140,9 +140,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash deleteEventId(long requesterId, byte[] deleteMessageId, byte[] messageId)
+  public Hash deleteEventId(String tenantId, long requesterId, byte[] deleteMessageId, byte[] messageId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELETE_EVENT_ID, requesterId, deleteMessageId, messageId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELETE_EVENT_ID, tenantId, requesterId, deleteMessageId, messageId);
   }
 
   /**
@@ -153,9 +153,9 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash downloadAttachmentEventId(long downloadedByUserId, byte[] messageId)
+  public Hash downloadAttachmentEventId(String tenantId, long downloadedByUserId, byte[] messageId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DOWNLOAD_ATTACHMENT_EVENT_ID, downloadedByUserId, messageId);
+    return HashProvider.getCompositeHashOf(LegacyId.DOWNLOAD_ATTACHMENT_EVENT_ID, tenantId, downloadedByUserId, messageId);
   }
 
   /**
@@ -167,8 +167,8 @@ public class LegacyIdFactory
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash likeEventId(long liker, byte[] likedMessageId, byte[] messageId)
+  public Hash likeEventId(String tenantId, long liker, byte[] likedMessageId, byte[] messageId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.LIKE_EVENT_ID, liker, likedMessageId, messageId);
+    return HashProvider.getCompositeHashOf(LegacyId.LIKE_EVENT_ID, tenantId, liker, likedMessageId, messageId);
   }
 }
