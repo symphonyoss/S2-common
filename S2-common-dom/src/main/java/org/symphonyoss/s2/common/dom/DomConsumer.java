@@ -35,7 +35,7 @@ public class DomConsumer<T extends DomConsumer<T>> implements IDomConsumerOrBuil
   
   protected DomConsumer(boolean compactMode, boolean canonicalMode)
   {
-    compactMode_ = canonicalMode || compactMode; // Canonical implies compact
+    compactMode_ = compactMode; // Canonical implies compact
     canonicalMode_ = canonicalMode;
   }
   

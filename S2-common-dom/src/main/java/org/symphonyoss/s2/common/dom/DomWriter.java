@@ -52,7 +52,7 @@ public class DomWriter extends DomConsumer<DomWriter> implements IDomWriterOrBui
   private DomWriter(Writer out, boolean doNotClose, boolean compactMode, boolean canonicalMode)
   {
     super(compactMode, canonicalMode);
-    out_ = compactMode || canonicalMode ? new CompactWriter(out) : new IndentedWriter(out);
+    out_ = compactMode ? new CompactWriter(out) : new IndentedWriter(out);
     doNotClose_ = doNotClose;
   }
   
