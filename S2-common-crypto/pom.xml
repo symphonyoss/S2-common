@@ -27,7 +27,7 @@
   <parent>
     <groupId>org.symphonyoss.s2.common</groupId>
     <artifactId>S2-common</artifactId>
-    <version>0.1.12</version>
+    <version>0.1.13-SNAPSHOT</version>
   </parent>
   <artifactId>S2-common-crypto</artifactId>
   <description>Common Cryptographic Functions</description>
