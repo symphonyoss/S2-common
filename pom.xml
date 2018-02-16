@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>org.symphonyoss.s2</groupId>
 		<artifactId>S2-super-pom</artifactId>
-		<version>0.1.4</version>
+		<version>0.1.5</version>
 	</parent>
 
 	<groupId>org.symphonyoss.s2.common</groupId>
@@ -35,7 +35,7 @@
 	<version>0.1.12-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<url>https://github.com/SymphonyOSF/S2-common</url>
+	<url>https://github.com/symphonyoss/S2-common</url>
 	<description>Symphony 2.0 Common Libraries</description>
 
 
@@ -47,9 +47,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/SymphonyOSF/S2-common.git</connection>
-		<developerConnection>scm:git:git@github.com:SymphonyOSF/S2-common.git</developerConnection>
-		<url>https://github.com/SymphonyOSF/S2-common</url>
+		<connection>scm:git:git://github.com/symphonyoss/S2-common.git</connection>
+		<developerConnection>scm:git:git@github.com:symphonyoss/S2-common.git</developerConnection>
+		<url>https://github.com/symphonyoss/S2-common</url>
 	  <tag>HEAD</tag>
   </scm>
 
@@ -89,11 +89,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<source.code.version>1.7</source.code.version>
 		<target.code.version>1.7</target.code.version>
-		
-		<!-- Not needed as yet, maybe never.... -->
-		<!-- <protogen.group.id>com.symphony.s2.protogen</protogen.group.id> <protogen.artifact.id>S2-protogen</protogen.artifact.id> 
-			<protogen.version>1.0.1</protogen.version> <protogen.template.groupid>${protogen.group.id}</protogen.template.groupid> 
-			<protogen.template.version>${protogen.version}</protogen.template.version> -->
 	</properties>
 
 

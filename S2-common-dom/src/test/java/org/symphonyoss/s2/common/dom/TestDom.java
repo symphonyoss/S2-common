@@ -82,19 +82,32 @@ public class TestDom
         .withCanonicalMode(true)
         .build();
     
-    test("{}", serializer.serialize(new MutableJsonDom()));
-    test("[\"Hello World\"]", serializer.serialize(new MutableJsonDom().add(new JsonString("Hello World"))));
-    test("[0]", serializer.serialize(new MutableJsonDom().add(new JsonInteger(0))));
-    test("[9223372036854775807]", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MAX_VALUE))));
-    test("[-9223372036854775808]", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MIN_VALUE))));
-    test("[9.223372036854776E18]", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MAX_VALUE))));
-    test("[-9.223372036854776E18]", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MIN_VALUE))));
-    test("[1.7976931348623157E308]", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MAX_VALUE))));
-    test("[4.9E-324]", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MIN_VALUE))));
-    test("[true]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(true))));
-    test("[false]", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(false))));
-    test("{\"Bruce\":\"Skingle\",\"MauritzioVeryLongNameDude\":\"Green\",\"Mike\":\"Harmon\"}", serializer.serialize(getJsonDom()));
-    test("[{\"Bruce\":\"Skingle\",\"MauritzioVeryLongNameDude\":\"Green\",\"Mike\":\"Harmon\"},\"Another String\"]", serializer.serialize(getJsonDom().add(new JsonString("Another String"))));
+    test("{}\n", serializer.serialize(new MutableJsonDom()));
+    test("[\n" + 
+        "  \"Hello World\"\n" + 
+        "]\n", serializer.serialize(new MutableJsonDom().add(new JsonString("Hello World"))));
+    test("[\n  0\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonInteger(0))));
+    test("[\n  9223372036854775807\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MAX_VALUE))));
+    test("[\n  -9223372036854775808\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonLong(Long.MIN_VALUE))));
+    test("[\n  9.223372036854776E18\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MAX_VALUE))));
+    test("[\n  -9.223372036854776E18\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonDouble((double)Long.MIN_VALUE))));
+    test("[\n  1.7976931348623157E308\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MAX_VALUE))));
+    test("[\n  4.9E-324\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonDouble(Double.MIN_VALUE))));
+    test("[\n  true\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(true))));
+    test("[\n  false\n]\n", serializer.serialize(new MutableJsonDom().add(new JsonBoolean(false))));
+    test("{\n" + 
+        "  \"Bruce\":\"Skingle\",\n" + 
+        "  \"MauritzioVeryLongNameDude\":\"Green\",\n" + 
+        "  \"Mike\":\"Harmon\"\n" + 
+        "}\n", serializer.serialize(getJsonDom()));
+    test("[\n" + 
+        "  {\n" + 
+        "    \"Bruce\":\"Skingle\",\n" + 
+        "    \"MauritzioVeryLongNameDude\":\"Green\",\n" + 
+        "    \"Mike\":\"Harmon\"\n" + 
+        "  },\n" + 
+        "  \"Another String\"\n" + 
+        "]\n", serializer.serialize(getJsonDom().add(new JsonString("Another String"))));
   }
 
   private MutableJsonDom getJsonDom()
@@ -116,7 +129,15 @@ public class TestDom
     
     MutableJsonObject mutableObject = createObject(1);
     
-    String expected = "{\"1 four\":true,\"1 one\":1,\"1 three\":[3,4],\"1 two\":\"2\"}";
+    String expected = "{\n" + 
+        "  \"1 four\":true,\n" + 
+        "  \"1 one\":1,\n" + 
+        "  \"1 three\":[\n" + 
+        "    3,\n" + 
+        "    4\n" + 
+        "  ],\n" + 
+        "  \"1 two\":\"2\"\n" + 
+        "}\n";
     
     test(expected, 
         serializer.serialize(mutableObject));
@@ -134,7 +155,170 @@ public class TestDom
          .withCanonicalMode(true)
          .build();
      
-     String expected = "{\"3 one\":{\"2 one\":{\"1 four\":true,\"1 one\":1,\"1 three\":[3,4],\"1 two\":\"2\"},\"2 three\":[{\"1 four\":true,\"1 one\":9,\"1 three\":[11,12],\"1 two\":\"10\"},{\"1 four\":true,\"1 one\":13,\"1 three\":[15,16],\"1 two\":\"14\"}],\"2 two\":{\"1 four\":true,\"1 one\":5,\"1 three\":[7,8],\"1 two\":\"6\"}},\"3 three\":[{\"2 one\":{\"1 four\":true,\"1 one\":33,\"1 three\":[35,36],\"1 two\":\"34\"},\"2 three\":[{\"1 four\":true,\"1 one\":41,\"1 three\":[43,44],\"1 two\":\"42\"},{\"1 four\":true,\"1 one\":45,\"1 three\":[47,48],\"1 two\":\"46\"}],\"2 two\":{\"1 four\":true,\"1 one\":37,\"1 three\":[39,40],\"1 two\":\"38\"}},{\"2 one\":{\"1 four\":true,\"1 one\":49,\"1 three\":[51,52],\"1 two\":\"50\"},\"2 three\":[{\"1 four\":true,\"1 one\":57,\"1 three\":[59,60],\"1 two\":\"58\"},{\"1 four\":true,\"1 one\":61,\"1 three\":[63,64],\"1 two\":\"62\"}],\"2 two\":{\"1 four\":true,\"1 one\":53,\"1 three\":[55,56],\"1 two\":\"54\"}}],\"3 two\":{\"2 one\":{\"1 four\":true,\"1 one\":17,\"1 three\":[19,20],\"1 two\":\"18\"},\"2 three\":[{\"1 four\":true,\"1 one\":25,\"1 three\":[27,28],\"1 two\":\"26\"},{\"1 four\":true,\"1 one\":29,\"1 three\":[31,32],\"1 two\":\"30\"}],\"2 two\":{\"1 four\":true,\"1 one\":21,\"1 three\":[23,24],\"1 two\":\"22\"}}}";
+     String expected = "{\n" + 
+         "  \"3 one\":{\n" + 
+         "    \"2 one\":{\n" + 
+         "      \"1 four\":true,\n" + 
+         "      \"1 one\":1,\n" + 
+         "      \"1 three\":[\n" + 
+         "        3,\n" + 
+         "        4\n" + 
+         "      ],\n" + 
+         "      \"1 two\":\"2\"\n" + 
+         "    },\n" + 
+         "    \"2 three\":[\n" + 
+         "      {\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":9,\n" + 
+         "        \"1 three\":[\n" + 
+         "          11,\n" + 
+         "          12\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"10\"\n" + 
+         "      },\n" + 
+         "      {\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":13,\n" + 
+         "        \"1 three\":[\n" + 
+         "          15,\n" + 
+         "          16\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"14\"\n" + 
+         "      }\n" + 
+         "    ],\n" + 
+         "    \"2 two\":{\n" + 
+         "      \"1 four\":true,\n" + 
+         "      \"1 one\":5,\n" + 
+         "      \"1 three\":[\n" + 
+         "        7,\n" + 
+         "        8\n" + 
+         "      ],\n" + 
+         "      \"1 two\":\"6\"\n" + 
+         "    }\n" + 
+         "  },\n" + 
+         "  \"3 three\":[\n" + 
+         "    {\n" + 
+         "      \"2 one\":{\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":33,\n" + 
+         "        \"1 three\":[\n" + 
+         "          35,\n" + 
+         "          36\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"34\"\n" + 
+         "      },\n" + 
+         "      \"2 three\":[\n" + 
+         "        {\n" + 
+         "          \"1 four\":true,\n" + 
+         "          \"1 one\":41,\n" + 
+         "          \"1 three\":[\n" + 
+         "            43,\n" + 
+         "            44\n" + 
+         "          ],\n" + 
+         "          \"1 two\":\"42\"\n" + 
+         "        },\n" + 
+         "        {\n" + 
+         "          \"1 four\":true,\n" + 
+         "          \"1 one\":45,\n" + 
+         "          \"1 three\":[\n" + 
+         "            47,\n" + 
+         "            48\n" + 
+         "          ],\n" + 
+         "          \"1 two\":\"46\"\n" + 
+         "        }\n" + 
+         "      ],\n" + 
+         "      \"2 two\":{\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":37,\n" + 
+         "        \"1 three\":[\n" + 
+         "          39,\n" + 
+         "          40\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"38\"\n" + 
+         "      }\n" + 
+         "    },\n" + 
+         "    {\n" + 
+         "      \"2 one\":{\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":49,\n" + 
+         "        \"1 three\":[\n" + 
+         "          51,\n" + 
+         "          52\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"50\"\n" + 
+         "      },\n" + 
+         "      \"2 three\":[\n" + 
+         "        {\n" + 
+         "          \"1 four\":true,\n" + 
+         "          \"1 one\":57,\n" + 
+         "          \"1 three\":[\n" + 
+         "            59,\n" + 
+         "            60\n" + 
+         "          ],\n" + 
+         "          \"1 two\":\"58\"\n" + 
+         "        },\n" + 
+         "        {\n" + 
+         "          \"1 four\":true,\n" + 
+         "          \"1 one\":61,\n" + 
+         "          \"1 three\":[\n" + 
+         "            63,\n" + 
+         "            64\n" + 
+         "          ],\n" + 
+         "          \"1 two\":\"62\"\n" + 
+         "        }\n" + 
+         "      ],\n" + 
+         "      \"2 two\":{\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":53,\n" + 
+         "        \"1 three\":[\n" + 
+         "          55,\n" + 
+         "          56\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"54\"\n" + 
+         "      }\n" + 
+         "    }\n" + 
+         "  ],\n" + 
+         "  \"3 two\":{\n" + 
+         "    \"2 one\":{\n" + 
+         "      \"1 four\":true,\n" + 
+         "      \"1 one\":17,\n" + 
+         "      \"1 three\":[\n" + 
+         "        19,\n" + 
+         "        20\n" + 
+         "      ],\n" + 
+         "      \"1 two\":\"18\"\n" + 
+         "    },\n" + 
+         "    \"2 three\":[\n" + 
+         "      {\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":25,\n" + 
+         "        \"1 three\":[\n" + 
+         "          27,\n" + 
+         "          28\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"26\"\n" + 
+         "      },\n" + 
+         "      {\n" + 
+         "        \"1 four\":true,\n" + 
+         "        \"1 one\":29,\n" + 
+         "        \"1 three\":[\n" + 
+         "          31,\n" + 
+         "          32\n" + 
+         "        ],\n" + 
+         "        \"1 two\":\"30\"\n" + 
+         "      }\n" + 
+         "    ],\n" + 
+         "    \"2 two\":{\n" + 
+         "      \"1 four\":true,\n" + 
+         "      \"1 one\":21,\n" + 
+         "      \"1 three\":[\n" + 
+         "        23,\n" + 
+         "        24\n" + 
+         "      ],\n" + 
+         "      \"1 two\":\"22\"\n" + 
+         "    }\n" + 
+         "  }\n" + 
+         "}\n";
      
      MutableJsonObject mutableObject = createObject(3);
      
