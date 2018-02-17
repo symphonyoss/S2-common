@@ -37,6 +37,11 @@ import org.symphonyoss.s2.common.hash.HashProvider;
  * separate pods and we create a 2.0 Sequence to represent those two threads that the
  * 2.0 IDs will not collide in a multi tenant environment.
  * 
+ * This also means that where the same message goes xpod that events about the same message
+ * originating from different pods will have different event IDs. In the comments below
+ * where it says "originating pod" it means the pod where the event originates which may
+ * be different from the pod where the message originated.
+ * 
  * Note that where we refer to userId in this class that we expect the "external" userId
  * which already includes the tenantId and is already globally unique. In this case the 
  * tenantId is not included again.
@@ -49,6 +54,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the given messageId.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * @param messageId   A messageId
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
@@ -61,6 +67,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the given threadId.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * @param threadId    A threadId
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
@@ -73,6 +80,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the read receipt of the given messageId for the given userId.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * @param userId      The external (globally unique) user ID or the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
@@ -87,6 +95,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the delivery receipt of the given messageId for the given userId.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * @param userId      The external (globally unique) user ID or the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
@@ -101,6 +110,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for a MaestroMessage.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * @param typeName          The type of the MaestroPayload.
    * @param fromPod           The originating pod id.
    * @param messageId         The message ID.
@@ -118,6 +128,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for an offline notification event.
    * 
+   * @param tenantId    The tenant ID of the pod where this event originated.
    * This event means that a user was offline when a message was delivered and an email
    * was sent to them.
    * 
@@ -134,6 +145,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for a DeleteEvent.
    * 
+   * @param tenantId          The tenant ID of the pod where this event originated.
    * @param requesterId       The id of the requesting user.
    * @param deleteMessageId   The message ID of the deleted message.
    * @param messageId         The message ID of the event.
@@ -148,6 +160,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for a DownloadAttachmentEvent.
    * 
+   * @param tenantId            The tenant ID of the pod where this event originated.
    * @param downloadedByUserId  The user ID of the user downloading the attachment.
    * @param messageId           The message ID of the attachment.
    * @return            The 2.0 object ID for the mirror of the given ID.
@@ -161,6 +174,7 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for a LikeEvent.
    * 
+   * @param tenantId            The tenant ID of the pod where this event originated.
    * @param liker               The user ID of the user sending the like.
    * @param likedMessageId      The message ID of liked message.
    * @param messageId           The message ID of the event.
