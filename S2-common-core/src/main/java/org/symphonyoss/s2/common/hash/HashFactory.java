@@ -26,7 +26,7 @@ package org.symphonyoss.s2.common.hash;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.fault.ProgramFault;
 
@@ -50,7 +50,7 @@ public class HashFactory
     hashFunction_ = HashType.getDefaultHashType().createHashFunction();
   }
   
-  public HashFactory(int typeId) throws BadFormatException
+  public HashFactory(int typeId) throws InvalidValueException
   {
     typeId_ = typeId;
     hashFunction_ = HashType.getHashType(typeId).createHashFunction();
@@ -67,7 +67,7 @@ public class HashFactory
     {
       return new Hash(typeId_, hashFunction_.digest(bytes));
     }
-    catch (BadFormatException e)
+    catch (InvalidValueException e)
     {
       throw new ProgramFault("Unexpected hash error", e);
     }
@@ -119,7 +119,7 @@ public class HashFactory
       
       return new Hash(typeId_, rawDigestBytes);
     }
-    catch (BadFormatException e)
+    catch (InvalidValueException e)
     {
       throw new ProgramFault("Unexpected hash error", e);
     }

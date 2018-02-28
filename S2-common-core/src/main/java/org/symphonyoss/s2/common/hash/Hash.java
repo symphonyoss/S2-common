@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.codec.binary.Base64;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 
@@ -134,7 +134,7 @@ public class Hash implements Comparable<Hash>
       GLOBAL_ENVIRONMENT_ID = type1HashFactory.getCompositeHashOf("GLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_ID");
 
     }
-    catch (BadFormatException e)
+    catch (InvalidValueException e)
     {
       throw new CodingFault(e);
     }
@@ -167,17 +167,17 @@ public class Hash implements Comparable<Hash>
    * @param typeId          The required Hash Type
    * @param rawDigestBytes  The raw digest value as a byte array.
    * 
-   * @throws BadFormatException If the parameters are invalid.
+   * @throws InvalidValueException If the parameters are invalid.
    */
-  /* package */ Hash(int typeId, @Nonnull byte[] rawDigestBytes) throws BadFormatException
+  /* package */ Hash(int typeId, @Nonnull byte[] rawDigestBytes) throws InvalidValueException
   {
     if(rawDigestBytes == null || rawDigestBytes.length == 0)
-      throw new BadFormatException("Null or zero length rawDigest passed, use ZERO_HASH if you really mean null");
+      throw new InvalidValueException("Null or zero length rawDigest passed, use ZERO_HASH if you really mean null");
     
     hashType_ = HashType.getHashType(typeId);
     
     if(rawDigestBytes.length != hashType_.byteLen_)
-      throw new BadFormatException("Hash Type " + typeId + " digest values are " + 
+      throw new InvalidValueException("Hash Type " + typeId + " digest values are " + 
           hashType_.byteLen_ + " bytes but " + rawDigestBytes.length + " were passed.");
     
     hashBytes_ = hashType_.encode(typeId, rawDigestBytes);
@@ -190,9 +190,9 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the byte representation.
    * 
    * @param hashBytes    The byte[] representation of a Hash.
-   * @throws BadFormatException  If the given string is not a valid hash representation.
+   * @throws InvalidValueException  If the given string is not a valid hash representation.
    */
-  public Hash(byte[] hashBytes) throws BadFormatException
+  public Hash(byte[] hashBytes) throws InvalidValueException
   {
     hashByteString_ = ByteString.copyFrom(hashBytes);
     hashBytes_ = hashByteString_.toByteArray();
@@ -205,9 +205,9 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the ByteString representation.
    * 
    * @param byteString    The ByteString representation of a Hash.
-   * @throws BadFormatException  If the given value is not a valid hash representation.
+   * @throws InvalidValueException  If the given value is not a valid hash representation.
    */
-  public Hash(ByteString byteString) throws BadFormatException
+  public Hash(ByteString byteString) throws InvalidValueException
   {
     hashByteString_ = byteString;
     hashBytes_ = byteString.toByteArray();
@@ -239,10 +239,10 @@ public class Hash implements Comparable<Hash>
   /*
    * Static because its called from constructors
    */
-  private static HashType getTypeFromHashBytes(byte[] hashBytes) throws BadFormatException
+  private static HashType getTypeFromHashBytes(byte[] hashBytes) throws InvalidValueException
   {
     if(hashBytes == null)
-      throw new BadFormatException("Hash value is null");
+      throw new InvalidValueException("Hash value is null");
     
     if(hashBytes.length == 0 || (hashBytes.length == 1 && hashBytes[0] == 0))
     {
@@ -250,13 +250,13 @@ public class Hash implements Comparable<Hash>
     }
     
     if(hashBytes.length < 3)
-      throw new BadFormatException("Hash value is too short");
+      throw new InvalidValueException("Hash value is too short");
     
     int len = hashBytes.length;
     int typeIdLen = 0xFF & hashBytes[--len];  // now 0 <= typeIdLen <= 255
     
     if(typeIdLen > len)
-      throw new BadFormatException("Hash value is too short");
+      throw new InvalidValueException("Hash value is too short");
     
     // Max valid typeIdLen is actually 15 but if the value passed is above that
     // we will fail to find the HashType in a moment so don't bother to check here
@@ -280,7 +280,7 @@ public class Hash implements Comparable<Hash>
     HashType hashType = HashType.getHashType(typeId);
     
     if(len != hashType.byteLen_)
-      throw new BadFormatException("HashType " + typeId + " values are " + hashType.byteLen_ +
+      throw new InvalidValueException("HashType " + typeId + " values are " + hashType.byteLen_ +
           " bytes but this value is " + len + " bytes.");
     
     return hashType;
@@ -290,12 +290,12 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the Hex string representation.
    * 
    * @param hashHexString    The hex representation of an Hash.
-   * @throws BadFormatException  If the given string is not a valid hash representation.
+   * @throws InvalidValueException  If the given string is not a valid hash representation.
    */
-  public Hash(String hashHexString) throws BadFormatException
+  public Hash(String hashHexString) throws InvalidValueException
   {
     if(hashHexString == null)
-      throw new BadFormatException("Hash value is null");
+      throw new InvalidValueException("Hash value is null");
     
     hashHexString = hashHexString.trim();
     
@@ -308,14 +308,14 @@ public class Hash implements Comparable<Hash>
     else
     {
       if(hashHexString.length() < 3)
-        throw new BadFormatException("Hash value is too short");
+        throw new InvalidValueException("Hash value is too short");
       
       char[] hexChars = hashHexString.toCharArray();
       int len = hexChars.length;
       int typeIdLen = hexValue(hexChars[--len]);
       
       if(typeIdLen > len)
-        throw new BadFormatException("Hash value is too short");
+        throw new InvalidValueException("Hash value is too short");
       
       int typeId;
       
@@ -336,7 +336,7 @@ public class Hash implements Comparable<Hash>
       
       // Multiply by 2 ensures that the value we have is of even length
       if(len != 2 * hashType_.byteLen_)
-        throw new BadFormatException("HashType " + typeId + " values are " + hashType_.byteLen_ +
+        throw new InvalidValueException("HashType " + typeId + " values are " + hashType_.byteLen_ +
             " bytes but this value is " + len + " bytes.");
       
       int typeIdByteLen = hashType_.typeIdAsBytes_.length;
@@ -359,12 +359,12 @@ public class Hash implements Comparable<Hash>
     hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
   }
   
-  private int hexValue(char c) throws BadFormatException
+  private int hexValue(char c) throws InvalidValueException
   {
     int v = hexCharToInt_[c];
     
     if(v == -1)
-      throw new BadFormatException("Invalid Hex character \"" + c + "\"");
+      throw new InvalidValueException("Invalid Hex character \"" + c + "\"");
     
     return v;
   }
@@ -429,7 +429,7 @@ public class Hash implements Comparable<Hash>
     return hashString_.compareTo(o.toString());
   }
 
-  public static @Nullable Hash newNullableInstance(ByteString byteString) throws BadFormatException
+  public static @Nullable Hash newNullableInstance(ByteString byteString) throws InvalidValueException
   {
     if(byteString.isEmpty())
       return null;
@@ -448,7 +448,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return new Hash(byteString);
-    } catch (BadFormatException e)
+    } catch (InvalidValueException e)
     {
       throw new TransactionFault(e);
     }
@@ -465,7 +465,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return new Hash(bytes);
-    } catch (BadFormatException e)
+    } catch (InvalidValueException e)
     {
       throw new TransactionFault(e);
     }
@@ -482,7 +482,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return new Hash(string);
-    } catch (BadFormatException e)
+    } catch (InvalidValueException e)
     {
       throw new TransactionFault(e);
     }
@@ -506,7 +506,7 @@ public class Hash implements Comparable<Hash>
     return hash.toByteString();
   }
   
-  public static Hash build(ByteString byteString) throws BadFormatException
+  public static Hash build(ByteString byteString) throws InvalidValueException
   {
     return new Hash(byteString);
   }

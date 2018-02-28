@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -63,7 +63,7 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
     return this;
   }
 
-  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws BadFormatException
+  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws InvalidValueException
   {
     Set<T> set = new HashSet<>();
     
@@ -74,12 +74,12 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
       T value = TypeAdaptor.adapt(type, it.next());
       
       if(!set.add(value))
-        throw new BadFormatException("Duplicate value in set input.");
+        throw new InvalidValueException("Duplicate value in set input.");
     }
     return  ImmutableSet.copyOf(set);
   }
   
-  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws BadFormatException
+  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws InvalidValueException
   {
     List<T> list = new LinkedList<>();
     

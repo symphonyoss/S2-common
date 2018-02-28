@@ -25,7 +25,7 @@ package org.symphonyoss.s2.common.hash;
 
 import javax.annotation.Nonnull;
 
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 
 /**
@@ -53,7 +53,7 @@ public class HashProvider
         factories_[i] = new HashFactory(i);
       }
     }
-    catch (BadFormatException e)
+    catch (InvalidValueException e)
     {
       // "Can't happen"
       throw new CodingFault(e);
@@ -70,10 +70,10 @@ public class HashProvider
     }
   }
   
-  public static @Nonnull Hash getHashOf(int hashType, byte[] bytes) throws BadFormatException
+  public static @Nonnull Hash getHashOf(int hashType, byte[] bytes) throws InvalidValueException
   {
     if(hashType < 1 || hashType >= factories_.length)
-      throw new BadFormatException("Invalid hash type ID " + hashType);
+      throw new InvalidValueException("Invalid hash type ID " + hashType);
     
     HashFactory factory = factories_[hashType];
     
@@ -83,10 +83,10 @@ public class HashProvider
     }
   }
   
-  public static @Nonnull Hash getCompositeHashOf(int hashType, Object ...parts) throws BadFormatException
+  public static @Nonnull Hash getCompositeHashOf(int hashType, Object ...parts) throws InvalidValueException
   {
     if(hashType < 1 || hashType >= factories_.length)
-      throw new BadFormatException("Invalid hash type ID " + hashType);
+      throw new InvalidValueException("Invalid hash type ID " + hashType);
     
     HashFactory factory = factories_[hashType];
     

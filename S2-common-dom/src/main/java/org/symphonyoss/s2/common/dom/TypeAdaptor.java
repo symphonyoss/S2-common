@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 
 import com.google.protobuf.ByteString;
@@ -41,75 +41,75 @@ public class TypeAdaptor
   static
   {
     adaptorMap_.put(ByteString.class, 
-        new ITypeAdaptor<ByteString>(){@Override public ByteString adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<ByteString>(){@Override public ByteString adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IStringProvider)
           {
             String encoded = ((IStringProvider)node).asString();
             
             if(!Base64.isBase64(encoded))
-              throw new BadFormatException("Input contains invalid Base64 characters");
+              throw new InvalidValueException("Input contains invalid Base64 characters");
             
             return ByteString.copyFrom(Base64.decodeBase64(encoded));
           }
-          throw new BadFormatException("String input is required.");
+          throw new InvalidValueException("String input is required.");
           }});
     
     adaptorMap_.put(String.class, 
-        new ITypeAdaptor<String>(){@Override public String adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<String>(){@Override public String adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IStringProvider)
           {
             return ((IStringProvider)node).asString();
           }
-          throw new BadFormatException("String input is required.");
+          throw new InvalidValueException("String input is required.");
           }});
     
     adaptorMap_.put(Long.class, 
-        new ITypeAdaptor<Long>(){@Override public Long adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<Long>(){@Override public Long adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof ILongProvider)
           {
             return ((ILongProvider)node).asLong();
           }
-          throw new BadFormatException("Long input is required.");
+          throw new InvalidValueException("Long input is required.");
           }});
     
     adaptorMap_.put(Integer.class, 
-        new ITypeAdaptor<Integer>(){@Override public Integer adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<Integer>(){@Override public Integer adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IIntegerProvider)
           {
             return ((IIntegerProvider)node).asInteger();
           }
-          throw new BadFormatException("Integer input is required.");
+          throw new InvalidValueException("Integer input is required.");
           }});
     
     adaptorMap_.put(Double.class, 
-        new ITypeAdaptor<Double>(){@Override public Double adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<Double>(){@Override public Double adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IDoubleProvider)
           {
             return ((IDoubleProvider)node).asDouble();
           }
-          throw new BadFormatException("Double input is required.");
+          throw new InvalidValueException("Double input is required.");
           }});
     
     adaptorMap_.put(Float.class, 
-        new ITypeAdaptor<Float>(){@Override public Float adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<Float>(){@Override public Float adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IFloatProvider)
           {
             return ((IFloatProvider)node).asFloat();
           }
-          throw new BadFormatException("Float input is required.");
+          throw new InvalidValueException("Float input is required.");
           }});
     
     adaptorMap_.put(Boolean.class, 
-        new ITypeAdaptor<Boolean>(){@Override public Boolean adapt(IJsonDomNode node) throws BadFormatException{
+        new ITypeAdaptor<Boolean>(){@Override public Boolean adapt(IJsonDomNode node) throws InvalidValueException{
           if(node instanceof IBooleanProvider)
           {
             return ((IBooleanProvider)node).asBoolean();
           }
-          throw new BadFormatException("Boolean input is required.");
+          throw new InvalidValueException("Boolean input is required.");
           }});
   }
 
-  public static <T> T adapt(Class<T> type, IJsonDomNode node) throws BadFormatException
+  public static <T> T adapt(Class<T> type, IJsonDomNode node) throws InvalidValueException
   {
     @SuppressWarnings("unchecked")
     ITypeAdaptor<T> adaptor = (ITypeAdaptor<T>)adaptorMap_.get(type);

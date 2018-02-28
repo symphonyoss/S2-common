@@ -159,7 +159,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     if(value == null)
       return this;
     
-    return add(name, new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
+    return add(name, new JsonBase64String(Base64.encodeBase64URLSafeString(value.toByteArray())));
   }
   
   public MutableJsonObject addIfNotNull(String name, JsonArray<IJsonDomNode> value)

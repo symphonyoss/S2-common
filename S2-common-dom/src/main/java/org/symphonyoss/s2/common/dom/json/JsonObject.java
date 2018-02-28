@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 import org.symphonyoss.s2.common.dom.IStringProvider;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<N>
 {
@@ -84,16 +84,16 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
     return get(name);
   }
   
-  public String getString(String name) throws BadFormatException
+  public String getString(String name) throws InvalidValueException
   {
     N node = get(name);
     
     if(node == null)
-      throw new BadFormatException("\"" + name + "\" does not exist");
+      throw new InvalidValueException("\"" + name + "\" does not exist");
     
     if(node instanceof IStringProvider)
       return ((JsonString) node).getValue();
     
-    throw new BadFormatException("\"" + name + "\" is not a String");
+    throw new InvalidValueException("\"" + name + "\" is not a String");
   }
 }
