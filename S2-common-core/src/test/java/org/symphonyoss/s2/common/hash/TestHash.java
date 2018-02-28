@@ -26,7 +26,7 @@ package org.symphonyoss.s2.common.hash;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.hash.Hash;
 import org.symphonyoss.s2.common.hash.HashFactory;
 
@@ -35,7 +35,7 @@ import junit.framework.AssertionFailedError;
 public class TestHash
 {
   @Test
-  public void testCompositeHash() throws BadFormatException
+  public void testCompositeHash() throws InvalidValueException
   {
     String stringValue = "84CE13744E13E1DB83F0DFCF8811DB6B7FFFEC51B40A8496936CD0720D37B32811";
     byte[] byteValue = new byte[]

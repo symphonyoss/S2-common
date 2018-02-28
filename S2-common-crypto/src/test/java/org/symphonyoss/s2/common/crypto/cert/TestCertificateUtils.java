@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
 import org.symphonyoss.s2.common.crypto.cipher.CipherSuite;
 import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
-import org.symphonyoss.s2.common.exception.BadFormatException;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 public class TestCertificateUtils
 {
@@ -106,7 +106,7 @@ public class TestCertificateUtils
   }
   
   @Test
-  public void loadCertificate() throws BadFormatException, UnknownCipherSuiteException, IOException, GeneralSecurityException
+  public void loadCertificate() throws InvalidValueException, UnknownCipherSuiteException, IOException, GeneralSecurityException
   {
     IMasterCertificate masterCert = (IMasterCertificate) CertificateFactory.loadOpenCertificate(ROOT_CERT, ROOT_KEY, "changeit".toCharArray());
     

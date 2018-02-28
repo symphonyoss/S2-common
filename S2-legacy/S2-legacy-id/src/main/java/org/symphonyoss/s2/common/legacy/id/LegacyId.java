@@ -33,18 +33,19 @@ package org.symphonyoss.s2.common.legacy.id;
  * @author Bruce Skingle
  *
  */
+@SuppressWarnings("javadoc")
 public class LegacyId
 {
-  public static final String MESSAGE_INGESTION_INFO = "MessageIngestionInfo";
-  public static final String OBJECT_STATUS_MESSAGE = "ObjectStatusMessage";
-  
-  public static final String MESSAGE_ID = "MessageID";
-  public static final String THREAD_ID = "ThreadID";
-  public static final String READ_RECEIPT_ID = "ReadReceiptID";
-  public static final String DELIVERY_RECEIPT_ID = "DeliveryReceiptID";
-  public static final String MAESTRO_MESSAGE_ID = "MaestroMessageID";
-  public static final String OFFLINE_NOTICE_ID = "OfflineNoticeID";
-  public static final String DELETE_EVENT_ID = "DeleteEventID";
+  public static final String MESSAGE_INGESTION_INFO       = "MessageIngestionInfo";
+  public static final String OBJECT_STATUS_MESSAGE        = "ObjectStatusMessage";
+
+  public static final String MESSAGE_ID                   = "MessageID";
+  public static final String THREAD_ID                    = "ThreadID";
+  public static final String READ_RECEIPT_ID              = "ReadReceiptID";
+  public static final String DELIVERY_RECEIPT_ID          = "DeliveryReceiptID";
+  public static final String MAESTRO_MESSAGE_ID           = "MaestroMessageID";
+  public static final String OFFLINE_NOTICE_ID            = "OfflineNoticeID";
+  public static final String DELETE_EVENT_ID              = "DeleteEventID";
   public static final String DOWNLOAD_ATTACHMENT_EVENT_ID = "DownloadAttachmentEventID";
-  public static final String LIKE_EVENT_ID = "LikeEventID";
+  public static final String LIKE_EVENT_ID                = "LikeEventID";
 }
