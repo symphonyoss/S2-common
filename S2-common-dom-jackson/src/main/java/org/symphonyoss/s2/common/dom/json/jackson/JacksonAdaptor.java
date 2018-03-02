@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
+import org.symphonyoss.s2.common.dom.json.ImmutableJsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonBase64String;
 import org.symphonyoss.s2.common.dom.json.JsonBoolean;
 import org.symphonyoss.s2.common.dom.json.JsonDouble;
@@ -36,8 +37,9 @@ import org.symphonyoss.s2.common.dom.json.JsonFloat;
 import org.symphonyoss.s2.common.dom.json.JsonInteger;
 import org.symphonyoss.s2.common.dom.json.JsonLong;
 import org.symphonyoss.s2.common.dom.json.JsonNull;
+import org.symphonyoss.s2.common.dom.json.JsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonString;
-import org.symphonyoss.s2.common.dom.json.MutableJsonArray;
+import org.symphonyoss.s2.common.dom.json.MutableJsonList;
 import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
 import org.symphonyoss.s2.common.fault.CodingFault;
 
@@ -107,27 +109,13 @@ public class JacksonAdaptor
     
     adaptorMap_.put(ObjectNode.class, 
         new IJacksonNodeAdaptor(){@Override public IJsonDomNode adapt(JsonNode n){
-            MutableJsonObject obj = new MutableJsonObject();
-            Iterator<String> it = n.fieldNames();
+            return JacksonAdaptor.adaptObject((ObjectNode) n);
             
-            while(it.hasNext())
-            {
-              String childName = it.next();
-              JsonNode childNode = n.get(childName);
-              
-              if(!childNode.isNull())
-              {
-//                System.err.println("childName=" + childName + ", childNode=" + childNode + ", class=" + childNode.getClass().getName());
-  //              add(childName, process(childNode));
-                obj.add(childName, JacksonAdaptor.adapt(childNode));
-              }
-            }
-            return obj;
           }});
     
     adaptorMap_.put(ArrayNode.class, 
         new IJacksonNodeAdaptor(){@Override public IJsonDomNode adapt(JsonNode n){
-          MutableJsonArray array = new MutableJsonArray();
+          MutableJsonList array = new MutableJsonList();
             Iterator<JsonNode> it = n.iterator();
             
             while(it.hasNext())
@@ -162,5 +150,25 @@ public class JacksonAdaptor
     }
     
     return adaptor.adapt(node);
+  }
+  
+  public static MutableJsonObject adaptObject(ObjectNode n)
+  {
+    MutableJsonObject obj = new MutableJsonObject();
+    Iterator<String> it = n.fieldNames();
+    
+    while(it.hasNext())
+    {
+      String childName = it.next();
+      JsonNode childNode = n.get(childName);
+      
+      if(!childNode.isNull())
+      {
+//        System.err.println("childName=" + childName + ", childNode=" + childNode + ", class=" + childNode.getClass().getName());
+//              add(childName, process(childNode));
+        obj.add(childName, JacksonAdaptor.adapt(childNode));
+      }
+    }
+    return obj;
   }
 }

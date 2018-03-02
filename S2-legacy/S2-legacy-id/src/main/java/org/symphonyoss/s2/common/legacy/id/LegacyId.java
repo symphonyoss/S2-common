@@ -48,4 +48,5 @@ public class LegacyId
   public static final String DELETE_EVENT_ID              = "DeleteEventID";
   public static final String DOWNLOAD_ATTACHMENT_EVENT_ID = "DownloadAttachmentEventID";
   public static final String LIKE_EVENT_ID                = "LikeEventID";
+  public static final String USER_ID                      = "UserID";
 }

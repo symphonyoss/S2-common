@@ -25,7 +25,7 @@ package org.symphonyoss.s2.common.dom.json;
 
 import org.symphonyoss.s2.common.dom.IImmutableDomNode;
 
-public interface IImmutableJsonDomNode extends IJsonDomNode, IImmutableDomNode
+public interface IImmutableJsonDomNode extends IJsonDomNode, IImmutableDomNode, Comparable<IImmutableJsonDomNode>
 {
 
 }

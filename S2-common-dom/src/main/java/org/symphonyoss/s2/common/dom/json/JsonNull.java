@@ -25,6 +25,7 @@ package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -50,5 +51,29 @@ public class JsonNull implements IImmutableJsonDomNode
   {
     writer.writeItem("null", terminator);
     return this;
+  }
+  
+  @Override
+  public @Nonnull String toString()
+  {
+    return "null";
+  }
+  
+  @Override
+  public int hashCode()
+  {
+    return 0;
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return other instanceof JsonNull;
+  }
+
+  @Override
+  public int compareTo(IImmutableJsonDomNode other)
+  {
+    return other instanceof JsonNull ? 0 : -1;
   }
 }

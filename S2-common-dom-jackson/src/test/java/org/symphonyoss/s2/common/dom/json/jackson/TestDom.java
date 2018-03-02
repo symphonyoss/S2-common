@@ -29,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.symphonyoss.s2.common.dom.DomSerializer;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
-import org.symphonyoss.s2.common.dom.json.MutableJsonArray;
+import org.symphonyoss.s2.common.dom.json.MutableJsonList;
 import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -83,7 +83,7 @@ public class TestDom
       return new MutableJsonObject()
           .addIfNotNull(l + " one", nestCount++)
           .addIfNotNull(l + " two", String.valueOf(nestCount++))
-          .add(l + " three", new MutableJsonArray()
+          .add(l + " three", new MutableJsonList()
               .add(nestCount++)
               .add(nestCount++))
           .addIfNotNull(l + " four", Boolean.TRUE);
@@ -92,7 +92,7 @@ public class TestDom
     return new MutableJsonObject()
         .add(l + " one", createObject(l - 1))
         .add(l + " two", createObject(l - 1))
-        .add(l + " three", new MutableJsonArray()
+        .add(l + " three", new MutableJsonList()
             .add(createObject(l - 1))
             .add(createObject(l - 1)));
       
