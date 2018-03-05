@@ -23,46 +23,30 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import com.google.protobuf.ByteString;
+import org.symphonyoss.s2.common.dom.TypeAdaptor;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 
-public abstract class MutableJsonArray<T extends MutableJsonArray> extends JsonArray<IJsonDomNode> implements IMutableJsonDomNode
+import com.google.common.collect.ImmutableSet;
+
+public abstract class JsonSet<N extends IJsonDomNode> extends JsonArray<N> implements IJsonSet<N>
 {
-  public abstract T add(IJsonDomNode child);
-  
-  public T add(Boolean value)
+  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws InvalidValueException
   {
-    return add(new JsonBoolean(value));
-  }
-  
-  public T add(Long value)
-  {
-    return add(new JsonLong(value));
-  }
-  
-  public T add(Integer value)
-  {
-    return add(new JsonInteger(value));
-  }
-  
-  public T add(Double value)
-  {
-    return add(new JsonDouble(value));
-  }
-  
-  public T add(Float value)
-  {
-    return add(new JsonFloat(value));
-  }
-  
-  public T add(String value)
-  {
-    return add(new JsonString(value));
-  }
-  
-  public T add(ByteString value)
-  {
-    return add(new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
+    Set<T> set = new HashSet<>();
+    
+    Iterator<N>  it = iterator();
+    
+    while(it.hasNext())
+    {
+      T value = TypeAdaptor.adapt(type, it.next());
+      
+      if(!set.add(value))
+        throw new InvalidValueException("Duplicate value in set input.");
+    }
+    return  ImmutableSet.copyOf(set);
   }
 }

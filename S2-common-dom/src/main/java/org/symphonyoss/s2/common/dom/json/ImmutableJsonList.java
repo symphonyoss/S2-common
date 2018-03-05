@@ -35,14 +35,14 @@ import org.symphonyoss.s2.common.dom.DomSerializer;
 import com.google.common.collect.ImmutableList;
 
 @Immutable
-public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> implements IImmutableJsonDomNode
+public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
   private final ImmutableList<IImmutableJsonDomNode> children_;
   private final String asString_;
   
-  public ImmutableJsonArray(Collection<IJsonDomNode> children)
+  public ImmutableJsonList(Collection<IJsonDomNode> children)
   {
     ArrayList<IImmutableJsonDomNode> c = new ArrayList<>(children.size());
     
@@ -74,16 +74,13 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
   }
 
   @Override
-  public ImmutableJsonArray immutify()
+  public ImmutableJsonList immutify()
   {
     return this;
-  }@Override
-  public @Nonnull String toString()
-  {
-    return asString_;
   }
   
-  public @Nonnull String serialize()
+  @Override
+  public @Nonnull String toString()
   {
     return asString_;
   }
@@ -92,5 +89,17 @@ public class ImmutableJsonArray extends JsonArray<IImmutableJsonDomNode> impleme
   public int hashCode()
   {
     return asString_.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return other instanceof ImmutableJsonList && asString_.equals(((ImmutableJsonList)other).asString_);
+  }
+
+  @Override
+  public int compareTo(IImmutableJsonDomNode other)
+  {
+    return asString_.compareTo(other.toString());
   }
 }

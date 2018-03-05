@@ -25,8 +25,5 @@ package org.symphonyoss.s2.common.dom.json;
 
 public interface IJsonArray<N extends IJsonDomNode> extends IJsonDomNode, Iterable<N>
 {
-  @Override
-  ImmutableJsonArray immutify();
-  
   boolean isEmpty();
 }

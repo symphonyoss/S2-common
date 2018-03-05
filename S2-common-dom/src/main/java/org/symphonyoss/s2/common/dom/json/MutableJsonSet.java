@@ -23,46 +23,35 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Iterator;
+import java.util.TreeSet;
 
-import com.google.protobuf.ByteString;
-
-public abstract class MutableJsonArray<T extends MutableJsonArray> extends JsonArray<IJsonDomNode> implements IMutableJsonDomNode
+public class MutableJsonSet extends MutableJsonArray<MutableJsonSet>
 {
-  public abstract T add(IJsonDomNode child);
+  private TreeSet<IJsonDomNode> children_    = new TreeSet<>();
   
-  public T add(Boolean value)
+  public MutableJsonSet add(IJsonDomNode child)
   {
-    return add(new JsonBoolean(value));
+    children_.add(child);
+    
+    return this;
   }
-  
-  public T add(Long value)
+
+  @Override
+  public boolean isEmpty()
   {
-    return add(new JsonLong(value));
+    return children_.isEmpty();
   }
-  
-  public T add(Integer value)
+
+  @Override
+  public Iterator<IJsonDomNode> iterator()
   {
-    return add(new JsonInteger(value));
+    return children_.iterator();
   }
-  
-  public T add(Double value)
+
+  @Override
+  public ImmutableJsonSet immutify()
   {
-    return add(new JsonDouble(value));
-  }
-  
-  public T add(Float value)
-  {
-    return add(new JsonFloat(value));
-  }
-  
-  public T add(String value)
-  {
-    return add(new JsonString(value));
-  }
-  
-  public T add(ByteString value)
-  {
-    return add(new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
+    return new ImmutableJsonSet(children_);
   }
 }

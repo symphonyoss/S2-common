@@ -23,46 +23,29 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.google.protobuf.ByteString;
+import org.symphonyoss.s2.common.dom.TypeAdaptor;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 
-public abstract class MutableJsonArray<T extends MutableJsonArray> extends JsonArray<IJsonDomNode> implements IMutableJsonDomNode
+import com.google.common.collect.ImmutableList;
+
+public abstract class JsonList<N extends IJsonDomNode> extends JsonArray<N> implements IJsonList<N>
 {
-  public abstract T add(IJsonDomNode child);
-  
-  public T add(Boolean value)
+  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws InvalidValueException
   {
-    return add(new JsonBoolean(value));
-  }
-  
-  public T add(Long value)
-  {
-    return add(new JsonLong(value));
-  }
-  
-  public T add(Integer value)
-  {
-    return add(new JsonInteger(value));
-  }
-  
-  public T add(Double value)
-  {
-    return add(new JsonDouble(value));
-  }
-  
-  public T add(Float value)
-  {
-    return add(new JsonFloat(value));
-  }
-  
-  public T add(String value)
-  {
-    return add(new JsonString(value));
-  }
-  
-  public T add(ByteString value)
-  {
-    return add(new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
+    List<T> list = new LinkedList<>();
+    
+    Iterator<N>  it = iterator();
+    
+    while(it.hasNext())
+    {
+      T value = TypeAdaptor.adapt(type, it.next());
+      
+      list.add(value);
+    }
+    return  ImmutableList.copyOf(list);
   }
 }

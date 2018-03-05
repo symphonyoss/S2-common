@@ -23,46 +23,8 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import org.apache.commons.codec.binary.Base64;
-
-import com.google.protobuf.ByteString;
-
-public abstract class MutableJsonArray<T extends MutableJsonArray> extends JsonArray<IJsonDomNode> implements IMutableJsonDomNode
+public interface IJsonList<N extends IJsonDomNode> extends IJsonArray<N>
 {
-  public abstract T add(IJsonDomNode child);
-  
-  public T add(Boolean value)
-  {
-    return add(new JsonBoolean(value));
-  }
-  
-  public T add(Long value)
-  {
-    return add(new JsonLong(value));
-  }
-  
-  public T add(Integer value)
-  {
-    return add(new JsonInteger(value));
-  }
-  
-  public T add(Double value)
-  {
-    return add(new JsonDouble(value));
-  }
-  
-  public T add(Float value)
-  {
-    return add(new JsonFloat(value));
-  }
-  
-  public T add(String value)
-  {
-    return add(new JsonString(value));
-  }
-  
-  public T add(ByteString value)
-  {
-    return add(new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
-  }
+  @Override
+  ImmutableJsonList immutify();
 }

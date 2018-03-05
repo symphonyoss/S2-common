@@ -23,11 +23,12 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nullable;
@@ -170,9 +171,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, value);
   }
   
-  public MutableJsonObject addCollectionOfDomNode(String name, Collection<? extends IJsonDomNodeProvider> value)
+  public MutableJsonObject addCollectionOfDomNode(String name, List<? extends IJsonDomNodeProvider> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(IJsonDomNodeProvider v : value)
       array.add(v.getJsonDomNode());
@@ -180,9 +181,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfBoolean(String name, Collection<Boolean> value)
+  public MutableJsonObject addCollectionOfBoolean(String name, List<Boolean> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(Boolean v : value)
       array.add(v);
@@ -190,9 +191,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfLong(String name, Collection<Long> value)
+  public MutableJsonObject addCollectionOfLong(String name, List<Long> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(Long v : value)
       array.add(v);
@@ -200,9 +201,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfInteger(String name, Collection<Integer> value)
+  public MutableJsonObject addCollectionOfInteger(String name, List<Integer> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(Integer v : value)
       array.add(v);
@@ -210,9 +211,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfDouble(String name, Collection<Double> value)
+  public MutableJsonObject addCollectionOfDouble(String name, List<Double> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(Double v : value)
       array.add(v);
@@ -220,9 +221,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfFloat(String name, Collection<Float> value)
+  public MutableJsonObject addCollectionOfFloat(String name, List<Float> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(Float v : value)
       array.add(v);
@@ -230,9 +231,9 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfString(String name, Collection<String> value)
+  public MutableJsonObject addCollectionOfString(String name, List<String> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
     
     for(String v : value)
       array.add(v);
@@ -240,9 +241,89 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
-  public MutableJsonObject addCollectionOfByteString(String name, Collection<ByteString> value)
+  public MutableJsonObject addCollectionOfByteString(String name, List<ByteString> value)
   {
-    MutableJsonArray array = new MutableJsonArray();
+    MutableJsonList array = new MutableJsonList();
+    
+    for(ByteString v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfDomNode(String name, Set<? extends IJsonDomNodeProvider> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(IJsonDomNodeProvider v : value)
+      array.add(v.getJsonDomNode());
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfBoolean(String name, Set<Boolean> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(Boolean v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfLong(String name, Set<Long> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(Long v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfInteger(String name, Set<Integer> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(Integer v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfDouble(String name, Set<Double> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(Double v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfFloat(String name, Set<Float> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(Float v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfString(String name, Set<String> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(String v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfByteString(String name, Set<ByteString> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
     
     for(ByteString v : value)
       array.add(v);

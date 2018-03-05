@@ -23,25 +23,28 @@
 
 package org.symphonyoss.s2.common.dom.json;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomSerializer;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
-public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements IImmutableJsonDomNode
-{protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
+@Immutable
+public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements IImmutableJsonDomNode
+{
+  protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
-  private final ImmutableList<IImmutableJsonDomNode>  children_;
-  private final @Nonnull String                       asString_;
+  private final ImmutableSet<IImmutableJsonDomNode> children_;
+  private final String asString_;
   
-  public ImmutableJsonDom(Collection<IJsonDomNode> children)
+  public ImmutableJsonSet(Set<IJsonDomNode> children)
   {
-    ArrayList<IImmutableJsonDomNode> c = new ArrayList<>(children.size());
+    TreeSet<IImmutableJsonDomNode> c = new TreeSet<>();
     
     for(IJsonDomNode child : children)
     {
@@ -54,20 +57,8 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
         c.add(((IMutableJsonDomNode)child).immutify());
       }
     }
-    children_ = ImmutableList.copyOf(c);
+    children_ = ImmutableSet.copyOf(c);
     asString_ = SERIALIZER.serialize(this);
-  }
-
-  @Override
-  public IImmutableJsonDomNode immutify()
-  {
-    return this;
-  }
-  
-  @Override
-  public int size()
-  {
-    return children_.size();
   }
 
   @Override
@@ -77,15 +68,15 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
   }
 
   @Override
-  public IImmutableJsonDomNode getFirst()
-  {
-    return children_.get(0);
-  }
-
-  @Override
   public Iterator<IImmutableJsonDomNode> iterator()
   {
     return children_.iterator();
+  }
+
+  @Override
+  public ImmutableJsonSet immutify()
+  {
+    return this;
   }
   
   @Override
@@ -103,7 +94,7 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
   @Override
   public boolean equals(Object other)
   {
-    return other instanceof ImmutableJsonDom && asString_.equals(((ImmutableJsonDom)other).asString_);
+    return other instanceof ImmutableJsonSet && asString_.equals(((ImmutableJsonSet)other).asString_);
   }
 
   @Override

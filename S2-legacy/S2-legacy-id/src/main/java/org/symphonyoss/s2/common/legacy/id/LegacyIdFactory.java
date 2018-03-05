@@ -54,6 +54,17 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the given messageId.
    * 
+   * @param userId      An external userId
+   * @return            The 2.0 object ID for the mirror of the given ID.
+   */
+  public Hash userId(long userId)
+  {
+    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, userId);
+  }
+  
+  /**
+   * Create a 2.0 Hash (ID) for the given messageId.
+   * 
    * @param tenantId    The tenant ID of the pod where this event originated.
    * @param messageId   A messageId
    * @return            The 2.0 object ID for the mirror of the given ID.

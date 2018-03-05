@@ -30,8 +30,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+
+import org.symphonyoss.s2.common.dom.DomSerializer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -40,10 +43,13 @@ import com.google.common.collect.ImmutableSet;
 @Immutable
 public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
+  protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
+
   private final ImmutableMap<String, IImmutableJsonDomNode> children_;
   private final ImmutableList<String>                       names_;
   private final ImmutableSet<String>                        sortedNames_;
   private final int                                         maxNameLen_;
+  private final @Nonnull String                             asString_;
   
   public ImmutableJsonObject(Map<String, IJsonDomNode> children, LinkedList<String> names, TreeSet<String> sortedNames)
   {
@@ -75,6 +81,7 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
     }
     
     maxNameLen_ = maxNameLen + QUOTE_MARGIN;
+    asString_ = SERIALIZER.serialize(this);
   }
 
   @Override
@@ -111,5 +118,29 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   public Iterator<String> getNameIterator()
   {
     return names_.iterator();
+  }
+  
+  @Override
+  public @Nonnull String toString()
+  {
+    return asString_;
+  }
+  
+  @Override
+  public int hashCode()
+  {
+    return asString_.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return other instanceof ImmutableJsonObject && asString_.equals(((ImmutableJsonObject)other).asString_);
+  }
+
+  @Override
+  public int compareTo(IImmutableJsonDomNode other)
+  {
+    return asString_.compareTo(other.toString());
   }
 }

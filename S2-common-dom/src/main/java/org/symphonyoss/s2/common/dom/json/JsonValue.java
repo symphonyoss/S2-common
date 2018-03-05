@@ -66,4 +66,28 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
     writer.writeItem(quotedValue_, terminator);
     return (N) this;
   }
+  
+  @Override
+  public @Nonnull String toString()
+  {
+    return value_.toString();
+  }
+  
+  @Override
+  public int hashCode()
+  {
+    return value_.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return other instanceof JsonValue && value_.equals(((JsonValue)other).value_);
+  }
+
+  @Override
+  public int compareTo(IImmutableJsonDomNode other)
+  {
+    return value_.toString().compareTo(other.toString());
+  }
 }
