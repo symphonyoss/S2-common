@@ -29,7 +29,6 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
-import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 
 import com.google.protobuf.ByteString;
@@ -39,7 +38,11 @@ import com.google.protobuf.ByteString;
  * 
  * The definitive value of a Hash is represented as a byte array, but
  * other standard representations are also provided, including a String
- * containing Hex.
+ * containing Hex, and two flavours of Base64.
+ * 
+ * The preferred representations are binary (byte[]) or URLSafeBase64,
+ * and the toString() method now (with effect from 0.1.15) returns the
+ * same value as toStringURLSafeBase64(). 
  * 
  * The algorithm used to generate a Hash may need to change over time,
  * initially we are using SHA256, which is defined to be hashTypeId 0.
@@ -87,13 +90,17 @@ import com.google.protobuf.ByteString;
 public class Hash implements Comparable<Hash>
 {
   /* package */ static final byte[]        NIL_BYTE_HASH       = new byte[] { 0 };
-  public        static final String        NIL_STRING_HASH     = "0";
-  public        static final ByteString    NIL_BYTESTRING_HASH = ByteString.copyFrom(NIL_BYTE_HASH);
+  /* package */ static final String        NIL_STRING_HASH     = "0";
+  /* package */ static final ByteString    NIL_BYTESTRING_HASH = ByteString.copyFrom(NIL_BYTE_HASH);
+  
+  /** The NIL (zero) Hash. Use in preference to null values */
   public        static final Hash          NIL_HASH            = new Hash(NIL_BYTE_HASH, HashType.getNilHashType(), NIL_STRING_HASH, NIL_BYTESTRING_HASH);
   
-//  public static final Hash ZONE_ALL_OBJECTS_SEQUENCE_ID; 
-  public static final Hash GLOBAL_ENVIRONMENT_ID;
-
+  /**
+   * Return the default HashType ID.
+   * 
+   * @return the default HashType ID.
+   */
   public static int getDefaultHashTypeId()
   {
     return HashType.defaultHashTypeId_;
@@ -124,30 +131,12 @@ public class Hash implements Comparable<Hash>
       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
   
-  static
-  {
-    try
-    {
-      HashFactory type1HashFactory = new HashFactory(1);
-      
-//      ZONE_ALL_OBJECTS_SEQUENCE_ID = type1HashFactory.getHashOf("ZONE_ALL_OBJECTS_SEQUENCE_IDZONE_ALL_OBJECTS_SEQUENCE_IDZONE_ALL_OBJECTS_SEQUENCE_ID".getBytes());
-      GLOBAL_ENVIRONMENT_ID = type1HashFactory.getCompositeHashOf("GLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_IDGLOBAL_ENVIRONMENT_ID");
-
-    }
-    catch (InvalidValueException e)
-    {
-      throw new CodingFault(e);
-    }
-  }
-  
-
-  
   private final byte[]     hashBytes_;
   private final HashType   hashType_;
   private final String     hashString_;
   private final ByteString hashByteString_;
   private final String     hashStringBase64_;
-  
+  private final String     hashStringUrlSafeBase64_;
 
   private Hash(byte[] hashBytes, HashType hashType, String hashString, ByteString hashByteString)
   {
@@ -156,6 +145,7 @@ public class Hash implements Comparable<Hash>
     hashString_ = hashString;
     hashByteString_ = hashByteString;
     hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
+    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
 
   /**
@@ -184,6 +174,7 @@ public class Hash implements Comparable<Hash>
     hashByteString_ = ByteString.copyFrom(hashBytes_);
     hashString_ = convertBytesToString(hashType_, hashBytes_);
     hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
+    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
   
   /**
@@ -199,6 +190,7 @@ public class Hash implements Comparable<Hash>
     hashType_ = getTypeFromHashBytes(hashBytes);
     hashString_ = convertBytesToString(hashType_, hashBytes_);
     hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
+    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
 
   /**
@@ -214,6 +206,7 @@ public class Hash implements Comparable<Hash>
     hashType_ = getTypeFromHashBytes(hashBytes_);
     hashString_ = convertBytesToString(hashType_, hashBytes_);
     hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
+    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
   
   /*
@@ -290,9 +283,10 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the Hex string representation.
    * 
    * @param hashHexString    The hex representation of an Hash.
+   * @return The Hash represented by the given hex string.
    * @throws InvalidValueException  If the given string is not a valid hash representation.
    */
-  public Hash(String hashHexString) throws InvalidValueException
+  public static Hash ofHexString(String hashHexString) throws InvalidValueException
   {
     if(hashHexString == null)
       throw new InvalidValueException("Hash value is null");
@@ -301,65 +295,59 @@ public class Hash implements Comparable<Hash>
     
     if(NIL_STRING_HASH.equals(hashHexString))
     {
-      hashBytes_ = NIL_BYTE_HASH;
-      hashByteString_ = NIL_BYTESTRING_HASH;
-      hashType_ = HashType.getNilHashType();
+      return NIL_HASH;
+    }
+
+    if(hashHexString.length() < 3)
+      throw new InvalidValueException("Hash value is too short");
+    
+    char[] hexChars = hashHexString.toCharArray();
+    int len = hexChars.length;
+    int typeIdLen = hexValue(hexChars[--len]);
+    
+    if(typeIdLen > len)
+      throw new InvalidValueException("Hash value is too short");
+    
+    int typeId;
+    
+    if(typeIdLen == 1)
+    {
+      typeId = hexValue(hexChars[--len]);
     }
     else
     {
-      if(hashHexString.length() < 3)
-        throw new InvalidValueException("Hash value is too short");
+      typeId = 0;
       
-      char[] hexChars = hashHexString.toCharArray();
-      int len = hexChars.length;
-      int typeIdLen = hexValue(hexChars[--len]);
-      
-      if(typeIdLen > len)
-        throw new InvalidValueException("Hash value is too short");
-      
-      int typeId;
-      
-      if(typeIdLen == 1)
-      {
-        typeId = hexValue(hexChars[--len]);
-      }
-      else
-      {
-        typeId = 0;
-        
-        while(typeIdLen-- > 0)
-          typeId = typeId * 16 + hexValue(hexChars[--len]);
-      }
-      
-      // throws BadFormatException if typeId is invalid
-      hashType_ = HashType.getHashType(typeId);
-      
-      // Multiply by 2 ensures that the value we have is of even length
-      if(len != 2 * hashType_.byteLen_)
-        throw new InvalidValueException("HashType " + typeId + " values are " + hashType_.byteLen_ +
-            " bytes but this value is " + len + " bytes.");
-      
-      int typeIdByteLen = hashType_.typeIdAsBytes_.length;
-      int byteLen = hashType_.byteLen_ + typeIdByteLen + 1;
-      hashBytes_ = new byte[byteLen];
-      
-      hashBytes_[--byteLen] = (byte) hashType_.typeIdAsBytes_.length;
-      
-      while(typeIdByteLen>0)
-        hashBytes_[--byteLen] = hashType_.typeIdAsBytes_[--typeIdByteLen];
-      
-      while(byteLen>0)
-      {
-        hashBytes_[--byteLen] = (byte) (hexValue(hexChars[--len]) + 16 * hexValue(hexChars[--len]));
-      }
-      hashByteString_ = ByteString.copyFrom(hashBytes_);
+      while(typeIdLen-- > 0)
+        typeId = typeId * 16 + hexValue(hexChars[--len]);
     }
     
-    hashString_ = hashHexString;
-    hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
+    // throws BadFormatException if typeId is invalid
+    HashType hashType = HashType.getHashType(typeId);
+    
+    // Multiply by 2 ensures that the value we have is of even length
+    if(len != 2 * hashType.byteLen_)
+      throw new InvalidValueException("HashType " + typeId + " values are " + hashType.byteLen_ +
+          " bytes but this value is " + len + " bytes.");
+    
+    int typeIdByteLen = hashType.typeIdAsBytes_.length;
+    int byteLen = hashType.byteLen_ + typeIdByteLen + 1;
+    byte[] hashBytes = new byte[byteLen];
+    
+    hashBytes[--byteLen] = (byte) hashType.typeIdAsBytes_.length;
+    
+    while(typeIdByteLen>0)
+      hashBytes[--byteLen] = hashType.typeIdAsBytes_[--typeIdByteLen];
+    
+    while(byteLen>0)
+    {
+      hashBytes[--byteLen] = (byte) (hexValue(hexChars[--len]) + 16 * hexValue(hexChars[--len]));
+    }
+    
+    return new Hash(hashBytes, hashType, hashHexString, ByteString.copyFrom(hashBytes));
   }
   
-  private int hexValue(char c) throws InvalidValueException
+  private static int hexValue(char c) throws InvalidValueException
   {
     int v = hexCharToInt_[c];
     
@@ -367,6 +355,22 @@ public class Hash implements Comparable<Hash>
       throw new InvalidValueException("Invalid Hex character \"" + c + "\"");
     
     return v;
+  }
+  
+  /**
+   * Return the Hash represented by the given Base64 string, which may be in
+   * either the standard or the URLSafe format of Base64.
+   * 
+   * @param base64String The BAe64 representation of a Hash, which may be in
+   * either the standard or the URLSafe format of Base64.
+   * 
+   * @return The Hash represented by the given value.
+   * 
+   * @throws InvalidValueException If the given value is not a valid Hash value.
+   */
+  public static Hash ofBase64String(String base64String) throws InvalidValueException
+  {
+    return new Hash(Base64.decodeBase64(base64String));
   }
 
   /* package */ byte[] toBytes()
@@ -377,7 +381,7 @@ public class Hash implements Comparable<Hash>
   @Override
   public @Nonnull String toString()
   {
-    return hashString_;
+    return hashStringUrlSafeBase64_;
   }
 
   /**
@@ -399,36 +403,24 @@ public class Hash implements Comparable<Hash>
       return false;
     
     if(anObject instanceof Hash)
-      return hashString_.equals(((Hash) anObject).hashString_);
+      return hashStringUrlSafeBase64_.equals(((Hash) anObject).hashStringUrlSafeBase64_);
     
     return false;
-  }
-
-  @Deprecated
-  public boolean matches(ByteString other)
-  {
-    if(other.size() != hashBytes_.length)
-      return false;
-    
-    for(int i=0 ; i<hashBytes_.length ; i++)
-      if(hashBytes_[i] != other.byteAt(i))
-        return false;
-    
-    return true;
   }
 
   @Override
   public int hashCode()
   {
-    return hashString_.hashCode();
+    return hashStringUrlSafeBase64_.hashCode();
   }
 
   @Override
   public int compareTo(Hash o)
   {
-    return hashString_.compareTo(o.toString());
+    return hashStringUrlSafeBase64_.compareTo(o.toString());
   }
 
+  @Deprecated
   public static @Nullable Hash newNullableInstance(ByteString byteString) throws InvalidValueException
   {
     if(byteString.isEmpty())
@@ -437,6 +429,14 @@ public class Hash implements Comparable<Hash>
     return new Hash(byteString);
   }
   
+  /**
+   * Create a Hash object from the byteString representation.
+   * 
+   * @param byteString    The byteString representation of a Hash.
+   * @return  a Hash object from the byteString representation.
+   * 
+   * @throws TransactionFault  If the given string is not a valid hash representation.
+   */
   public static @Nonnull Hash newInstance(ByteString byteString)
   {
     if(byteString == null || byteString.isEmpty())
@@ -454,12 +454,19 @@ public class Hash implements Comparable<Hash>
     }
   }
   
+  /**
+   * Create a Hash object from the byte representation.
+   * 
+   * @param bytes    The byte[] representation of a Hash.
+   * @return  a Hash object from the byte representation.
+   * 
+   * @throws TransactionFault  If the given string is not a valid hash representation.
+   */
   public static @Nonnull Hash newInstance(byte[] bytes)
   {
     if(bytes == null || bytes.length == 0)
     {
       return NIL_HASH;
-//      throw new TransactionFault("Unexpected null hash value");
     }
     
     try
@@ -471,23 +478,36 @@ public class Hash implements Comparable<Hash>
     }
   }
   
+  /**
+   * Return the Hash represented by the given (Base64) String value.
+   * 
+   * @param string  the Hash represented by the given (Base64) String value.
+   * 
+   * @return the Hash represented by the given (Base64) String value.
+   */
   public static @Nonnull Hash newInstance(String string)
   {
     if(string == null || string.isEmpty())
     {
       return NIL_HASH;
-//      throw new TransactionFault("Unexpected null hash value");
     }
     
     try
     {
-      return new Hash(string);
+      return ofBase64String(string);
     } catch (InvalidValueException e)
     {
       throw new TransactionFault(e);
     }
   }
   
+  /**
+   * Return the ByteString representation of the given Hash value.
+   * 
+   * @param hash  A Hash value.
+   * 
+   * @return The ByteString representation of the given value.
+   */
   public static @Nonnull ByteString asByteString(Hash hash)
   {
     if(hash == null)
@@ -496,16 +516,57 @@ public class Hash implements Comparable<Hash>
     return hash.toByteString();
   }
 
+  /**
+   * Return the Hex encoding of this Hash value.
+   * 
+   * @return the Hex encoding of this Hash value.
+   */
+  public String toStringHex()
+  {
+    return hashString_;
+  }
+
+  /**
+   * Return the value of this Hash as a Base64 String.
+   * 
+   * @return the value of this Hash as a Base64 String.
+   */
   public String toStringBase64()
   {
     return hashStringBase64_;
   }
 
+  /**
+   * Return the value of this Hash as a URL safe Base64 String.
+   * 
+   * @return the value of this Hash as a URL safe Base64 String.
+   */
+  public String toStringUrlSafeBase64()
+  {
+    return hashStringUrlSafeBase64_;
+  }
+
+  /**
+   * Return the value of the given Hash as a ByteString.
+   * 
+   * @param hash A Hash value
+   * 
+   * @return the value of the given Hash as a ByteString.
+   */
   public static ByteString toByteString(Hash hash)
   {
     return hash.toByteString();
   }
   
+  /**
+   * Return a Hash value decoded from the given ByteString value.
+   * 
+   * @param byteString An encoded Hash.
+   * 
+   * @return The Hash represented by the given encoding.
+   * 
+   * @throws InvalidValueException If the given encoding is invalid.
+   */
   public static Hash build(ByteString byteString) throws InvalidValueException
   {
     return new Hash(byteString);

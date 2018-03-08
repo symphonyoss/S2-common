@@ -37,7 +37,9 @@ public class TestHash
   @Test
   public void testCompositeHash() throws InvalidValueException
   {
-    String stringValue = "84CE13744E13E1DB83F0DFCF8811DB6B7FFFEC51B40A8496936CD0720D37B32811";
+    String hexStringValue = "84CE13744E13E1DB83F0DFCF8811DB6B7FFFEC51B40A8496936CD0720D37B32811";
+    String urlSafeBase64Value = "hM4TdE4T4duD8N_PiBHba3__7FG0CoSWk2zQcg03sygBAQ";
+    String base64Value = "hM4TdE4T4duD8N/PiBHba3//7FG0CoSWk2zQcg03sygBAQ==";
     byte[] byteValue = new byte[]
     {
         (byte)0x84, (byte)0xCE, (byte)0x13, (byte)0x74, (byte)0x4E, (byte)0x13, (byte)0xE1, (byte)0xDB,
@@ -46,14 +48,23 @@ public class TestHash
         (byte)0x93, (byte)0x6C, (byte)0xD0, (byte)0x72, (byte)0x0D, (byte)0x37, (byte)0xB3, (byte)0x28,
         (byte)0x1, (byte)0x1};
     
-    Hash hash = new Hash(stringValue);
+    Hash hash = Hash.ofHexString(hexStringValue);
     byte[] result = hash.toBytes();
+    
+//    System.out.println(hash.toString());
+//    System.out.println(hash.toStringBase64());
 
     if(!Arrays.equals(byteValue, result))
         throw new AssertionFailedError("Bytes conversion test failed");
     
-    Hash hash2 = new Hash("\t  " + stringValue + "  \n");
-    
+    Hash hash2 = Hash.ofHexString("\t  " + hexStringValue + "  \n");
+
+    if(!hash.equals(Hash.ofBase64String(urlSafeBase64Value)))
+      throw new AssertionFailedError("equals  urlSafeBase64 test failed");
+
+    if(!hash.equals(Hash.ofBase64String(base64Value)))
+      throw new AssertionFailedError("equals  base64 test failed");
+
     if(hash.hashCode() != hash2.hashCode())
       throw new AssertionFailedError("hashcode test failed");
     
@@ -78,7 +89,7 @@ public class TestHash
     
     hash = new Hash(byteValue);
     
-    if(!stringValue.equals(hash.toString()))
+    if(!urlSafeBase64Value.equals(hash.toString()))
       throw new AssertionFailedError("String conversion test failed");
     
     if(hash.hashCode() != hash2.hashCode())
