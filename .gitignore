@@ -39,3 +39,4 @@ workspace/**
 /.recommenders/
 
 /release.properties
+**/.gitignore
