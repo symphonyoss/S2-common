@@ -52,7 +52,7 @@ import org.symphonyoss.s2.common.hash.HashProvider;
 public class LegacyIdFactory
 {
   /**
-   * Create a 2.0 Hash (ID) for the given messageId.
+   * Create a 2.0 Hash (ID) for the given userId.
    *
    * @param userId      An external userId
    * @return            The 2.0 object ID for the mirror of the given ID.
