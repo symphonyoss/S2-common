@@ -34,9 +34,9 @@ import org.symphonyoss.s2.common.fault.CodingFault;
   /* package */ static final int        defaultHashTypeId_ = 1;
   /* package */ static final HashType[] hashTypes_ = new HashType[]
   {
-      new HashType(null,      0,  new byte[] {},  "0"),
-      new DigestHashType("SHA-256", 32, new byte[] {1}, "11"),
-      new HashType(new AbstractHashFunctionFactory()
+      new HashType(0, null,      0,  new byte[] {},  "0"),
+      new DigestHashType(1, "SHA-256", 32, new byte[] {1}, "11"),
+      new HashType(2, new AbstractHashFunctionFactory()
       {
         @Override
         AbstractHashFunction createHashFunction()
@@ -53,6 +53,7 @@ import org.symphonyoss.s2.common.fault.CodingFault;
        */
   };
       
+  /* package */ final int           hashTypeId_;
   /* package */ final int           byteLen_;
   /* package */ final byte[]        typeIdAsBytes_;
   /* package */ final String        typeIdAndLengthAsString_;
@@ -69,7 +70,7 @@ import org.symphonyoss.s2.common.fault.CodingFault;
    * @param typeIdAsBytes           TypeId in encoded byte form.
    * @param typeIdAndLengthAsString TypeId in encoded Hex String form.
    */
-  /* package */ HashType(@Nullable AbstractHashFunctionFactory hashFunctionFactory, int byteLen,
+  /* package */ HashType(int hashTypeId, @Nullable AbstractHashFunctionFactory hashFunctionFactory, int byteLen,
       byte[] typeIdAsBytes, String typeIdAndLengthAsString)
   {
     super(hashFunctionFactory);
@@ -77,6 +78,7 @@ import org.symphonyoss.s2.common.fault.CodingFault;
     if(typeIdAsBytes.length > 15)
       throw new CodingFault("Hash typeId may not exceed 15 bytes length, (1 digit of Hex)");
     
+    hashTypeId_ = hashTypeId;
     byteLen_ = byteLen;
     typeIdAsBytes_ = typeIdAsBytes;
     typeIdAndLengthAsString_ = typeIdAndLengthAsString;
@@ -120,5 +122,10 @@ import org.symphonyoss.s2.common.fault.CodingFault;
     hashBytes[out] = (byte) typeIdAsBytes_.length;
     
     return hashBytes;
+  }
+
+  /* package */ int getHashTypeId()
+  {
+    return hashTypeId_;
   }
 }

@@ -36,7 +36,8 @@ import org.symphonyoss.s2.common.crypto.cert.ICertificate;
 import org.symphonyoss.s2.common.crypto.cert.IIntermediateCertificate;
 import org.symphonyoss.s2.common.crypto.cert.IOpenCertificate;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
-import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
+
+import com.symphony.s2.model.fundamental.crypto.cipher.UnknownCipherSuiteException;
 
 public class GenerateUserCert
 {

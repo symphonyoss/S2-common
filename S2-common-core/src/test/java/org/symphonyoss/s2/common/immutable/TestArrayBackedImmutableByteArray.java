@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2018 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,33 +21,45 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.crypto.cipher;
+package org.symphonyoss.s2.common.immutable;
 
 import static org.junit.Assert.assertEquals;
 
-import java.security.KeyPair;
-
-import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
-public class TestCipherSuite
+public class TestArrayBackedImmutableByteArray
 {
   @Test
-  public void testKeySizes() throws UnknownCipherSuiteException
+  public void testConcatenation()
   {
-    for(IAsymmetricCipherSuite cipherSuite : CipherSuite.getAllAsymetricCipherSuites())
-    {
-      KeyPair keyPair = cipherSuite.generateKeyPair();
-      assertEquals(CipherSuite.get(keyPair.getPublic()), cipherSuite);
-    }
+    String  s[] = new String[] {
+        "Hello",
+        "This",
+        "is",
+        "a",
+        "",
+        "TEST"
+    };
     
-    for(ISymmetricCipherSuite cipherSuite : CipherSuite.getAllSymetricCipherSuites())
+    for(int l=0 ; l<s.length+1 ; l++)
     {
-      ISymmetricCipherSuite expected = cipherSuite instanceof Aes256CipherSuite ?
-          CipherSuite.getSymmetricCipher() : cipherSuite;
-      SecretKey key = cipherSuite.generateKey();
-      assertEquals(expected, CipherSuite.get(key));
+      StringBuilder builder = new StringBuilder();
+      byte[][] input = new byte[l][];
+      
+      for(int i=0 ; i<l ; i++)
+      {
+        input[i] = s[i].getBytes(StandardCharsets.UTF_8);
+        
+        builder.append(s[i]);
+      }
+
+      ImmutableByteArray a = ImmutableByteArray.newInstance(input);
+      ImmutableByteArray b = ImmutableByteArray.newInstance(builder.toString().getBytes(StandardCharsets.UTF_8));
+      
+      assertEquals(a, b);
     }
   }
+
 }

@@ -40,7 +40,7 @@ public class TestHashProvider
     
     Hash hash = HashProvider.getHashOf(2, plainText.getBytes(StandardCharsets.UTF_8));
     
-    Assert.assertEquals("Type2 Hash should be 25 bytes", hash.toBytes().length, 25);
+    Assert.assertEquals("Type2 Hash should be 25 bytes", hash.toImmutableByteArray().toByteArray().length, 25);
     
     System.out.println("Type2 Hashes:");
     

@@ -23,7 +23,10 @@
 
 package org.symphonyoss.s2.common.dom;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 /**
  * Any type of IDomNode which is <B>immutable</B>.
@@ -36,5 +39,12 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public interface IImmutableDomNode extends IDomNode
 {
-
+  /**
+   * Return the serialized form of this node.
+   * 
+   * The contents of the bytes are UTF-8 encoded characters.
+   * 
+   * @return the serialized form of this node.
+   */
+  @Nonnull ImmutableByteArray serialize();
 }

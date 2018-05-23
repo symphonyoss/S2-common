@@ -30,11 +30,15 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 @Immutable
 public class JsonNull implements IImmutableJsonDomNode
 {
-  public static final JsonNull  INSTANCE = new JsonNull();
+  public static final JsonNull            INSTANCE  = new JsonNull();
+  
+  private static final String             AS_STRING = "null";
+  private static final ImmutableByteArray AS_BYTES  = ImmutableByteArray.newInstance(AS_STRING);
   
   private JsonNull()
   {
@@ -47,6 +51,12 @@ public class JsonNull implements IImmutableJsonDomNode
   }
 
   @Override
+  public JsonNull newMutableCopy()
+  {
+    return this;
+  }
+
+  @Override
   public JsonNull writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
     writer.writeItem("null", terminator);
@@ -54,9 +64,15 @@ public class JsonNull implements IImmutableJsonDomNode
   }
   
   @Override
+  public ImmutableByteArray serialize()
+  {
+    return AS_BYTES;
+  }
+
+  @Override
   public @Nonnull String toString()
   {
-    return "null";
+    return AS_STRING;
   }
   
   @Override

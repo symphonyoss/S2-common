@@ -35,4 +35,7 @@ public interface IJsonDomNode extends IDomNode
 {
   @Override
   IImmutableJsonDomNode immutify();
+  
+  @Override
+  IJsonDomNode newMutableCopy();
 }

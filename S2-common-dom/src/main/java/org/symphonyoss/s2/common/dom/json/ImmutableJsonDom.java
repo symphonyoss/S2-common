@@ -30,15 +30,31 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 
 import org.symphonyoss.s2.common.dom.DomSerializer;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * An immutable node from a JSON DOM tree.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements IImmutableJsonDomNode
-{protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
+{
+  protected static final DomSerializer               SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true)
+      .build();
 
-  private final ImmutableList<IImmutableJsonDomNode>  children_;
-  private final @Nonnull String                       asString_;
+  private final ImmutableList<IImmutableJsonDomNode> children_;
+  private final @Nonnull String                      asString_;
+  private final @Nonnull ImmutableByteArray          asBytes_;
   
+  /**
+   * Create a node with the given children, if the children are immutable then they are added directly
+   * otherwise their immutify() method is called and the immutable equivalent is added.
+   *  
+   * @param children  The children of the required node.
+   */
   public ImmutableJsonDom(Collection<IJsonDomNode> children)
   {
     ArrayList<IImmutableJsonDomNode> c = new ArrayList<>(children.size());
@@ -56,6 +72,7 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
     }
     children_ = ImmutableList.copyOf(c);
     asString_ = SERIALIZER.serialize(this);
+    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -64,6 +81,17 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
     return this;
   }
   
+  @Override
+  public MutableJsonDom newMutableCopy()
+  {
+    MutableJsonDom result = new MutableJsonDom();
+    
+    for(IImmutableJsonDomNode child : children_)
+      result.add(child.newMutableCopy());
+    
+    return result;
+  }
+
   @Override
   public int size()
   {
@@ -86,6 +114,12 @@ public class ImmutableJsonDom extends JsonDom<IImmutableJsonDomNode> implements 
   public Iterator<IImmutableJsonDomNode> iterator()
   {
     return children_.iterator();
+  }
+  
+  @Override
+  public @Nonnull ImmutableByteArray serialize()
+  {
+    return asBytes_;
   }
   
   @Override

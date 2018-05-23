@@ -24,6 +24,7 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import org.apache.commons.codec.binary.Base64;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.protobuf.ByteString;
 
@@ -64,5 +65,10 @@ public abstract class MutableJsonArray<T extends MutableJsonArray> extends JsonA
   public T add(ByteString value)
   {
     return add(new JsonString(Base64.encodeBase64URLSafeString(value.toByteArray())));
+  }
+  
+  public T add(ImmutableByteArray value)
+  {
+    return add(new JsonString(value.toBase64String()));
   }
 }

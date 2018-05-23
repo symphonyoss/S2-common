@@ -34,9 +34,10 @@ import java.util.Date;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
-import org.symphonyoss.s2.common.crypto.cipher.CipherSuite;
-import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
+
+import com.symphony.s2.model.fundamental.crypto.cipher.CipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.UnknownCipherSuiteException;
 
 public class TestCertificateUtils
 {

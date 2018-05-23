@@ -34,6 +34,7 @@ import java.util.TreeSet;
 import javax.annotation.Nullable;
 
 import org.apache.commons.codec.binary.Base64;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.protobuf.ByteString;
 
@@ -49,6 +50,17 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return new ImmutableJsonObject(children_,  names_ , sortedNames_);
   }
   
+  @Override
+  public MutableJsonObject newMutableCopy()
+  {
+    MutableJsonObject result = new MutableJsonObject();
+    
+    for(String name : names_)
+      result.add(name, children_.get(name).newMutableCopy());
+    
+    return result;
+  }
+
   @Override
   public int getMaxNameLen()
   {
@@ -160,7 +172,15 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     if(value == null)
       return this;
     
-    return add(name, new JsonBase64String(Base64.encodeBase64URLSafeString(value.toByteArray())));
+    return add(name, new JsonBase64String(Base64.encodeBase64String(value.toByteArray())));
+  }
+  
+  public MutableJsonObject addIfNotNull(String name, ImmutableByteArray value)
+  {
+    if(value == null)
+      return this;
+    
+    return add(name, new JsonBase64String(value.toBase64String()));
   }
   
   public MutableJsonObject addIfNotNull(String name, JsonArray<IJsonDomNode> value)
@@ -251,6 +271,16 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     return add(name, array);
   }
   
+  public MutableJsonObject addCollectionOfImmutableByteArray(String name, List<ImmutableByteArray> value)
+  {
+    MutableJsonList array = new MutableJsonList();
+    
+    for(ImmutableByteArray v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+  
   public MutableJsonObject addCollectionOfDomNode(String name, Set<? extends IJsonDomNodeProvider> value)
   {
     MutableJsonSet array = new MutableJsonSet();
@@ -329,5 +359,22 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
       array.add(v);
     
     return add(name, array);
+  }
+  
+  public MutableJsonObject addCollectionOfImmutableByteArray(String name, Set<ImmutableByteArray> value)
+  {
+    MutableJsonSet array = new MutableJsonSet();
+    
+    for(ImmutableByteArray v : value)
+      array.add(v);
+    
+    return add(name, array);
+  }
+
+  public void clear()
+  {
+    children_.clear();
+    names_.clear();
+    sortedNames_.clear();
   }
 }

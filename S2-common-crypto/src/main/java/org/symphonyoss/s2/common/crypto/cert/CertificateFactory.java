@@ -37,7 +37,7 @@ import java.util.Enumeration;
 
 import javax.annotation.Nullable;
 
-import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
+import com.symphony.s2.model.fundamental.crypto.cipher.UnknownCipherSuiteException;
 
 /**
  * Public factory class for Certificates.

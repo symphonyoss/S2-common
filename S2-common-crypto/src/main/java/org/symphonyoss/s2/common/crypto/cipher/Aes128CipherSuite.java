@@ -26,6 +26,9 @@ package org.symphonyoss.s2.common.crypto.cipher;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import com.symphony.s2.model.fundamental.crypto.cipher.AesCipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.SymmetricCipher;
+
 /* package */ class Aes128CipherSuite extends AesCipherSuite
 {
 	public Aes128CipherSuite(SymmetricCipher id) throws NoSuchAlgorithmException, NoSuchProviderException

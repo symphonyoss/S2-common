@@ -23,6 +23,9 @@
 
 package org.symphonyoss.s2.common.immutable;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -51,8 +54,13 @@ import com.google.protobuf.ByteString;
  *
  */
 @Immutable
-public abstract class ImmutableByteArray
+public abstract class ImmutableByteArray implements Iterable<Byte>
 {
+  /**
+   * An empty (zero length) array of bytes.
+   */
+  public static final ImmutableByteArray  EMPTY = new ArrayBackedImmutableByteArray(new byte[0]);
+  
   /**
    * Return an ImmutableByteArray containing the given data.
    * 
@@ -62,9 +70,23 @@ public abstract class ImmutableByteArray
    * 
    * @return An ImmutableByteArray containing the given data.
    */
-  public static ImmutableByteArray newInstance(byte[] bytes)
+  public static ImmutableByteArray newInstance(byte[] ...bytes)
   {
     return new ArrayBackedImmutableByteArray(bytes);
+  }
+  
+  /**
+   * Return an ImmutableByteArray containing the given data.
+   * 
+   * This operation involves a defensive copy.
+   * 
+   * @param string The data for the ImmutableByteArray.
+   * 
+   * @return An ImmutableByteArray containing the given data.
+   */
+  public static ImmutableByteArray newInstance(String string)
+  {
+    return new ArrayBackedImmutableByteArray(string);
   }
   
   /**
@@ -111,6 +133,15 @@ public abstract class ImmutableByteArray
   }
   
   /**
+   * Write the contents of this ByteArray to the given OutputStream.
+   * 
+   * @param out and OutputStream to which the contents of this ByteArray are to be written.
+   * 
+   * @throws IOException If there is an IO error.
+   */
+  public abstract void write(OutputStream out) throws IOException;
+  
+  /**
    * Create a Reader instance with the given character set.
    * 
    * @param charset The character set with which the byte data should be interpreted.
@@ -140,4 +171,82 @@ public abstract class ImmutableByteArray
    * @return The contents of the byte array as a Base64 (standard encoding) String.
    */
   public abstract String toBase64String();
+  
+  /**
+   * Return the contents of the byte array as a ByteString.
+   * 
+   * @return The contents of the byte array as a ByteString.
+   */
+  public abstract ByteString toByteString();
+  
+  /**
+   * Return a copy of the contents as a byte array.
+   * 
+   * @return A copy of the contents.
+   */
+  public abstract byte[] toByteArray();
+
+  /**
+   * Create an InputStream for the contents of this ImmutableByteArray.
+   * 
+   * @return An InputStream for the contents of this ImmutableByteArray.
+   */
+  public abstract InputStream getInputStream();
+
+  /**
+   * Return the number of bytes in this ImmutableByteArray.
+   * 
+   * @return The number of bytes in this ImmutableByteArray.
+   */
+  public abstract int length();
+  
+  /**
+   * Return the byte at the given index.
+   * 
+   * @param index An index.
+   * 
+   * @return The byte at that index.
+   * @throws IndexOutOfBoundsException if the index is negative or greater or equal to length()
+   */
+  public abstract byte byteAt(int index);
+  
+
+
+  public abstract void arraycopy(int index, byte[] iv, int i, int length);
+  
+
+
+  @Override
+  public int hashCode()
+  {
+    int   h=0;
+    
+    for(int i=0 ; i<length() ; i++)
+    {
+      h = 31 * h + byteAt(i);
+    }
+    return h;
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if(obj instanceof ImmutableByteArray)
+    {
+      ImmutableByteArray other = (ImmutableByteArray) obj;
+      
+      if(other.length() == length())
+      {
+        for(int i=0 ; i<length() ; i++)
+        {
+          if(byteAt(i) != other.byteAt(i))
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
+  }
 }

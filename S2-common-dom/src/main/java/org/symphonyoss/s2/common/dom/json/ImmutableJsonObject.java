@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomSerializer;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -50,6 +51,7 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   private final ImmutableSet<String>                        sortedNames_;
   private final int                                         maxNameLen_;
   private final @Nonnull String                             asString_;
+  private final @Nonnull ImmutableByteArray                 asBytes_;
   
   public ImmutableJsonObject(Map<String, IJsonDomNode> children, LinkedList<String> names, TreeSet<String> sortedNames)
   {
@@ -82,12 +84,24 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
     
     maxNameLen_ = maxNameLen + QUOTE_MARGIN;
     asString_ = SERIALIZER.serialize(this);
+    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
   public IImmutableJsonDomNode immutify()
   {
     return this;
+  }
+  
+  @Override
+  public MutableJsonObject newMutableCopy()
+  {
+    MutableJsonObject result = new MutableJsonObject();
+    
+    for(String name : names_)
+      result.add(name, children_.get(name).newMutableCopy());
+    
+    return result;
   }
 
   @Override
@@ -118,6 +132,12 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   public Iterator<String> getNameIterator()
   {
     return names_.iterator();
+  }
+  
+  @Override
+  public @Nonnull ImmutableByteArray serialize()
+  {
+    return asBytes_;
   }
   
   @Override

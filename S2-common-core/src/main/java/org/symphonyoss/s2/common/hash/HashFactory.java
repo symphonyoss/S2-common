@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2017-2018 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -29,6 +29,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.fault.ProgramFault;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 /**
  * A factory for Hash objects.
@@ -44,24 +45,44 @@ public class HashFactory
   private final int                  typeId_;
   private final AbstractHashFunction hashFunction_;
 
+  /**
+   * Construct a HashFactory with the current default hash type.
+   */
   public HashFactory()
   {
     typeId_ = HashType.defaultHashTypeId_;
     hashFunction_ = HashType.getDefaultHashType().createHashFunction();
   }
   
+  /**
+   * Construct a HashFactory for the given hash type.
+   *  
+   * @param typeId The hash type of the required factory
+   * @throws InvalidValueException If the given hash type is invalid.
+   */
   public HashFactory(int typeId) throws InvalidValueException
   {
     typeId_ = typeId;
     hashFunction_ = HashType.getHashType(typeId).createHashFunction();
   }
   
+  /**
+   * Return the hash type ID of the factory.
+   * 
+   * @return the hash type ID of the factory.
+   */
   public int    getHashTypeId()
   {
     return typeId_;
   }
   
-  public @Nonnull Hash   getHashOf(byte[] bytes)
+  /**
+   * Return the hash of the given value.
+   * 
+   * @param bytes A value to be hashed.
+   * @return The hash of the given value.
+   */
+  public @Nonnull Hash getHashOf(byte[] bytes)
   {
     try
     {
@@ -73,42 +94,59 @@ public class HashFactory
     }
   }
   
+  /**
+   * Return the hash of the given value.
+   * 
+   * @param bytes A value to be hashed.
+   * @return The hash of the given value.
+   */
+  public @Nonnull Hash   getHashOf(ImmutableByteArray bytes)
+  {
+    try
+    {
+      for(byte b : bytes)
+        hashFunction_.update(b);
+      
+      return new Hash(typeId_, hashFunction_.digest());
+    }
+    catch (InvalidValueException e)
+    {
+      throw new ProgramFault("Unexpected hash error", e);
+    }
+  }
+  
+  /**
+   * Return the hash of the given values.
+   * 
+   * The order of the provided values is significant.
+   * 
+   * @param parts One or more objects the values of which will be concatenated and hashed.
+   * 
+   * @return The hash of the given value.
+   */
   public @Nonnull Hash   getCompositeHashOf(Object ...parts)
   {
- // debug  Logger log_ = LoggerFactory.getLogger(getClass());
- // debug  log_.debug("getCompositeHashOf");
-    
     for(Object part : parts)
     {
       if(part instanceof Hash)
       {
-// debug        
-//        StringBuilder b = new StringBuilder();
-//        
-//        for(byte bb : ((Hash) part).toBytes())
-//        {
-//          b.append(String.format("%02X ", 0xFF & bb));
-//        }
-//        
-//        log_.debug("  HASH " + part + " " + b.toString());
-        
         if(Hash.NIL_HASH.equals(part))
           throw new CodingFault("NIL_HASH (null value) included as element of composite hash");
         
-        hashFunction_.update(((Hash) part).toBytes());
+        for(byte b : ((Hash) part).toImmutableByteArray())
+          hashFunction_.update(b);
       }
       else if(part instanceof byte[])
       {
         hashFunction_.update(((byte[]) part));
       }
-//
-//      else if(part instanceof ByteString)
-//      {
-//        hashFunction_.update(((ByteString) part));
-//      }
+      else if(part instanceof ImmutableByteArray)
+      {
+        for(byte b : (ImmutableByteArray) part)
+          hashFunction_.update(b);
+      }
       else
       {
-     // debug  log_.debug("  OBJ  " + part);
         hashFunction_.update(part.toString().getBytes());
       }
     }

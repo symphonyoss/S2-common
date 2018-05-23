@@ -1,7 +1,7 @@
 /*
- * Copyright 2016-2017  Symphony Communication Services, LLC.
- * 
- * Includes public domain material developed by Immutify Limited.
+ *
+ *
+ * Copyright 2017 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,28 +21,11 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.crypto.cipher;
+package org.symphonyoss.s2.common.dom;
 
-public class NoSuchCipherSuiteException extends Exception
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+
+public interface IImmutableByteArrayProvider
 {
-	private static final long	serialVersionUID	= 1L;
-
-	public NoSuchCipherSuiteException()
-	{
-	}
-
-	public NoSuchCipherSuiteException(String message)
-	{
-		super(message);
-	}
-
-	public NoSuchCipherSuiteException(Throwable cause)
-	{
-		super(cause);
-	}
-
-	public NoSuchCipherSuiteException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+  ImmutableByteArray asImmutableByteArray();
 }

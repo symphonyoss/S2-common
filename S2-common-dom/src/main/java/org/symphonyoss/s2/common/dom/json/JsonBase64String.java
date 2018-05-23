@@ -24,25 +24,24 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import org.apache.commons.codec.binary.Base64;
-import org.symphonyoss.s2.common.dom.IByteStringProvider;
+import org.symphonyoss.s2.common.dom.IImmutableByteArrayProvider;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
-import com.google.protobuf.ByteString;
-
-public class JsonBase64String extends JsonString implements IByteStringProvider
+public class JsonBase64String extends JsonString implements IImmutableByteArrayProvider
 {
-  private ByteString byteString_;
+  private ImmutableByteArray immutableByteArray_;
 
   public JsonBase64String(String value)
   {
     super(value);
     
-    byteString_ = ByteString.copyFrom(Base64.decodeBase64(value));
+    immutableByteArray_ = ImmutableByteArray.newInstance(Base64.decodeBase64(value));
   }
 
   @Override
-  public ByteString asByteString()
+  public ImmutableByteArray asImmutableByteArray()
   {
-    return byteString_;
+    return immutableByteArray_;
   }
 
 }

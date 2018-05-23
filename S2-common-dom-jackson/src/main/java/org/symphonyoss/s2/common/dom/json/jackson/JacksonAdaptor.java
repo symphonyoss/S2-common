@@ -23,13 +23,13 @@
 
 package org.symphonyoss.s2.common.dom.json.jackson;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
-import org.symphonyoss.s2.common.dom.json.ImmutableJsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonBase64String;
 import org.symphonyoss.s2.common.dom.json.JsonBoolean;
 import org.symphonyoss.s2.common.dom.json.JsonDouble;
@@ -37,13 +37,15 @@ import org.symphonyoss.s2.common.dom.json.JsonFloat;
 import org.symphonyoss.s2.common.dom.json.JsonInteger;
 import org.symphonyoss.s2.common.dom.json.JsonLong;
 import org.symphonyoss.s2.common.dom.json.JsonNull;
-import org.symphonyoss.s2.common.dom.json.JsonObject;
 import org.symphonyoss.s2.common.dom.json.JsonString;
 import org.symphonyoss.s2.common.dom.json.MutableJsonList;
 import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
+import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -53,9 +55,17 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+/**
+ * Adaptor to produce IJsonDomNode types from a Jackson parse tree.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public class JacksonAdaptor
 {
   static Map<Class<?>, IJacksonNodeAdaptor> adaptorMap_ = new HashMap<>();
+  
+  private static final ObjectMapper MAPPER = new ObjectMapper();
   
   // We can't use lambdas as this is java7 for the benefit of SBE. Sigh.
   static
@@ -128,8 +138,6 @@ public class JacksonAdaptor
               }
               else
               {
-//                System.err.println("childNode=" + childNode + ", class=" + childNode.getClass().getName());
-  //              add(childName, process(childNode));
                 array.add(JacksonAdaptor.adapt(childNode));
               }
             }
@@ -137,6 +145,13 @@ public class JacksonAdaptor
           }});
   }
   
+  /**
+   * Return the IJsonDomNode equivalent of the given Jackson JsonNode.
+   *  
+   * @param node A Jackson object.
+   * 
+   * @return the IJsonDomNode equivalent of the given Jackson JsonNode. 
+   */
   public static IJsonDomNode  adapt(JsonNode node)
   {
     IJacksonNodeAdaptor adaptor = adaptorMap_.get(node.getClass());
@@ -144,28 +159,51 @@ public class JacksonAdaptor
     if(adaptor == null)
     {
       throw new CodingFault("Unknown Jackson node type \"" + node.getClass().getName() + "\"");
-      
-//      System.err.println("Unknown Jackson node type \"" + node.getClass().getName() + "\"");
-//      adaptor = adaptorMap_.get(TextNode.class);
     }
     
     return adaptor.adapt(node);
   }
   
-  public static MutableJsonObject adaptObject(ObjectNode n)
+  /**
+   * Parse the give input and return a Mutable JSON object.
+   * 
+   * @param input JSON in byte array form.
+   * 
+   * @return a MutableJsonObject representing the input.
+   * 
+   * @throws InvalidValueException If the input is not a JSON Object.
+   */
+  public static MutableJsonObject parseObject(ImmutableByteArray input) throws InvalidValueException
+  {
+    try
+    {
+      return adaptObject((ObjectNode) MAPPER.readTree(input.getInputStream()));
+    }
+    catch (ClassCastException | IOException e)
+    {
+      throw new InvalidValueException("Unable to parse input", e);
+    }
+  }
+  
+  /**
+   * Adapt the given Jackson object into a MutableJsonObject.
+   * 
+   * @param object A Jackson JSON object.
+   * 
+   * @return The MutableJsonObject equivalent of the given input.
+   */
+  public static MutableJsonObject adaptObject(ObjectNode object)
   {
     MutableJsonObject obj = new MutableJsonObject();
-    Iterator<String> it = n.fieldNames();
+    Iterator<String> it = object.fieldNames();
     
     while(it.hasNext())
     {
       String childName = it.next();
-      JsonNode childNode = n.get(childName);
+      JsonNode childNode = object.get(childName);
       
       if(!childNode.isNull())
       {
-//        System.err.println("childName=" + childName + ", childNode=" + childNode + ", class=" + childNode.getClass().getName());
-//              add(childName, process(childNode));
         obj.add(childName, JacksonAdaptor.adapt(childNode));
       }
     }

@@ -21,22 +21,27 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.reader;
+package org.symphonyoss.s2.common.legacy.id;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import static org.junit.Assert.assertEquals;
 
-public class ByteArrayReader extends InputStreamReader
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Test;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+
+public class TestLegacyIdFactory
 {
-
-  public ByteArrayReader(byte[] input)
-  {
-    super(new ByteArrayInputStream(input));
-  }
+  private static final String TENANT_ID = "MyTenant";
+  private static final byte[] MESSAGE_ID = Base64.decodeBase64("xjbP0HZYa8xSyPqH19BFxX///p49T8mWbQ==");
+  private static final Object EXPECTED = "NTdNYe1p6iQDVUdq3rRJWG77_PLCq7iMwYPLO-dqS4sBAQ";
   
-  public ByteArrayReader(byte[] input, Charset charset)
+  private final LegacyIdFactory factory_ = new LegacyIdFactory();
+  
+  @Test
+  public void TestRoundTrip()
   {
-    super(new ByteArrayInputStream(input), charset);
+    assertEquals(EXPECTED, factory_.messageId(TENANT_ID, MESSAGE_ID).toString());
+    assertEquals(EXPECTED, factory_.messageId(TENANT_ID, ImmutableByteArray.newInstance(MESSAGE_ID)).toString());
   }
+
 }

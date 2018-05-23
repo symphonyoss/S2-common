@@ -30,6 +30,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.protobuf.ByteString;
 
@@ -50,6 +51,20 @@ public class TypeAdaptor
               throw new InvalidValueException("Input contains invalid Base64 characters");
             
             return ByteString.copyFrom(Base64.decodeBase64(encoded));
+          }
+          throw new InvalidValueException("String input is required.");
+          }});
+    
+    adaptorMap_.put(ImmutableByteArray.class, 
+        new ITypeAdaptor<ImmutableByteArray>(){@Override public ImmutableByteArray adapt(IJsonDomNode node) throws InvalidValueException{
+          if(node instanceof IStringProvider)
+          {
+            String encoded = ((IStringProvider)node).asString();
+            
+            if(!Base64.isBase64(encoded))
+              throw new InvalidValueException("Input contains invalid Base64 characters");
+            
+            return ImmutableByteArray.newInstance(Base64.decodeBase64(encoded));
           }
           throw new InvalidValueException("String input is required.");
           }});

@@ -30,6 +30,11 @@ package org.symphonyoss.s2.common.fault;
  * a switch statement with cases for all values of an 
  * enumeration for example.
  * 
+ * Receiving this exception indicates that the implementation of the called method is faulty
+ * and there is nothing the caller did wrong. This exception should <b>not</b> be thrown
+ * if any argument to the called code was invalid, in such cases {@link NullPointerException}
+ * or {@link IllegalArgumentException} should be thrown instead.
+ * 
  * @author bruce.skingle
  *
  */

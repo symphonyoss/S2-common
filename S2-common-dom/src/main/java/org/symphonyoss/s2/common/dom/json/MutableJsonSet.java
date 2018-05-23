@@ -54,4 +54,15 @@ public class MutableJsonSet extends MutableJsonArray<MutableJsonSet>
   {
     return new ImmutableJsonSet(children_);
   }
+
+  @Override
+  public MutableJsonSet newMutableCopy()
+  {
+    MutableJsonSet result = new MutableJsonSet();
+    
+    for(IJsonDomNode child : children_)
+      result.add(child.newMutableCopy());
+    
+    return result;
+  }
 }

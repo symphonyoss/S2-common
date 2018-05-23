@@ -23,9 +23,8 @@
 
 package org.symphonyoss.s2.common.crypto.cert;
 
-import org.symphonyoss.s2.common.crypto.cipher.SignatureVerificationException;
-
 import com.google.protobuf.ByteString;
+import com.symphony.s2.model.fundamental.crypto.cipher.SignatureVerificationException;
 
 public interface ISignatureVerificationCertificate extends ICertificate
 {

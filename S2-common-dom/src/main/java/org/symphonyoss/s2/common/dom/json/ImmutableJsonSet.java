@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomSerializer;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -39,8 +40,9 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
 {
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
-  private final ImmutableSet<IImmutableJsonDomNode> children_;
-  private final String asString_;
+  private final ImmutableSet<IImmutableJsonDomNode>   children_;
+  private final @Nonnull String                      asString_;
+  private final @Nonnull ImmutableByteArray          asBytes_;
   
   public ImmutableJsonSet(Set<IJsonDomNode> children)
   {
@@ -59,6 +61,7 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
     }
     children_ = ImmutableSet.copyOf(c);
     asString_ = SERIALIZER.serialize(this);
+    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -77,6 +80,23 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
   public ImmutableJsonSet immutify()
   {
     return this;
+  }
+
+  @Override
+  public MutableJsonSet newMutableCopy()
+  {
+    MutableJsonSet result = new MutableJsonSet();
+    
+    for(IJsonDomNode child : children_)
+      result.add(child.newMutableCopy());
+    
+    return result;
+  }
+  
+  @Override
+  public @Nonnull ImmutableByteArray serialize()
+  {
+    return asBytes_;
   }
   
   @Override

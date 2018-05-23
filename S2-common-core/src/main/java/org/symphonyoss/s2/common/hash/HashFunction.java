@@ -28,6 +28,7 @@ package org.symphonyoss.s2.common.hash;
   /* package */ abstract byte[] digest(byte[] bytes);
 
   /* package */ abstract void update(byte[] bytes);
+  /* package */ abstract void update(byte b);
 
   /* package */ abstract byte[] digest();
 }

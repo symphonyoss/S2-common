@@ -29,7 +29,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.symphonyoss.s2.common.crypto.cipher.IAsymmetricCipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.IAsymmetricCipherSuite;
 
 /* package */ class IntCert extends Certificate implements IIntermediateCertificate
 {

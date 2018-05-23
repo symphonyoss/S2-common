@@ -67,4 +67,15 @@ public class MutableJsonDom extends JsonDom<IJsonDomNode> implements IMutableJso
   {
     return new ImmutableJsonDom(children_);
   }
+  
+  @Override
+  public MutableJsonDom newMutableCopy()
+  {
+    MutableJsonDom result = new MutableJsonDom();
+    
+    for(IJsonDomNode child : children_)
+      result.add(child.newMutableCopy());
+    
+    return result;
+  }
 }

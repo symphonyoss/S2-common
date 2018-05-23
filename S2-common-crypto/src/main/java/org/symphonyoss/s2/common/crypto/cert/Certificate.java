@@ -49,12 +49,12 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.symphonyoss.s2.common.crypto.cipher.CertType;
-import org.symphonyoss.s2.common.crypto.cipher.CipherSuite;
-import org.symphonyoss.s2.common.crypto.cipher.IAsymmetricCipherSuite;
-import org.symphonyoss.s2.common.crypto.cipher.SignatureVerificationException;
-import org.symphonyoss.s2.common.crypto.cipher.UnknownCipherSuiteException;
 
 import com.google.protobuf.ByteString;
+import com.symphony.s2.model.fundamental.crypto.cipher.CipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.IAsymmetricCipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.SignatureVerificationException;
+import com.symphony.s2.model.fundamental.crypto.cipher.UnknownCipherSuiteException;
 
 /**
  * Concrete implementation of all types of certificate.

@@ -27,10 +27,9 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.symphonyoss.s2.common.crypto.cipher.IAsymmetricCipherSuite;
-import org.symphonyoss.s2.common.crypto.cipher.SignatureVerificationException;
-
 import com.google.protobuf.ByteString;
+import com.symphony.s2.model.fundamental.crypto.cipher.IAsymmetricCipherSuite;
+import com.symphony.s2.model.fundamental.crypto.cipher.SignatureVerificationException;
 
 public interface ICertificate
 {

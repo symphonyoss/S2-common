@@ -31,17 +31,31 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomSerializer;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * An immutable list (array) node in a JSON DOM tree.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 @Immutable
 public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implements IImmutableJsonDomNode
 {
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
   private final ImmutableList<IImmutableJsonDomNode> children_;
-  private final String asString_;
+  private final @Nonnull String                      asString_;
+  private final @Nonnull ImmutableByteArray          asBytes_;
   
+  /**
+   * Create a list with the given children, if the children are immutable then they are added directly
+   * otherwise their immutify() method is called and the immutable equivalent is added.
+   *  
+   * @param children  The children of the required node.
+   */
   public ImmutableJsonList(Collection<IJsonDomNode> children)
   {
     ArrayList<IImmutableJsonDomNode> c = new ArrayList<>(children.size());
@@ -59,6 +73,7 @@ public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implement
     }
     children_ = ImmutableList.copyOf(c);
     asString_ = SERIALIZER.serialize(this);
+    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -77,6 +92,23 @@ public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implement
   public ImmutableJsonList immutify()
   {
     return this;
+  }
+  
+  @Override
+  public MutableJsonList newMutableCopy()
+  {
+    MutableJsonList result = new MutableJsonList();
+    
+    for(IJsonDomNode child : children_)
+      result.add(child.newMutableCopy());
+    
+    return result;
+  }
+
+  @Override
+  public @Nonnull ImmutableByteArray serialize()
+  {
+    return asBytes_;
   }
   
   @Override

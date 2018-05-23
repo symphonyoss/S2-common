@@ -24,12 +24,12 @@
 package org.symphonyoss.s2.common.hash;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.TransactionFault;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 import com.google.protobuf.ByteString;
 
@@ -89,12 +89,12 @@ import com.google.protobuf.ByteString;
 @Immutable
 public class Hash implements Comparable<Hash>
 {
-  /* package */ static final byte[]        NIL_BYTE_HASH       = new byte[] { 0 };
-  /* package */ static final String        NIL_STRING_HASH     = "0";
-  /* package */ static final ByteString    NIL_BYTESTRING_HASH = ByteString.copyFrom(NIL_BYTE_HASH);
+  /* package */ static final ImmutableByteArray NIL_BYTE_HASH       = ImmutableByteArray.newInstance(new byte[] { 0 });
+  /* package */ static final String             NIL_STRING_HASH     = "0";
+  /* package */ static final ByteString         NIL_BYTESTRING_HASH = NIL_BYTE_HASH.toByteString();
   
   /** The NIL (zero) Hash. Use in preference to null values */
-  public        static final Hash          NIL_HASH            = new Hash(NIL_BYTE_HASH, HashType.getNilHashType(), NIL_STRING_HASH, NIL_BYTESTRING_HASH);
+  public        static final Hash          NIL_HASH            = new Hash(NIL_BYTE_HASH, HashType.getNilHashType(), NIL_STRING_HASH);
   
   /**
    * Return the default HashType ID.
@@ -131,21 +131,15 @@ public class Hash implements Comparable<Hash>
       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
   
-  private final byte[]     hashBytes_;
-  private final HashType   hashType_;
-  private final String     hashString_;
-  private final ByteString hashByteString_;
-  private final String     hashStringBase64_;
-  private final String     hashStringUrlSafeBase64_;
+  private final ImmutableByteArray hashBytes_;
+  private final HashType           hashType_;
+  private final String             hashString_;
 
-  private Hash(byte[] hashBytes, HashType hashType, String hashString, ByteString hashByteString)
+  private Hash(ImmutableByteArray hashBytes, HashType hashType, String hashString)
   {
     hashBytes_ = hashBytes;
     hashType_ = hashType;
     hashString_ = hashString;
-    hashByteString_ = hashByteString;
-    hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
-    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
 
   /**
@@ -170,11 +164,8 @@ public class Hash implements Comparable<Hash>
       throw new InvalidValueException("Hash Type " + typeId + " digest values are " + 
           hashType_.byteLen_ + " bytes but " + rawDigestBytes.length + " were passed.");
     
-    hashBytes_ = hashType_.encode(typeId, rawDigestBytes);
-    hashByteString_ = ByteString.copyFrom(hashBytes_);
+    hashBytes_ = ImmutableByteArray.newInstance(hashType_.encode(typeId, rawDigestBytes));
     hashString_ = convertBytesToString(hashType_, hashBytes_);
-    hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
-    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
   
   /**
@@ -185,12 +176,20 @@ public class Hash implements Comparable<Hash>
    */
   public Hash(byte[] hashBytes) throws InvalidValueException
   {
-    hashByteString_ = ByteString.copyFrom(hashBytes);
-    hashBytes_ = hashByteString_.toByteArray();
+    this(ImmutableByteArray.newInstance(hashBytes));
+  }
+  
+  /**
+   * Create a Hash object from the byte representation.
+   * 
+   * @param hashBytes    The byte[] representation of a Hash.
+   * @throws InvalidValueException  If the given string is not a valid hash representation.
+   */
+  public Hash(ImmutableByteArray hashBytes) throws InvalidValueException
+  {
+    hashBytes_ = hashBytes;
     hashType_ = getTypeFromHashBytes(hashBytes);
     hashString_ = convertBytesToString(hashType_, hashBytes_);
-    hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
-    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
 
   /**
@@ -201,24 +200,21 @@ public class Hash implements Comparable<Hash>
    */
   public Hash(ByteString byteString) throws InvalidValueException
   {
-    hashByteString_ = byteString;
-    hashBytes_ = byteString.toByteArray();
+    hashBytes_ = ImmutableByteArray.newInstance(byteString);
     hashType_ = getTypeFromHashBytes(hashBytes_);
     hashString_ = convertBytesToString(hashType_, hashBytes_);
-    hashStringBase64_ = Base64.encodeBase64String(hashBytes_);
-    hashStringUrlSafeBase64_ = Base64.encodeBase64URLSafeString(hashBytes_);
   }
   
   /*
    * Static because its called from constructors
    */
-  private static String convertBytesToString(HashType hashType, byte[] hashBytes)
+  private static String convertBytesToString(HashType hashType, ImmutableByteArray hashBytes)
   {
     StringBuilder s = new StringBuilder();
     
     for(int i=0 ; i<hashType.byteLen_ ; i++)
     {
-      byte b = hashBytes[i];
+      byte b = hashBytes.byteAt(i);
       
       s.append(hexIntToChar_[(b & 0xF0) >> 4]);
       s.append(hexIntToChar_[b & 0x0F]);
@@ -232,21 +228,21 @@ public class Hash implements Comparable<Hash>
   /*
    * Static because its called from constructors
    */
-  private static HashType getTypeFromHashBytes(byte[] hashBytes) throws InvalidValueException
+  private static HashType getTypeFromHashBytes(ImmutableByteArray hashBytes) throws InvalidValueException
   {
     if(hashBytes == null)
       throw new InvalidValueException("Hash value is null");
     
-    if(hashBytes.length == 0 || (hashBytes.length == 1 && hashBytes[0] == 0))
+    if(hashBytes.length() == 0 || (hashBytes.length() == 1 && hashBytes.byteAt(0) == 0))
     {
       return HashType.getNilHashType();
     }
     
-    if(hashBytes.length < 3)
+    if(hashBytes.length() < 3)
       throw new InvalidValueException("Hash value is too short");
     
-    int len = hashBytes.length;
-    int typeIdLen = 0xFF & hashBytes[--len];  // now 0 <= typeIdLen <= 255
+    int len = hashBytes.length();
+    int typeIdLen = 0xFF & hashBytes.byteAt(--len);  // now 0 <= typeIdLen <= 255
     
     if(typeIdLen > len)
       throw new InvalidValueException("Hash value is too short");
@@ -259,14 +255,14 @@ public class Hash implements Comparable<Hash>
     
     if(typeIdLen == 1)
     {
-      typeId = 0xFF & hashBytes[--len];
+      typeId = 0xFF & hashBytes.byteAt(--len);
     }
     else
     {
       typeId = 0;
       
       while(typeIdLen-- > 0)
-        typeId = typeId * 256 + 0xFF & hashBytes[--len];
+        typeId = typeId * 256 + 0xFF & hashBytes.byteAt(--len);
     }
     
     // throws BadFormatException if typeId is invalid
@@ -344,7 +340,7 @@ public class Hash implements Comparable<Hash>
       hashBytes[--byteLen] = (byte) (hexValue(hexChars[--len]) + 16 * hexValue(hexChars[--len]));
     }
     
-    return new Hash(hashBytes, hashType, hashHexString, ByteString.copyFrom(hashBytes));
+    return new Hash(ImmutableByteArray.newInstance(hashBytes), hashType, hashHexString);
   }
   
   private static int hexValue(char c) throws InvalidValueException
@@ -373,15 +369,33 @@ public class Hash implements Comparable<Hash>
     return new Hash(Base64.decodeBase64(base64String));
   }
 
-  /* package */ byte[] toBytes()
+  
+  /**
+   * Return the byte[] representation of this Hash as an ImmutableByteArray.
+   * 
+   * Does not involve a copy operation.
+   * 
+   * @return The ImmutableByteArray representation of this Hash.
+   */
+  public ImmutableByteArray toImmutableByteArray()
   {
     return hashBytes_;
+  }
+  
+  /**
+   * Return the integer hash type of this hash.
+   * 
+   * @return The integer hash type of this hash.
+   */
+  public int getTypeId()
+  {
+    return hashType_.getHashTypeId();
   }
 
   @Override
   public @Nonnull String toString()
   {
-    return hashStringUrlSafeBase64_;
+    return hashBytes_.toBase64UrlSafeString();
   }
 
   /**
@@ -393,7 +407,7 @@ public class Hash implements Comparable<Hash>
    */
   public @Nonnull ByteString toByteString()
   {
-    return hashByteString_;
+    return hashBytes_.toByteString();
   }
 
   @Override
@@ -403,7 +417,7 @@ public class Hash implements Comparable<Hash>
       return false;
     
     if(anObject instanceof Hash)
-      return hashStringUrlSafeBase64_.equals(((Hash) anObject).hashStringUrlSafeBase64_);
+      return toStringUrlSafeBase64().equals(((Hash) anObject).toStringUrlSafeBase64());
     
     return false;
   }
@@ -411,22 +425,13 @@ public class Hash implements Comparable<Hash>
   @Override
   public int hashCode()
   {
-    return hashStringUrlSafeBase64_.hashCode();
+    return toStringUrlSafeBase64().hashCode();
   }
 
   @Override
   public int compareTo(Hash o)
   {
-    return hashStringUrlSafeBase64_.compareTo(o.toString());
-  }
-
-  @Deprecated
-  public static @Nullable Hash newNullableInstance(ByteString byteString) throws InvalidValueException
-  {
-    if(byteString.isEmpty())
-      return null;
-    
-    return new Hash(byteString);
+    return toStringUrlSafeBase64().compareTo(o.toStringUrlSafeBase64());
   }
   
   /**
@@ -533,7 +538,7 @@ public class Hash implements Comparable<Hash>
    */
   public String toStringBase64()
   {
-    return hashStringBase64_;
+    return hashBytes_.toBase64String();
   }
 
   /**
@@ -543,7 +548,7 @@ public class Hash implements Comparable<Hash>
    */
   public String toStringUrlSafeBase64()
   {
-    return hashStringUrlSafeBase64_;
+    return hashBytes_.toBase64UrlSafeString();
   }
 
   /**
@@ -568,6 +573,32 @@ public class Hash implements Comparable<Hash>
    * @throws InvalidValueException If the given encoding is invalid.
    */
   public static Hash build(ByteString byteString) throws InvalidValueException
+  {
+    return new Hash(byteString);
+  }
+
+  /**
+   * Return the value of the given Hash as a ByteString.
+   * 
+   * @param hash A Hash value
+   * 
+   * @return the value of the given Hash as a ImmutableByteArray.
+   */
+  public static ImmutableByteArray toImmutableByteArray(Hash hash)
+  {
+    return hash.toImmutableByteArray();
+  }
+  
+  /**
+   * Return a Hash value decoded from the given ImmutableByteArray value.
+   * 
+   * @param byteString An encoded Hash.
+   * 
+   * @return The Hash represented by the given encoding.
+   * 
+   * @throws InvalidValueException If the given encoding is invalid.
+   */
+  public static Hash build(ImmutableByteArray byteString) throws InvalidValueException
   {
     return new Hash(byteString);
   }

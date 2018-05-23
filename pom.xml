@@ -94,7 +94,7 @@
 
 	<modules>
 		<module>S2-common-core</module>
-		<module>S2-common-crypto</module>
+		<!-- <module>S2-common-crypto</module> -->
 		<module>S2-legacy</module>
 		<module>S2-common-dom</module>
 		<module>S2-common-dom-jackson</module>

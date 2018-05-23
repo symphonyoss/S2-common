@@ -52,6 +52,12 @@ import org.symphonyoss.s2.common.fault.CodingFault;
   {
     return digest_.digest(bytes);
   }
+  
+  @Override
+  /* package */ void update(byte b)
+  {
+    digest_.update(b);
+  }
 
   @Override
   /* package */ void update(byte[] bytes)

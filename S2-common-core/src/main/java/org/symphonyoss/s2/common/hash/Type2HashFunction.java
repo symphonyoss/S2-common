@@ -65,6 +65,12 @@ import org.symphonyoss.s2.common.fault.CodingFault;
   }
 
   @Override
+  /* package */ void update(byte b)
+  {
+    sha256Digest_.update(b);
+  }
+
+  @Override
   /* package */ byte[] digest()
   {
     byte[] sha256Hash = sha256Digest_.digest();
