@@ -44,6 +44,12 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.symphonyoss.s2.common.fault.ProgramFault;
 
+/**
+ * 
+ *
+ * @deprecated Moved to org.symphonyoss.s2.fugue.http
+ */
+@Deprecated
 public class HttpServerBuilder implements IServletContainer
 {
   private Map<String, Servlet> servletMap_ = new HashMap<>();

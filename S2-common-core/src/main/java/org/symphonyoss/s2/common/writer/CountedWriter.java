@@ -29,10 +29,7 @@ import java.io.Writer;
 /**
  * 
  * @author Bruce Skingle
- *
- * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
-@Deprecated
 public class CountedWriter extends Writer
 {
 	private	long			offset_ = 0L;

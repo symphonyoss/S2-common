@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2018 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,23 +21,42 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.http;
+package org.symphonyoss.s2.common.fluent;
 
-import javax.servlet.Servlet;
+import org.symphonyoss.s2.common.fault.CodingFault;
 
 /**
+ * A superclass for fluent classes.
  * 
- *
- * @deprecated Moved to org.symphonyoss.s2.fugue.http
+ * Fluent methods should return <code>self()</code>
  * 
  * @author Bruce Skingle
  *
+ * @param <T> The concrete type returned by fluent methods.
  */
-@Deprecated
-public interface IServletContainer
+public class Fluent<T extends IFluent<T>> implements IFluent<T>
 {
-  IServletContainer addServlet(String path, Servlet servlet);
+  private final T self_;
+  
+  /**
+   * Constructor.
+   * 
+   * @param type The concrete type returned by fluent methods.
+   */
+  public Fluent(Class<T> type)
+  {
+    if (!(type.isInstance(this)))
+      throw new CodingFault("Class is declared to be " + type + " in type parameter T but it is not.");
 
-  IServletContainer addServlet(IUrlPathServlet servlet);
+    @SuppressWarnings("unchecked")
+    T s = (T) this;
 
+    self_ = s;
+  }
+
+  @Override
+  public T self()
+  {
+    return self_;
+  }
 }

@@ -30,7 +30,9 @@ import javax.servlet.Servlet;
  * 
  * @author Bruce Skingle
  *
+ * @deprecated Moved to org.symphonyoss.s2.fugue.http
  */
+@Deprecated
 public interface IUrlPathServlet extends Servlet
 {
 	String getUrlPath();

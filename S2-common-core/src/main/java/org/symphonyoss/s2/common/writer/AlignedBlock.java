@@ -30,10 +30,7 @@ import java.util.ArrayList;
  * Rows can be added with the align() method, each string representing the text for an aligned column.
  * The print method outputs the block, optionally outputting a separator. 
  * @author Bruce Skingle
- *
- * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
-@Deprecated
 public class AlignedBlock
 {
 	private static final int										TAB_SIZE	= 8;

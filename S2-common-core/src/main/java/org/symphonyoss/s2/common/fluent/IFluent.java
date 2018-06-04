@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2018 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,23 +21,22 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.http;
-
-import javax.servlet.Servlet;
+package org.symphonyoss.s2.common.fluent;
 
 /**
- * 
- *
- * @deprecated Moved to org.symphonyoss.s2.fugue.http
+ * A fluent class, i.e. one with methods which return the called class to enable method call chaining.
  * 
  * @author Bruce Skingle
  *
+ * @param <T> The concrete type returned by fluent methods.
  */
-@Deprecated
-public interface IServletContainer
+public interface IFluent<T>
 {
-  IServletContainer addServlet(String path, Servlet servlet);
-
-  IServletContainer addServlet(IUrlPathServlet servlet);
+  /**
+   * Return a typed reference to this object.
+   * 
+   * @return <code>this</code> cast to the type of <code>T</code>
+   */
+  T self();
 
 }

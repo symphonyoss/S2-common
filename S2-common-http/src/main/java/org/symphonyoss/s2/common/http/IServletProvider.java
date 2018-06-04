@@ -28,7 +28,10 @@ package org.symphonyoss.s2.common.http;
  * 
  * @author bruce.skingle
  *
+ *
+ * @deprecated Moved to org.symphonyoss.s2.fugue.http
  */
+@Deprecated
 public interface IServletProvider
 {
   void registerServlets(IServletContainer servletContainer);

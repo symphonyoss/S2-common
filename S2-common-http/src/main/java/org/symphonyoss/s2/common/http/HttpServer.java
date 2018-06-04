@@ -31,6 +31,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.s2.common.fault.ProgramFault;
 
+/**
+ * 
+ *
+ * @deprecated Moved to org.symphonyoss.s2.fugue.http
+ * 
+ * @author Bruce Skingle
+ *
+ */
+@Deprecated
 public class HttpServer
 {
   private static final Logger log_ = LoggerFactory.getLogger(HttpServer.class);

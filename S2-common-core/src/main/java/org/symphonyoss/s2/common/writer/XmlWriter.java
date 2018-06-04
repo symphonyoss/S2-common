@@ -34,10 +34,7 @@ import java.util.Stack;
  * A Writer based on IndentedWriter which adds functions to format XML.
  * 
  * @author Bruce Skingle
- *
- * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
-@Deprecated
 public class XmlWriter extends IndentedWriter
 {
 	private		Stack<String>		elementStack_ = new Stack<String>();

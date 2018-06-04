@@ -26,10 +26,7 @@ package org.symphonyoss.s2.common.writer;
 /**
  * 
  * @author Bruce Skingle
- *
- * @deprecated Use org.symphonyoss.s2.common.dom instead
  */
-@Deprecated
 public interface IXmlWritable
 {
 	void print(XmlWriter out);
