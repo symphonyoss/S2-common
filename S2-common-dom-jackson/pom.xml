@@ -62,8 +62,21 @@
   <dependencies>
     <dependency>
       <groupId>org.symphonyoss.s2.common</groupId>
+      <artifactId>S2-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.symphonyoss.s2.common</groupId>
       <artifactId>S2-common-dom</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

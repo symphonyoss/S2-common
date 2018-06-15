@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>org.symphonyoss.s2</groupId>
 		<artifactId>S2-super-pom</artifactId>
-		<version>0.1.5</version>
+		<version>0.1.8-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.symphonyoss.s2.common</groupId>
@@ -113,11 +113,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-		</dependency>
-	</dependencies>
 </project>

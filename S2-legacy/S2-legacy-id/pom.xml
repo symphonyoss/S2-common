@@ -22,48 +22,53 @@
     ~ under the License.
   -->
 
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.symphonyoss.s2.common</groupId>
-    <artifactId>S2-legacy</artifactId>
-    <version>0.1.22-SNAPSHOT</version>
-  </parent>
-  <artifactId>S2-legacy-id</artifactId>
-  
-  <build>
-      <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  
-  <dependencies>
-      <dependency>
-      <groupId>org.symphonyoss.s2.common</groupId>
-      <artifactId>S2-common-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.symphonyoss.s2.common</groupId>
+		<artifactId>S2-legacy</artifactId>
+		<version>0.1.22-SNAPSHOT</version>
+	</parent>
+	<artifactId>S2-legacy-id</artifactId>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.symphonyoss.s2.common</groupId>
+			<artifactId>S2-common-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+	</dependencies>
 </project>
