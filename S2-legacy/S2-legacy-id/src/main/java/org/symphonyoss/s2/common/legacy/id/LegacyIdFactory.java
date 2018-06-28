@@ -64,6 +64,19 @@ public class LegacyIdFactory
   }
 
   /**
+   * Create a 2.0 Hash (ID) for the given signal messageId.
+   *
+   * @param tenantId    The tenant ID of the pod where this event originated.
+   * @param messageId   A messageId
+   * @return            The 2.0 object ID for the mirror of the given ID.
+   * @throws NullPointerException if any parameter is null.
+   */
+  public Hash signalId(String tenantId, ImmutableByteArray messageId)
+  {
+    return HashProvider.getCompositeHashOf(LegacyId.SIGNAL_ID, tenantId, messageId);
+  }
+
+  /**
    * Create a 2.0 Hash (ID) for the given messageId.
    *
    * @param tenantId    The tenant ID of the pod where this event originated.
@@ -114,6 +127,20 @@ public class LegacyIdFactory
   {
     return HashProvider.getCompositeHashOf(LegacyId.THREAD_ID, tenantId, threadId);
   }
+  
+ /**
+  * Create a 2.0 Hash (ID) for an object status of the given messageId for the given userId.
+  *
+  * @param tenantId    The tenant ID of the pod where this event originated.
+  * @param messageId   The id of the message read.
+  * @param threadId    The threadId of the message read.
+  * @return            The 2.0 object ID for the mirror of the given ID.
+  * @throws NullPointerException if any parameter is null.
+  */
+ public Hash objectStatusId(String tenantId, ImmutableByteArray messageId, ImmutableByteArray threadId)
+ {
+   return HashProvider.getCompositeHashOf(LegacyId.OBJECT_STATUS_ID, tenantId, messageId, threadId);
+ }
 
   /**
    * Create a 2.0 Hash (ID) for the read receipt of the given messageId for the given userId.

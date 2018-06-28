@@ -40,6 +40,7 @@ public class LegacyId
   public static final String OBJECT_STATUS_MESSAGE        = "ObjectStatusMessage";
 
   public static final String MESSAGE_ID                   = "MessageID";
+  public static final String OBJECT_STATUS_ID             = "ObjectStatusID";
   public static final String THREAD_ID                    = "ThreadID";
   public static final String READ_RECEIPT_ID              = "ReadReceiptID";
   public static final String DELIVERY_RECEIPT_ID          = "DeliveryReceiptID";
@@ -49,4 +50,5 @@ public class LegacyId
   public static final String DOWNLOAD_ATTACHMENT_EVENT_ID = "DownloadAttachmentEventID";
   public static final String LIKE_EVENT_ID                = "LikeEventID";
   public static final String USER_ID                      = "UserID";
+  public static final String SIGNAL_ID                    = "SignalID";
 }
