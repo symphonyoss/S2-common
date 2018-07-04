@@ -377,4 +377,44 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
     names_.clear();
     sortedNames_.clear();
   }
+  
+  /**
+   * Add all attributes of the given object to this object.
+   * 
+   * @param other Another object to merge with the current object.
+   * 
+   * @return this (fluent method).
+   */
+  public MutableJsonObject addAll(MutableJsonObject other)
+  {
+    Iterator<String> it = other.getNameIterator();
+    
+    while(it.hasNext())
+    {
+      String name = it.next();
+      IJsonDomNode element = other.get(name);
+      
+      if(element instanceof IJsonObject)
+      {
+        IJsonDomNode localElement = get(name);
+        
+        if(localElement instanceof IJsonObject)
+        {
+          // The current is an object so merge the child objects
+          ((MutableJsonObject) localElement).addAll((MutableJsonObject) element);
+        }
+        else
+        {
+          // The current attribute is not an object (or is not present) so replace whatever is there with the new object.
+          add(name, element);
+        }
+      }
+      else
+      {
+        add(name, element);
+      }
+    }
+    
+    return this;
+  }
 }
