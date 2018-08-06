@@ -387,31 +387,63 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
    */
   public MutableJsonObject addAll(MutableJsonObject other)
   {
+    return addAll(other, null);
+    
+  }
+
+  /**
+   * Add all attributes of the given object to this object.
+   * 
+   * The ignorePrefix is intended to allow for the use of names starting with a hash to be ignored
+   * (treated as comments).
+   * 
+   * @param other Another object to merge with the current object.
+   * @param ignorePrefix If non-null then all elements with names starting with this value are ignored.
+   * 
+   * @return this (fluent method).
+   */
+  public MutableJsonObject addAll(MutableJsonObject other, String ignorePrefix)
+  {
     Iterator<String> it = other.getNameIterator();
     
     while(it.hasNext())
     {
       String name = it.next();
-      IJsonDomNode element = other.get(name);
       
-      if(element instanceof IJsonObject)
+
+      if(ignorePrefix == null || !name.startsWith(ignorePrefix))
       {
-        IJsonDomNode localElement = get(name);
+        IJsonDomNode element = other.get(name);
         
-        if(localElement instanceof IJsonObject)
+        if(element instanceof IJsonObject)
         {
-          // The current is an object so merge the child objects
-          ((MutableJsonObject) localElement).addAll((MutableJsonObject) element);
+          IJsonDomNode localElement = get(name);
+          
+          if(localElement instanceof IJsonObject)
+          {
+            // The current is an object so merge the child objects
+            ((MutableJsonObject) localElement).addAll((MutableJsonObject) element, ignorePrefix);
+          }
+          else
+          {
+            // The current attribute is not an object (or is not present) so replace whatever is there with the new object.
+            
+            if(ignorePrefix == null)
+              add(name, element);
+            else
+            {
+              MutableJsonObject newObject = new MutableJsonObject();
+              
+              add(name, newObject);
+              
+              newObject.addAll((MutableJsonObject) element, ignorePrefix);
+            }
+          }
         }
         else
         {
-          // The current attribute is not an object (or is not present) so replace whatever is there with the new object.
           add(name, element);
         }
-      }
-      else
-      {
-        add(name, element);
       }
     }
     

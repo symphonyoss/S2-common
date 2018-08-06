@@ -84,6 +84,60 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
     return get(name);
   }
   
+  @Override
+  public IJsonObject<?> getRequiredObject(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IJsonObject)
+      return (IJsonObject<?>) node;
+    
+    throw new IllegalStateException("\"" + name + "\" is not an object");
+  }
+  
+  @Override
+  public String getString(String name, String defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IStringProvider)
+      return ((JsonString) node).getValue();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a String");
+  }
+  
+  @Override
+  public String getRequiredString(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IStringProvider)
+      return ((JsonString) node).getValue();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a String");
+  }
+
+  /**
+   * Return the string value of the given field.
+   * 
+   * @param name The name of the required field.
+   * 
+   * @return The value of the field.
+   * 
+   * @throws InvalidValueException if the field does not exist or is not a string value.
+   * 
+   * @deprecated call getRequiredString() instead.
+   */
+  @Deprecated
   public String getString(String name) throws InvalidValueException
   {
     N node = get(name);

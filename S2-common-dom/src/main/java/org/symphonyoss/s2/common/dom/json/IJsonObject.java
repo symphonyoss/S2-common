@@ -25,6 +25,7 @@ package org.symphonyoss.s2.common.dom.json;
 
 import java.util.Iterator;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface IJsonObject<N extends IJsonDomNode> extends IJsonDomNode
@@ -34,4 +35,38 @@ public interface IJsonObject<N extends IJsonDomNode> extends IJsonDomNode
   Iterator<String> getNameIterator();
   int getMaxNameLen();
   boolean containsKey(String name);
+  
+  /**
+   * Return the string value of the given field.
+   * 
+   * @param name The name of the required field.
+   * 
+   * @return The value of the field.
+   * 
+   * @throws IllegalStateException if the field does not exist or is not a string value.
+   */
+  @Nonnull String  getRequiredString(@Nonnull String name);
+  
+  /**
+   * Return the string value of the given field.
+   * 
+   * @param name The name of the field.
+   * @param defaultValue The value to be returned if the field does not exist.
+   * 
+   * @return The value of the field, or the defaultValue if it does not exist.
+   * 
+   * @throws IllegalStateException if the field exists but is not a string value.
+   */
+  @Nullable String  getString(@Nonnull String name, @Nullable String defaultValue);
+  
+  /**
+   * Return the object field whose name is given.
+   * 
+   * @param name The name of the required field.
+   * 
+   * @return The value of the field.
+   * 
+   * @throws IllegalStateException if the field does not exist or is not an object.
+   */
+  @Nonnull IJsonObject<?>  getRequiredObject(@Nonnull String name);
 }
