@@ -395,7 +395,7 @@ public class Hash implements Comparable<Hash>
   @Override
   public @Nonnull String toString()
   {
-    return hashBytes_.toBase64UrlSafeString();
+    return hashBytes_.toBase64String();
   }
 
   /**

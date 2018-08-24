@@ -103,7 +103,7 @@ public class TestHash
     
     hash = new Hash(byteValue);
     
-    if(!urlSafeBase64Value.equals(hash.toString()))
+    if(!base64Value.equals(hash.toString()))
       throw new AssertionFailedError("String conversion test failed");
     
     if(hash.hashCode() != hash2.hashCode())

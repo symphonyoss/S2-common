@@ -33,7 +33,7 @@ public class TestLegacyIdFactory
 {
   private static final String TENANT_ID = "MyTenant";
   private static final byte[] MESSAGE_ID = Base64.decodeBase64("xjbP0HZYa8xSyPqH19BFxX///p49T8mWbQ==");
-  private static final Object EXPECTED = "NTdNYe1p6iQDVUdq3rRJWG77_PLCq7iMwYPLO-dqS4sBAQ";
+  private static final Object EXPECTED = "NTdNYe1p6iQDVUdq3rRJWG77/PLCq7iMwYPLO+dqS4sBAQ==";
   
   private final LegacyIdFactory factory_ = new LegacyIdFactory();
   

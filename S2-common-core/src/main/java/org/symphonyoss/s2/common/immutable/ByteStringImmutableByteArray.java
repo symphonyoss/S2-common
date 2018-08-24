@@ -42,39 +42,41 @@ import com.google.protobuf.ByteString;
 @Immutable
 class ByteStringImmutableByteArray extends ImmutableByteArray
 {
-  private final ByteString bytes_;
+  private final ByteString byteString_;
+  private final byte[]     bytes_;
   private String           stringValue_;
   private String           base64UrlSafeValue_;
   private String           base64Value_;
 
-  ByteStringImmutableByteArray(ByteString bytes)
+  ByteStringImmutableByteArray(ByteString byteString)
   {
-    bytes_ = bytes;
+    byteString_ = byteString;
+    bytes_ = byteString_.toByteArray();
   }
 
   @Override
   public Reader createReader(Charset charset)
   {
-    return new ByteStringReader(bytes_, charset);
+    return new ByteStringReader(byteString_, charset);
   }
 
   @Override
   public InputStream getInputStream()
   {
-    return new ByteStringInputStream(bytes_);
+    return new ByteStringInputStream(byteString_);
   }
 
   @Override
   public void write(OutputStream out) throws IOException
   {
-    bytes_.writeTo(out);
+    byteString_.writeTo(out);
   }
 
   @Override
   public String toString()
   {
     if(stringValue_ == null)
-      stringValue_ = new String(bytes_.toByteArray(), StandardCharsets.UTF_8); // involves 2 copies, sigh.
+      stringValue_ = new String(bytes_, StandardCharsets.UTF_8);
     
     return stringValue_;
   }
@@ -83,7 +85,7 @@ class ByteStringImmutableByteArray extends ImmutableByteArray
   public String toBase64UrlSafeString()
   {
     if(base64UrlSafeValue_ == null)
-      base64UrlSafeValue_ = Base64.encodeBase64URLSafeString(toString().getBytes()); // double copy is unavoidable, may as well set string value in the process
+      base64UrlSafeValue_ = Base64.encodeBase64URLSafeString(bytes_);
     
     return base64UrlSafeValue_;
   }
@@ -92,7 +94,7 @@ class ByteStringImmutableByteArray extends ImmutableByteArray
   public String toBase64String()
   {
     if(base64Value_ == null)
-      base64Value_ = Base64.encodeBase64String(toString().getBytes()); // double copy is unavoidable, may as well set string value in the process
+      base64Value_ = Base64.encodeBase64String(bytes_);
     
     return base64Value_;
   }
@@ -100,37 +102,37 @@ class ByteStringImmutableByteArray extends ImmutableByteArray
   @Override
   public Iterator<Byte> iterator()
   {
-    return bytes_.iterator();
+    return byteString_.iterator();
   }
 
   @Override
   public byte[] toByteArray()
   {
-    return bytes_.toByteArray();
+    return byteString_.toByteArray();
   }
 
   @Override
   public ByteString toByteString()
   {
-    return bytes_;
+    return byteString_;
   }
 
   @Override
   public int length()
   {
-    return bytes_.size();
+    return byteString_.size();
   }
 
   @Override
   public byte byteAt(int index)
   {
-    return bytes_.byteAt(index);
+    return byteString_.byteAt(index);
   }
 
   @Override
   public void arraycopy(int index, byte[] dest, int destPos, int length)
   {
     for(int i=0 ; i<length ; i++)
-      dest[destPos++] = bytes_.byteAt(index++);
+      dest[destPos++] = byteString_.byteAt(index++);
   }
 }
