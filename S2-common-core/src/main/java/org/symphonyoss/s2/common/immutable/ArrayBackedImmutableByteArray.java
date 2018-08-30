@@ -75,6 +75,24 @@ class ArrayBackedImmutableByteArray extends ImmutableByteArray
     bytes_ = stringValue_.getBytes(StandardCharsets.UTF_8);
   }
 
+  public ArrayBackedImmutableByteArray(InputStream in, int contentLength) throws IOException
+  {
+    bytes_ = new byte[contentLength];
+    int offset=0;
+    int remaining = contentLength;
+    int nbytes;
+    
+    while(remaining > 0)
+    {
+      nbytes = Math.min(1024, remaining);
+      
+      nbytes = in.read(bytes_, offset, nbytes);
+      
+      offset += nbytes;
+      remaining -= nbytes;
+    }
+  }
+
   @Override
   public Reader createReader(Charset charset)
   {

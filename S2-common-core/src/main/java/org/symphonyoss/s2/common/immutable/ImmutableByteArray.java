@@ -88,6 +88,20 @@ public abstract class ImmutableByteArray implements Iterable<Byte>
   {
     return new ArrayBackedImmutableByteArray(string);
   }
+
+  /**
+   * Return an ImmutableByteArray containing the given data.
+   * 
+   * @param in              An inputStream containing the data
+   * @param contentLength   The length of the data
+   * 
+   * @return An ImmutableByteArray containing the given data.
+   * @throws IOException if the content cannot be read
+   */
+  public static ImmutableByteArray newInstance(InputStream in, int contentLength) throws IOException
+  {
+    return new ArrayBackedImmutableByteArray(in, contentLength);
+  }
   
   /**
    * Return an ImmutableByteArray containing the given data.
