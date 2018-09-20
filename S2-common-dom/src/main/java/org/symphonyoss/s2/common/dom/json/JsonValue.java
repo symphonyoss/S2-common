@@ -32,6 +32,14 @@ import javax.annotation.concurrent.Immutable;
 import org.symphonyoss.s2.common.dom.DomWriter;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
+/**
+ * An immutable JsonDomNode for a simple value.
+ * 
+ * @author Bruce Skingle
+ *
+ * @param <T> The type of the value
+ * @param <N> The concrete type of the node so that fluent methods are possible.
+ */
 @Immutable
 public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomNode
 {
@@ -40,6 +48,12 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
   private final @Nonnull String             asString_;
   private final @Nonnull ImmutableByteArray asBytes_;
   
+  /**
+   * Constructor.
+   * 
+   * @param value       The typed value.
+   * @param quotedValue The string value as it appears in JSON, with quotes if necessary.
+   */
   public JsonValue(@Nonnull T value, @Nonnull String quotedValue)
   {
     value_ = value;
@@ -60,11 +74,19 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
     return this;
   }
 
+  /**
+   * 
+   * @return the typed value.
+   */
   public @Nonnull T getValue()
   {
     return value_;
   }
 
+  /**
+   * 
+   * @return the JSON string value with quotes if necessary.
+   */
   public @Nonnull String getQuotedValue()
   {
     return quotedValue_;
@@ -99,7 +121,7 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
   @Override
   public boolean equals(Object other)
   {
-    return other instanceof JsonValue && value_.equals(((JsonValue)other).value_);
+    return other instanceof JsonValue && value_.equals(((JsonValue<?,?>)other).value_);
   }
 
   @Override
