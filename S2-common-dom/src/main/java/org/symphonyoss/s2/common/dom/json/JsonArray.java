@@ -71,10 +71,18 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
     
     while(it.hasNext())
     {
-      T value = TypeAdaptor.adapt(type, it.next());
+      N node = it.next();
       
-      if(!set.add(value))
-        throw new InvalidValueException("Duplicate value in set input.");
+      // TODO: figure out error / warning handling and put this check back in
+      if(!(node instanceof JsonNull))
+      {
+        T value = TypeAdaptor.adapt(type, node);
+        
+        set.add(value);
+        
+  //      if(!set.add(value))
+  //        throw new InvalidValueException("Duplicate value in set input.");
+      }
     }
     return  ImmutableSet.copyOf(set);
   }
