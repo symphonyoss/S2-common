@@ -103,6 +103,12 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
     
     return result;
   }
+  
+  @Override
+  public MutableJsonObject  mutify()
+  {
+    return newMutableCopy();
+  }
 
   @Override
   public int getMaxNameLen()

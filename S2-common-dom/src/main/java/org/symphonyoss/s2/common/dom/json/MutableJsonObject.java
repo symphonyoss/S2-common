@@ -51,6 +51,12 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
   }
   
   @Override
+  public MutableJsonObject  mutify()
+  {
+    return this;
+  }
+  
+  @Override
   public MutableJsonObject newMutableCopy()
   {
     MutableJsonObject result = new MutableJsonObject();
@@ -385,7 +391,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
    * 
    * @return this (fluent method).
    */
-  public MutableJsonObject addAll(MutableJsonObject other)
+  public MutableJsonObject addAll(JsonObject<?> other)
   {
     return addAll(other, null);
     
@@ -402,7 +408,7 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
    * 
    * @return this (fluent method).
    */
-  public MutableJsonObject addAll(MutableJsonObject other, String ignorePrefix)
+  public MutableJsonObject addAll(JsonObject<?> other, String ignorePrefix)
   {
     Iterator<String> it = other.getNameIterator();
     
@@ -415,28 +421,31 @@ public class MutableJsonObject extends JsonObject<IJsonDomNode> implements IMuta
       {
         IJsonDomNode element = other.get(name);
         
-        if(element instanceof IJsonObject)
+        if(element instanceof JsonObject)
         {
           IJsonDomNode localElement = get(name);
           
-          if(localElement instanceof IJsonObject)
+          if(localElement instanceof JsonObject)
           {
             // The current is an object so merge the child objects
-            ((MutableJsonObject) localElement).addAll((MutableJsonObject) element, ignorePrefix);
+            
+            ((JsonObject<?>)localElement).mutify().addAll((JsonObject<?>) element, ignorePrefix);
           }
           else
           {
             // The current attribute is not an object (or is not present) so replace whatever is there with the new object.
             
             if(ignorePrefix == null)
+            {
               add(name, element);
+            }
             else
             {
               MutableJsonObject newObject = new MutableJsonObject();
               
               add(name, newObject);
               
-              newObject.addAll((MutableJsonObject) element, ignorePrefix);
+              newObject.addAll((JsonObject<?>) element, ignorePrefix);
             }
           }
         }

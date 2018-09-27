@@ -24,13 +24,25 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
+import org.symphonyoss.s2.common.dom.IBooleanProvider;
+import org.symphonyoss.s2.common.dom.IByteStringProvider;
+import org.symphonyoss.s2.common.dom.IDoubleProvider;
+import org.symphonyoss.s2.common.dom.IFloatProvider;
+import org.symphonyoss.s2.common.dom.IIntegerProvider;
+import org.symphonyoss.s2.common.dom.ILongProvider;
 import org.symphonyoss.s2.common.dom.IStringProvider;
+import org.symphonyoss.s2.common.dom.TypeAdaptor;
 import org.symphonyoss.s2.common.exception.InvalidValueException;
+
+import com.google.protobuf.ByteString;
 
 public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<N>
 {
@@ -38,6 +50,8 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
   public static final String      CLOSE_QUOTE  = "\":";
   public static final int         QUOTE_MARGIN = OPEN_QUOTE.length() + CLOSE_QUOTE.length() + 1;
 
+  public abstract MutableJsonObject  mutify();
+  
   @Override
   public JsonObject<N> writeTo(DomWriter writer, @Nullable String terminator) throws IOException
   {
@@ -84,18 +98,31 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
     return get(name);
   }
   
+  
+  
   @Override
-  public IJsonObject<?> getRequiredObject(String name)
+  public IJsonObject<?> getObject(String name)
   {
     N node = get(name);
     
     if(node == null)
-      throw new IllegalStateException("\"" + name + "\" does not exist");
+      return null;
     
     if(node instanceof IJsonObject)
       return (IJsonObject<?>) node;
     
     throw new IllegalStateException("\"" + name + "\" is not an object");
+  }
+
+  @Override
+  public IJsonObject<?> getRequiredObject(String name)
+  {
+    IJsonObject<?> object = getObject(name);
+    
+    if(object == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    return object;
   }
   
   @Override
@@ -107,7 +134,7 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
       return defaultValue;
     
     if(node instanceof IStringProvider)
-      return ((JsonString) node).getValue();
+      return ((IStringProvider) node).asString();
     
     throw new IllegalStateException("\"" + name + "\" is not a String");
   }
@@ -121,9 +148,177 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
       throw new IllegalStateException("\"" + name + "\" does not exist");
     
     if(node instanceof IStringProvider)
-      return ((JsonString) node).getValue();
+      return ((IStringProvider) node).asString();
     
     throw new IllegalStateException("\"" + name + "\" is not a String");
+  }
+  
+  @Override
+  public Integer getInteger(String name, Integer defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IIntegerProvider)
+      return ((IIntegerProvider) node).asInteger();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Integer");
+  }
+  
+  @Override
+  public Integer getRequiredInteger(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IIntegerProvider)
+      return ((IIntegerProvider) node).asInteger();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Integer");
+  }
+  
+  @Override
+  public Long getLong(String name, Long defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof ILongProvider)
+      return ((ILongProvider) node).asLong();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Long");
+  }
+  
+  @Override
+  public Long getRequiredLong(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof ILongProvider)
+      return ((ILongProvider) node).asLong();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Long");
+  }
+  
+  @Override
+  public Float getFloat(String name, Float defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IFloatProvider)
+      return ((IFloatProvider) node).asFloat();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Float");
+  }
+  
+  @Override
+  public Float getRequiredFloat(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IFloatProvider)
+      return ((IFloatProvider) node).asFloat();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Float");
+  }
+  
+  @Override
+  public Double getDouble(String name, Double defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IDoubleProvider)
+      return ((IDoubleProvider) node).asDouble();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Double");
+  }
+  
+  @Override
+  public Double getRequiredDouble(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IDoubleProvider)
+      return ((IDoubleProvider) node).asDouble();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Double");
+  }
+  
+  @Override
+  public ByteString getByteString(String name, ByteString defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IByteStringProvider)
+      return ((IByteStringProvider) node).asByteString();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a ByteString");
+  }
+  
+  @Override
+  public ByteString getRequiredByteString(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IByteStringProvider)
+      return ((IByteStringProvider) node).asByteString();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a ByteString");
+  }
+  
+  @Override
+  public Boolean getBoolean(String name, Boolean defaultValue)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      return defaultValue;
+    
+    if(node instanceof IBooleanProvider)
+      return ((IBooleanProvider) node).asBoolean();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Boolean");
+  }
+  
+  @Override
+  public Boolean getRequiredBoolean(String name)
+  {
+    N node = get(name);
+    
+    if(node == null)
+      throw new IllegalStateException("\"" + name + "\" does not exist");
+    
+    if(node instanceof IBooleanProvider)
+      return ((IBooleanProvider) node).asBoolean();
+    
+    throw new IllegalStateException("\"" + name + "\" is not a Boolean");
   }
 
   /**
@@ -146,8 +341,22 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
       throw new InvalidValueException("\"" + name + "\" does not exist");
     
     if(node instanceof IStringProvider)
-      return ((JsonString) node).getValue();
+      return ((IStringProvider) node).asString();
     
     throw new InvalidValueException("\"" + name + "\" is not a String");
+  }
+
+  public <T> List<T> getListOf(Class<T> type, String name) throws InvalidValueException
+  {
+    List<T> result = new LinkedList<>();
+    IJsonDomNode node = get(name); 
+    
+    if(node instanceof IJsonArray)
+    {
+      for(IJsonDomNode v : ((IJsonArray<?>)node))
+        result.add( TypeAdaptor.adapt(type, v));
+    }
+    
+    return result;
   }
 }
