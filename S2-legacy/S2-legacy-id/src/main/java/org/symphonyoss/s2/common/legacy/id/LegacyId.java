@@ -51,4 +51,5 @@ public class LegacyId
   public static final String LIKE_EVENT_ID                = "LikeEventID";
   public static final String USER_ID                      = "UserID";
   public static final String SIGNAL_ID                    = "SignalID";
+  public static final String PRESENCE_CHANGE_ID           = "PresenceChangeID";
 }
