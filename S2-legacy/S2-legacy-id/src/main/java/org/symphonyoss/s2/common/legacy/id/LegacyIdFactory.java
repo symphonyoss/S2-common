@@ -55,12 +55,27 @@ public class LegacyIdFactory
   /**
    * Create a 2.0 Hash (ID) for the given userId.
    *
+   * @param tenantId    The tenant ID of the pod to which the user belongs.
    * @param userId      An external userId
    * @return            The 2.0 object ID for the mirror of the given ID.
    */
-  public Hash userId(long userId)
+  public Hash userId(String tenantId, long userId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, userId);
+    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, tenantId, userId);
+  }
+  
+  /**
+   * Create a 2.0 Hash (ID) for the given userId, as seen from another tenant.
+   *
+   * @param subjectTenantId    The tenant ID of the pod to which the user belongs.
+   * @param subjectUserId      An external userId
+   * @param viewTenantId       The tenant ID of the pod from which this view is visible.
+   * 
+   * @return            The 2.0 object ID for the mirror of the given ID.
+   */
+  public Hash externalUserId(String subjectTenantId, long subjectUserId, String viewTenantId)
+  {
+    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, subjectTenantId, subjectUserId, viewTenantId);
   }
 
   /**
