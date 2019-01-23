@@ -43,6 +43,23 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
  * where it says "originating pod" it means the pod where the event originates which may
  * be different from the pod where the message originated.
  *
+ * User IDs
+ * ========
+ * User IDs in SBE are very confusing, there is a 36 bit per pod user Id and a 27 bit podId
+ * which are OR'ed together to form a single 63 bit value which is stored in a long integer,
+ * the most significant (sign) bit, in bit position 0, is always zero the podId is in bit
+ * positions 1-28 and the per tenant user Id is in bit positions 29-63.
+ * 
+ * Unfortunately we defined 2 pods with podId 1 so these userIds are not globally unique and
+ * we therefore have a separate "external podId" and code in
+ * https://github.com/SymphonyOSF/SBE/blob/dev/commons/runtimecommons/src/main/java/com/symphony/runtime/commons/util/UserIDUtil.java
+ * to manipulate these IDs to replace the "internal podId" with an "externalPodId"
+ * 
+ * In the 2.0 space we use a globally unique hash to refer to a user called the principalId
+ * which is constructed from the low order 36 bits of the SBE userId (so it does not matter if we
+ * pass an internal or external user ID) as well as the tenantId and a constant value to ensure 
+ * a principalId cannot collide with some other type of ID. 
+ * 
  * Note that where we refer to userId in this class that we expect the "external" userId
  * which already includes the tenantId and is already globally unique. In this case the
  * tenantId is not included again.
@@ -53,22 +70,35 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 public class LegacyIdFactory
 {
   /**
+   * Extract the local user part from an internal or external userId.
+   * 
+   * @param internalOrExternalUserId  An SBE user ID, it makes no difference
+   *                                  if its the internal or external version as
+   *                                  we will extract away the podId part.
+   * @return                          The local user part of the given ID.
+   */
+  public static long extractUserId(long internalOrExternalUserId)
+  {
+    return internalOrExternalUserId & 0x8FFFFFFFFL;
+  }
+  
+  /**
    * Create a 2.0 Hash (ID) for the given userId.
    *
    * @param tenantId    The tenant ID of the pod to which the user belongs.
-   * @param userId      An external userId
+   * @param internalOrExternalUserId An SBE userId
    * @return            The 2.0 object ID for the mirror of the given ID.
    */
-  public Hash userId(String tenantId, long userId)
+  public Hash userId(String tenantId, long internalOrExternalUserId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, tenantId, userId);
+    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, tenantId, extractUserId(internalOrExternalUserId));
   }
   
   /**
    * Create a 2.0 Hash (ID) for the given userId, as seen from another tenant.
    *
    * @param subjectTenantId    The tenant ID of the pod to which the user belongs.
-   * @param subjectUserId      An external userId
+   * @param subjectUserId      An internal or external userId
    * @param viewTenantId       The tenant ID of the pod from which this view is visible.
    * 
    * @return            The 2.0 object ID for the mirror of the given ID.
@@ -157,7 +187,7 @@ public class LegacyIdFactory
   }
   
  /**
-  * Create a 2.0 Hash (ID) for an object status of the given messageId for the given userId.
+  * Create a 2.0 Hash (ID) for an object status of the given messageId for the given tenantId.
   *
   * @param tenantId    The tenant ID of the pod where this event originated.
   * @param messageId   The id of the message read.
@@ -174,60 +204,60 @@ public class LegacyIdFactory
    * Create a 2.0 Hash (ID) for the read receipt of the given messageId for the given userId.
    *
    * @param tenantId    The tenant ID of the pod where this event originated.
-   * @param userId      The external (globally unique) user ID or the user who read the message.
+   * @param internalOrExternalUserId The SBE userId of the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash readReceiptId(String tenantId, long userId, byte[] messageId, byte[] threadId)
+  public Hash readReceiptId(String tenantId, long internalOrExternalUserId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
    * Create a 2.0 Hash (ID) for the read receipt of the given messageId for the given userId.
    *
    * @param tenantId    The tenant ID of the pod where this event originated.
-   * @param userId      The external (globally unique) user ID or the user who read the message.
+   * @param internalOrExternalUserId The SBE userId of the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash readReceiptId(String tenantId, long userId, ImmutableByteArray messageId, ImmutableByteArray threadId)
+  public Hash readReceiptId(String tenantId, long internalOrExternalUserId, ImmutableByteArray messageId, ImmutableByteArray threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
    * Create a 2.0 Hash (ID) for the delivery receipt of the given messageId for the given userId.
    *
    * @param tenantId    The tenant ID of the pod where this event originated.
-   * @param userId      The external (globally unique) user ID or the user who read the message.
+   * @param internalOrExternalUserId The SBE userId of the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash deliveryReceiptId(String tenantId, long userId, byte[] messageId, byte[] threadId)
+  public Hash deliveryReceiptId(String tenantId, long internalOrExternalUserId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
    * Create a 2.0 Hash (ID) for the delivery receipt of the given messageId for the given userId.
    *
    * @param tenantId    The tenant ID of the pod where this event originated.
-   * @param userId      The external (globally unique) user ID or the user who read the message.
+   * @param internalOrExternalUserId The SBE userId of the user who read the message.
    * @param messageId   The id of the message read.
    * @param threadId    The threadId of the message read.
    * @return            The 2.0 object ID for the mirror of the given ID.
    * @throws NullPointerException if any parameter is null.
    */
-  public Hash deliveryReceiptId(String tenantId, long userId, ImmutableByteArray messageId, ImmutableByteArray threadId)
+  public Hash deliveryReceiptId(String tenantId, long internalOrExternalUserId, ImmutableByteArray messageId, ImmutableByteArray threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, userId, messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
