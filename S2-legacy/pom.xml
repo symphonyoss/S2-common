@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.symphonyoss.s2.common</groupId>
     <artifactId>S2-common</artifactId>
-    <version>0.1.34</version>
+    <version>0.1.35-SNAPSHOT</version>
   </parent>
   <artifactId>S2-legacy</artifactId>
   <packaging>pom</packaging>
