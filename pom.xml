@@ -87,8 +87,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<source.code.version>1.7</source.code.version>
-		<target.code.version>1.7</target.code.version>
+		<source.code.version>1.8</source.code.version>
+		<target.code.version>1.8</target.code.version>
 	</properties>
 
 

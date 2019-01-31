@@ -45,53 +45,148 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
  *
  * User IDs
  * ========
- * User IDs in SBE are very confusing, there is a 36 bit per pod user Id and a 27 bit podId
+ * User IDs in SBE contain a 36 bit per pod user Id and a 27 bit podId
  * which are OR'ed together to form a single 63 bit value which is stored in a long integer,
  * the most significant (sign) bit, in bit position 0, is always zero the podId is in bit
  * positions 1-28 and the per tenant user Id is in bit positions 29-63.
  * 
- * Unfortunately we defined 2 pods with podId 1 so these userIds are not globally unique and
+ * Internal pod IDs are not unique so these userIds are not globally unique and
  * we therefore have a separate "external podId" and code in
  * https://github.com/SymphonyOSF/SBE/blob/dev/commons/runtimecommons/src/main/java/com/symphony/runtime/commons/util/UserIDUtil.java
  * to manipulate these IDs to replace the "internal podId" with an "externalPodId"
  * 
  * In the 2.0 space we use a globally unique hash to refer to a user called the principalId
- * which is constructed from the low order 36 bits of the SBE userId (so it does not matter if we
- * pass an internal or external user ID) as well as the tenantId and a constant value to ensure 
- * a principalId cannot collide with some other type of ID. 
+ * which is constructed from the external userId, i.e. the userId with the podId part replaced
+ * with the pod's externalPodId.
  * 
- * Note that where we refer to userId in this class that we expect the "external" userId
- * which already includes the tenantId and is already globally unique. In this case the
- * tenantId is not included again.
+ * This class takes an internal and external podId in its constructor which allows it to map internal userId
+ * values to their external equivalents where necessary. Where a userId value is passed into methods in this
+ * class it is always safe to pass either internal or external values.
  *
+ * 63 bit userId      0x7FFFFFFFFFFFFFFFL
+ *                      0111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111
+ * 27 bit podId       0x7FFFFFF000000000L
+ *                      0111 1111 1111 1111 1111 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000
+ * 36 bit user part   0x0000000FFFFFFFFFL
+ *                      0000 0000 0000 0000 0000 0000 0000 1111 1111 1111 1111 1111 1111 1111 1111 1111
  * @author Bruce Skingle
  *
  */
 public class LegacyIdFactory
 {
+  /** All bits which may be non-zero in an SBE userId */
+  public static final long USER_ID_MASK       = 0x7FFFFFFFFFFFFFFFL;  // 0111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1111
+  
+  /** Bits representing the pod part in an SBE userId */
+  public static final long USER_ID_POD_MASK   = 0x7FFFFFF000000000L;  // 0111 1111 1111 1111 1111 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000
+  
+  /** Bits representing the user part in an SBE userId */
+  public static final long USER_ID_USER_MASK  = 0x0000000FFFFFFFFFL;  // 0000 0000 0000 0000 0000 0000 0000 1111 1111 1111 1111 1111 1111 1111 1111 1111
+  
+  /** Number of bits by which the pod part of an SBE userId are shifted */
+  public static final int  USER_ID_POD_SHIFT  = 36;
+
+  private final IUserIdFunction userIdFunction_;
+  
   /**
-   * Extract the local user part from an internal or external userId.
+   * Constructor.
    * 
-   * @param internalOrExternalUserId  An SBE user ID, it makes no difference
-   *                                  if its the internal or external version as
-   *                                  we will extract away the podId part.
-   * @return                          The local user part of the given ID.
+   * @param internalPodId The pod's internal pod ID
+   * @param externalPodId The pod's external pod ID.
    */
-  public static long extractUserId(long internalOrExternalUserId)
+  public LegacyIdFactory(long internalPodId, long externalPodId)
   {
-    return internalOrExternalUserId & 0x8FFFFFFFFL;
+    /*
+     * If the internal and external pod IDs are the same, which they almost always are, then there is nothing to do, so
+     * we use a closure as an optimisation as it allows us to test for the common case once, here.
+     */
+    if(internalPodId == externalPodId)
+    {
+      // The internal and external IDs are the same, so this is the identity function.
+      
+      userIdFunction_ = (x) -> x;
+    }
+    else
+    {
+      final long internalPodIdPart = internalPodId << USER_ID_POD_SHIFT;
+      final long externalPodIdPart = externalPodId << USER_ID_POD_SHIFT;
+      
+      // If the podId is our internal podId then replace it with our external podId.
+      
+      userIdFunction_ = (internalOrExternalUserId) ->
+      {
+        if((internalOrExternalUserId & USER_ID_POD_MASK) == internalPodIdPart)
+        {
+          long e = externalPodIdPart;
+          
+          return (internalOrExternalUserId & USER_ID_USER_MASK) | externalPodIdPart;
+        }
+        else
+        {
+          return internalOrExternalUserId;
+        }
+      };
+    }
   }
+
+  /**
+   * Return the externalUserId for the given userId which may be internal or external.
+   * 
+   * @param internalOrExternalUserId A userId which may be internal or external.
+   * 
+   * @return The externalUserId for the given internalOrExternalUserId.
+   */
+  public long toExternalUserId(long internalOrExternalUserId)
+  {
+    return userIdFunction_.map(internalOrExternalUserId);
+  }
+
+//  /**
+//   * Extract the local user part from an internal or external userId.
+//   * 
+//   * @param internalOrExternalUserId  An SBE user ID, it makes no difference
+//   *                                  if its the internal or external version as
+//   *                                  we will extract away the podId part.
+//   * @return                          The local user part of the given ID.
+//   */
+//  public long extractUserId(long internalOrExternalUserId)
+//  {
+//    return internalOrExternalUserId & USER_ID_USER_MASK;
+//  }
+//  
+//
+//  /**
+//   * Extract the pod part from an internal or external userId.
+//   * 
+//   * @param internalOrExternalUserId  An SBE user ID.
+//   * @return                          The local user part of the given ID.
+//   */
+//  public long extractPodId(long internalOrExternalUserId)
+//  {
+//    return (internalOrExternalUserId & USER_ID_POD_MASK) >> USER_ID_POD_SHIFT;
+//  }
+//  
+//  /**
+//   * Extract the pod part from an internal or external userId.
+//   * 
+//   * @param internalOrExternalUserId  An SBE user ID.
+//   * @param podId                     The podId to overlay into the internalOrExternalUserId.
+//   * @return                          The local user part of the given ID.
+//   */
+//  public long replacePodId(long internalOrExternalUserId, long podId)
+//  {
+//    return (internalOrExternalUserId & USER_ID_POD_MASK) | (podId << USER_ID_POD_SHIFT);
+//  }
   
   /**
    * Create a 2.0 Hash (ID) for the given userId.
    *
-   * @param tenantId    The tenant ID of the pod to which the user belongs.
    * @param internalOrExternalUserId An SBE userId
    * @return            The 2.0 object ID for the mirror of the given ID.
    */
-  public Hash userId(String tenantId, long internalOrExternalUserId)
+  public Hash userId(long internalOrExternalUserId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, tenantId, extractUserId(internalOrExternalUserId));
+    return HashProvider.getCompositeHashOf(LegacyId.USER_ID, toExternalUserId(internalOrExternalUserId));
   }
   
   /**
@@ -212,7 +307,7 @@ public class LegacyIdFactory
    */
   public Hash readReceiptId(String tenantId, long internalOrExternalUserId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, toExternalUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
@@ -227,7 +322,7 @@ public class LegacyIdFactory
    */
   public Hash readReceiptId(String tenantId, long internalOrExternalUserId, ImmutableByteArray messageId, ImmutableByteArray threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.READ_RECEIPT_ID, tenantId, toExternalUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
@@ -242,7 +337,7 @@ public class LegacyIdFactory
    */
   public Hash deliveryReceiptId(String tenantId, long internalOrExternalUserId, byte[] messageId, byte[] threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, toExternalUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
@@ -257,7 +352,7 @@ public class LegacyIdFactory
    */
   public Hash deliveryReceiptId(String tenantId, long internalOrExternalUserId, ImmutableByteArray messageId, ImmutableByteArray threadId)
   {
-    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, extractUserId(internalOrExternalUserId), messageId, threadId);
+    return HashProvider.getCompositeHashOf(LegacyId.DELIVERY_RECEIPT_ID, tenantId, toExternalUserId(internalOrExternalUserId), messageId, threadId);
   }
 
   /**
