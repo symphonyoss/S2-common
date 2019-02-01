@@ -228,6 +228,19 @@ public class LegacyIdFactory
   {
     return HashProvider.getCompositeHashOf(LegacyId.PRESENCE_CHANGE_ID, tenantId, messageId);
   }
+
+  /**
+   * Create a 2.0 Hash (ID) for the given bookmark event.
+   *
+   * @param tenantId    The tenant ID of the pod where this event originated.
+   * @param messageId   A messageId
+   * @return            The 2.0 object ID for the mirror of the given ID.
+   * @throws NullPointerException if any parameter is null.
+   */
+  public Hash bookmarkId(String tenantId, ImmutableByteArray messageId)
+  {
+    return HashProvider.getCompositeHashOf(LegacyId.BOOKMARK_ID, tenantId, messageId);
+  }
   
   /**
    * Create a 2.0 Hash (ID) for the given messageId.

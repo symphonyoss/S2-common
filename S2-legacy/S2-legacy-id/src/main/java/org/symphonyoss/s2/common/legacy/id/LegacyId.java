@@ -52,4 +52,5 @@ public class LegacyId
   public static final String USER_ID                      = "UserID";
   public static final String SIGNAL_ID                    = "SignalID";
   public static final String PRESENCE_CHANGE_ID           = "PresenceChangeID";
+  public static final String BOOKMARK_ID                  = "BookmarkID";
 }
