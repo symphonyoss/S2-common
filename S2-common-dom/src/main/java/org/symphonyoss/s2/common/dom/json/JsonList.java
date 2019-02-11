@@ -28,13 +28,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 import com.google.common.collect.ImmutableList;
 
 public abstract class JsonList<N extends IJsonDomNode> extends JsonArray<N> implements IJsonList<N>
 {
-  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws InvalidValueException
+  public <T> ImmutableList<T> asImmutableListOf(Class<T> type)
   {
     List<T> list = new LinkedList<>();
     

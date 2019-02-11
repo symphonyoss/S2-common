@@ -26,9 +26,7 @@ package org.symphonyoss.s2.common.hash;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
-import org.symphonyoss.s2.common.fault.ProgramFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 /**
@@ -58,9 +56,9 @@ public class HashFactory
    * Construct a HashFactory for the given hash type.
    *  
    * @param typeId The hash type of the required factory
-   * @throws InvalidValueException If the given hash type is invalid.
+   * @throws IllegalArgumentException If the given hash type is invalid.
    */
-  public HashFactory(int typeId) throws InvalidValueException
+  public HashFactory(int typeId)
   {
     typeId_ = typeId;
     hashFunction_ = HashType.getHashType(typeId).createHashFunction();
@@ -84,14 +82,7 @@ public class HashFactory
    */
   public @Nonnull Hash getHashOf(byte[] bytes)
   {
-    try
-    {
-      return new Hash(typeId_, hashFunction_.digest(bytes));
-    }
-    catch (InvalidValueException e)
-    {
-      throw new ProgramFault("Unexpected hash error", e);
-    }
+    return new Hash(typeId_, hashFunction_.digest(bytes));
   }
   
   /**
@@ -102,17 +93,10 @@ public class HashFactory
    */
   public @Nonnull Hash   getHashOf(ImmutableByteArray bytes)
   {
-    try
-    {
-      for(byte b : bytes)
-        hashFunction_.update(b);
-      
-      return new Hash(typeId_, hashFunction_.digest());
-    }
-    catch (InvalidValueException e)
-    {
-      throw new ProgramFault("Unexpected hash error", e);
-    }
+    for(byte b : bytes)
+      hashFunction_.update(b);
+    
+    return new Hash(typeId_, hashFunction_.digest());
   }
   
   /**
@@ -151,15 +135,8 @@ public class HashFactory
       }
     }
     
-    try
-    {
-      byte[] rawDigestBytes = hashFunction_.digest();
-      
-      return new Hash(typeId_, rawDigestBytes);
-    }
-    catch (InvalidValueException e)
-    {
-      throw new ProgramFault("Unexpected hash error", e);
-    }
+    byte[] rawDigestBytes = hashFunction_.digest();
+    
+    return new Hash(typeId_, rawDigestBytes);
   }
 }

@@ -23,6 +23,8 @@
 
 package org.symphonyoss.s2.common.fault;
 
+import javax.annotation.Nullable;
+
 /**
  * Root class of the Fault hierarchy.
  * 
@@ -33,26 +35,56 @@ public abstract class AbstractFault extends RuntimeException
 {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Default constructor.
+   */
   public AbstractFault()
   {
   }
 
+  /**
+   * Constructor with message.
+   * 
+   * @param message A message describing the detail of the fault.
+   */
   public AbstractFault(String message)
   {
     super(message);
   }
 
+  /**
+   * Constructor with cause.
+   * 
+   * @param cause The underlying cause of the fault.
+   */
   public AbstractFault(Throwable cause)
   {
     super(cause);
   }
 
+  /**
+   * Constructor with message and cause.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   */
   public AbstractFault(String message, Throwable cause)
   {
     super(message, cause);
   }
 
-  public AbstractFault(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+  /**
+   * Constructor with message, cause, suppression enabled or disabled, and writable
+   * stack trace enabled or disabled.
+   *
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   * @param enableSuppression whether or not suppression is enabled
+   *                          or disabled
+   * @param writableStackTrace whether or not the stack trace should
+   *                           be writable
+   */
+  public AbstractFault(String message, @Nullable Throwable cause, boolean enableSuppression, boolean writableStackTrace)
   {
     super(message, cause, enableSuppression, writableStackTrace);
   }

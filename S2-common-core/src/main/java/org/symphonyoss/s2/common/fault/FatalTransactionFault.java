@@ -25,6 +25,8 @@ package org.symphonyoss.s2.common.fault;
 
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 /**
  * A type of TransactionFault resulting from an operation which
  * should not be retried.
@@ -36,31 +38,69 @@ public class FatalTransactionFault extends TransactionFault
 {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Default constructor.
+   */
   public FatalTransactionFault()
   {
   }
 
+  /**
+   * Constructor with message.
+   * 
+   * @param message A message describing the detail of the fault.
+   */
   public FatalTransactionFault(String message)
   {
     super(message);
   }
 
+  /**
+   * Constructor with message and multiple causes.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param parallelCauses A collection of causes which occured in parallel.
+   * 
+   * @see TransactionFault#create
+   */
   public FatalTransactionFault(String message, Collection<Exception> parallelCauses)
   {
     super(message, parallelCauses);
   }
 
+  /**
+   * Constructor with cause.
+   * 
+   * @param cause The underlying cause of the fault.
+   */
   public FatalTransactionFault(Throwable cause)
   {
     super(cause);
   }
 
+  /**
+   * Constructor with message and cause.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   */
   public FatalTransactionFault(String message, Throwable cause)
   {
     super(message, cause);
   }
 
-  public FatalTransactionFault(String message, Throwable cause, boolean enableSuppression,
+  /**
+   * Constructor with message, cause, suppression enabled or disabled, and writable
+   * stack trace enabled or disabled.
+   *
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   * @param enableSuppression whether or not suppression is enabled
+   *                          or disabled
+   * @param writableStackTrace whether or not the stack trace should
+   *                           be writable
+   */
+  public FatalTransactionFault(String message, @Nullable Throwable cause, boolean enableSuppression,
       boolean writableStackTrace)
   {
     super(message, cause, enableSuppression, writableStackTrace);

@@ -34,7 +34,6 @@ import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -63,7 +62,7 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
     return this;
   }
 
-  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws InvalidValueException
+  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type)
   {
     Set<T> set = new HashSet<>();
     
@@ -87,7 +86,7 @@ public abstract class JsonArray<N extends IJsonDomNode> implements IJsonArray<N>
     return  ImmutableSet.copyOf(set);
   }
   
-  public <T> ImmutableList<T> asImmutableListOf(Class<T> type) throws InvalidValueException
+  public <T> ImmutableList<T> asImmutableListOf(Class<T> type)
   {
     List<T> list = new LinkedList<>();
     

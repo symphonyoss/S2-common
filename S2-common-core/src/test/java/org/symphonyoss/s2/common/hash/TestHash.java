@@ -28,16 +28,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
-import org.symphonyoss.s2.common.hash.Hash;
-import org.symphonyoss.s2.common.hash.HashFactory;
 
 import junit.framework.AssertionFailedError;
 
 public class TestHash
 {
   @Test
-  public void testTypeId() throws InvalidValueException
+  public void testTypeId()
   {
     for(int i=1 ; i<3 ; i++)
     {
@@ -49,7 +46,7 @@ public class TestHash
   
   
   @Test
-  public void testCompositeHash() throws InvalidValueException
+  public void testCompositeHash()
   {
     String hexStringValue = "84CE13744E13E1DB83F0DFCF8811DB6B7FFFEC51B40A8496936CD0720D37B32811";
     String urlSafeBase64Value = "hM4TdE4T4duD8N_PiBHba3__7FG0CoSWk2zQcg03sygBAQ";

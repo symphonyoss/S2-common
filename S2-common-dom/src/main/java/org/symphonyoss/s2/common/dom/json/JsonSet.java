@@ -28,13 +28,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 import com.google.common.collect.ImmutableSet;
 
 public abstract class JsonSet<N extends IJsonDomNode> extends JsonArray<N> implements IJsonSet<N>
 {
-  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type) throws InvalidValueException
+  public <T> ImmutableSet<T> asImmutableSetOf(Class<T> type)
   {
     Set<T> set = new HashSet<>();
     
@@ -45,7 +44,7 @@ public abstract class JsonSet<N extends IJsonDomNode> extends JsonArray<N> imple
       T value = TypeAdaptor.adapt(type, it.next());
       
       if(!set.add(value))
-        throw new InvalidValueException("Duplicate value in set input.");
+        throw new IllegalArgumentException("Duplicate value in set input.");
     }
     return  ImmutableSet.copyOf(set);
   }

@@ -40,7 +40,6 @@ import org.symphonyoss.s2.common.dom.json.JsonNull;
 import org.symphonyoss.s2.common.dom.json.JsonString;
 import org.symphonyoss.s2.common.dom.json.MutableJsonList;
 import org.symphonyoss.s2.common.dom.json.MutableJsonObject;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
@@ -171,9 +170,9 @@ public class JacksonAdaptor
    * 
    * @return a MutableJsonObject representing the input.
    * 
-   * @throws InvalidValueException If the input is not a JSON Object.
+   * @throws IllegalArgumentException If the input is not a JSON Object.
    */
-  public static MutableJsonObject parseObject(ImmutableByteArray input) throws InvalidValueException
+  public static MutableJsonObject parseObject(ImmutableByteArray input)
   {
     try
     {
@@ -181,7 +180,7 @@ public class JacksonAdaptor
     }
     catch (ClassCastException | IOException e)
     {
-      throw new InvalidValueException("Unable to parse input", e);
+      throw new IllegalArgumentException("Unable to parse input", e);
     }
   }
   

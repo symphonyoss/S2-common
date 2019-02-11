@@ -25,6 +25,8 @@ package org.symphonyoss.s2.common.fault;
 
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 /**
  * A TransactionFault should be thrown when an error occurs which makes
  * it impossible to complete the current business transaction.
@@ -32,6 +34,8 @@ import java.util.Collection;
  * Where the code is being executed within the context of a thread pool,
  * the thread can be expected not to be terminated by this RuntimeException,
  * but the business transaction will fail and should not be retried.
+ * 
+ * This would include cases where an HTTP 500 Server Error status has been returned.
  * 
  * @author bruce.skingle
  *
@@ -81,10 +85,21 @@ public class TransactionFault extends AbstractFault
     return new TransactionFault(message, parallelCauses);
   }
   
+  /**
+   * Default constructor.
+   */
   public TransactionFault()
   {
   }
 
+  /**
+   * Constructor with message and multiple causes.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param parallelCauses A collection of causes which occured in parallel.
+   * 
+   * @see TransactionFault#create
+   */
   public TransactionFault(String message, Collection<Exception> parallelCauses)
   {
     super(message);
@@ -92,26 +107,57 @@ public class TransactionFault extends AbstractFault
     parallelCauses_ = parallelCauses;
   }
   
+  /**
+   * Constructor with message.
+   * 
+   * @param message A message describing the detail of the fault.
+   */
   public TransactionFault(String message)
   {
     super(message);
   }
 
+  /**
+   * Constructor with cause.
+   * 
+   * @param cause The underlying cause of the fault.
+   */
   public TransactionFault(Throwable cause)
   {
     super(cause);
   }
 
+  /**
+   * Constructor with message and cause.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   */
   public TransactionFault(String message, Throwable cause)
   {
     super(message, cause);
   }
 
-  public TransactionFault(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+  /**
+   * Constructor with message, cause, suppression enabled or disabled, and writable
+   * stack trace enabled or disabled.
+   *
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   * @param enableSuppression whether or not suppression is enabled
+   *                          or disabled
+   * @param writableStackTrace whether or not the stack trace should
+   *                           be writable
+   */
+  public TransactionFault(String message, @Nullable Throwable cause, boolean enableSuppression, boolean writableStackTrace)
   {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 
+  /**
+   * 
+   * @return The parallel causes of this fault.
+   */
   public Collection<Exception> getParallelCauses()
   {
     return parallelCauses_;

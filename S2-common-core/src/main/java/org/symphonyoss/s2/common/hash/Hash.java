@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.codec.binary.Base64;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
@@ -151,20 +150,20 @@ public class Hash implements Comparable<Hash>
    * @param typeId          The required Hash Type
    * @param rawDigestBytes  The raw digest value as a byte array.
    * 
-   * @throws InvalidValueException If the parameters are invalid.
+   * @throws IllegalArgumentException If the parameters are invalid.
    */
-  /* package */ Hash(int typeId, @Nonnull byte[] rawDigestBytes) throws InvalidValueException
+  /* package */ Hash(int typeId, @Nonnull byte[] rawDigestBytes)
   {
     if(rawDigestBytes == null || rawDigestBytes.length == 0)
-      throw new InvalidValueException("Null or zero length rawDigest passed, use ZERO_HASH if you really mean null");
+      throw new IllegalArgumentException("Null or zero length rawDigest passed, use ZERO_HASH if you really mean null");
     
     hashType_ = HashType.getHashType(typeId);
     
     if(rawDigestBytes.length != hashType_.byteLen_)
-      throw new InvalidValueException("Hash Type " + typeId + " digest values are " + 
+      throw new IllegalArgumentException("Hash Type " + typeId + " digest values are " + 
           hashType_.byteLen_ + " bytes but " + rawDigestBytes.length + " were passed.");
     
-    hashBytes_ = ImmutableByteArray.newInstance(hashType_.encode(typeId, rawDigestBytes));
+    hashBytes_ = ImmutableByteArray.newInstance(hashType_.encode(rawDigestBytes));
     hashString_ = convertBytesToString(hashType_, hashBytes_);
   }
   
@@ -172,9 +171,9 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the byte representation.
    * 
    * @param hashBytes    The byte[] representation of a Hash.
-   * @throws InvalidValueException  If the given string is not a valid hash representation.
+   * @throws IllegalArgumentException  If the given string is not a valid hash representation.
    */
-  public Hash(byte[] hashBytes) throws InvalidValueException
+  public Hash(byte[] hashBytes)
   {
     this(ImmutableByteArray.newInstance(hashBytes));
   }
@@ -183,9 +182,9 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the byte representation.
    * 
    * @param hashBytes    The byte[] representation of a Hash.
-   * @throws InvalidValueException  If the given string is not a valid hash representation.
+   * @throws IllegalArgumentException  If the given string is not a valid hash representation.
    */
-  public Hash(ImmutableByteArray hashBytes) throws InvalidValueException
+  public Hash(ImmutableByteArray hashBytes)
   {
     hashBytes_ = hashBytes;
     hashType_ = getTypeFromHashBytes(hashBytes);
@@ -196,9 +195,9 @@ public class Hash implements Comparable<Hash>
    * Create a Hash object from the ByteString representation.
    * 
    * @param byteString    The ByteString representation of a Hash.
-   * @throws InvalidValueException  If the given value is not a valid hash representation.
+   * @throws IllegalArgumentException  If the given value is not a valid hash representation.
    */
-  public Hash(ByteString byteString) throws InvalidValueException
+  public Hash(ByteString byteString)
   {
     hashBytes_ = ImmutableByteArray.newInstance(byteString);
     hashType_ = getTypeFromHashBytes(hashBytes_);
@@ -228,10 +227,10 @@ public class Hash implements Comparable<Hash>
   /*
    * Static because its called from constructors
    */
-  private static HashType getTypeFromHashBytes(ImmutableByteArray hashBytes) throws InvalidValueException
+  private static HashType getTypeFromHashBytes(ImmutableByteArray hashBytes)
   {
     if(hashBytes == null)
-      throw new InvalidValueException("Hash value is null");
+      throw new IllegalArgumentException("Hash value is null");
     
     if(hashBytes.length() == 0 || (hashBytes.length() == 1 && hashBytes.byteAt(0) == 0))
     {
@@ -239,13 +238,13 @@ public class Hash implements Comparable<Hash>
     }
     
     if(hashBytes.length() < 3)
-      throw new InvalidValueException("Hash value is too short");
+      throw new IllegalArgumentException("Hash value is too short");
     
     int len = hashBytes.length();
     int typeIdLen = 0xFF & hashBytes.byteAt(--len);  // now 0 <= typeIdLen <= 255
     
     if(typeIdLen > len)
-      throw new InvalidValueException("Hash value is too short");
+      throw new IllegalArgumentException("Hash value is too short");
     
     // Max valid typeIdLen is actually 15 but if the value passed is above that
     // we will fail to find the HashType in a moment so don't bother to check here
@@ -269,7 +268,7 @@ public class Hash implements Comparable<Hash>
     HashType hashType = HashType.getHashType(typeId);
     
     if(len != hashType.byteLen_)
-      throw new InvalidValueException("HashType " + typeId + " values are " + hashType.byteLen_ +
+      throw new IllegalArgumentException("HashType " + typeId + " values are " + hashType.byteLen_ +
           " bytes but this value is " + len + " bytes.");
     
     return hashType;
@@ -280,12 +279,12 @@ public class Hash implements Comparable<Hash>
    * 
    * @param hashHexString    The hex representation of an Hash.
    * @return The Hash represented by the given hex string.
-   * @throws InvalidValueException  If the given string is not a valid hash representation.
+   * @throws IllegalArgumentException  If the given string is not a valid hash representation.
    */
-  public static Hash ofHexString(String hashHexString) throws InvalidValueException
+  public static Hash ofHexString(String hashHexString)
   {
     if(hashHexString == null)
-      throw new InvalidValueException("Hash value is null");
+      throw new IllegalArgumentException("Hash value is null");
     
     hashHexString = hashHexString.trim();
     
@@ -295,14 +294,14 @@ public class Hash implements Comparable<Hash>
     }
 
     if(hashHexString.length() < 3)
-      throw new InvalidValueException("Hash value is too short");
+      throw new IllegalArgumentException("Hash value is too short");
     
     char[] hexChars = hashHexString.toCharArray();
     int len = hexChars.length;
     int typeIdLen = hexValue(hexChars[--len]);
     
     if(typeIdLen > len)
-      throw new InvalidValueException("Hash value is too short");
+      throw new IllegalArgumentException("Hash value is too short");
     
     int typeId;
     
@@ -323,7 +322,7 @@ public class Hash implements Comparable<Hash>
     
     // Multiply by 2 ensures that the value we have is of even length
     if(len != 2 * hashType.byteLen_)
-      throw new InvalidValueException("HashType " + typeId + " values are " + hashType.byteLen_ +
+      throw new IllegalArgumentException("HashType " + typeId + " values are " + hashType.byteLen_ +
           " bytes but this value is " + len + " bytes.");
     
     int typeIdByteLen = hashType.typeIdAsBytes_.length;
@@ -343,12 +342,12 @@ public class Hash implements Comparable<Hash>
     return new Hash(ImmutableByteArray.newInstance(hashBytes), hashType, hashHexString);
   }
   
-  private static int hexValue(char c) throws InvalidValueException
+  private static int hexValue(char c)
   {
     int v = hexCharToInt_[c];
     
     if(v == -1)
-      throw new InvalidValueException("Invalid Hex character \"" + c + "\"");
+      throw new IllegalArgumentException("Invalid Hex character \"" + c + "\"");
     
     return v;
   }
@@ -362,9 +361,9 @@ public class Hash implements Comparable<Hash>
    * 
    * @return The Hash represented by the given value.
    * 
-   * @throws InvalidValueException If the given value is not a valid Hash value.
+   * @throws IllegalArgumentException If the given value is not a valid Hash value.
    */
-  public static Hash ofBase64String(String base64String) throws InvalidValueException
+  public static Hash ofBase64String(String base64String)
   {
     return new Hash(Base64.decodeBase64(base64String));
   }
@@ -453,7 +452,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return new Hash(byteString);
-    } catch (InvalidValueException e)
+    } catch (IllegalArgumentException e)
     {
       throw new TransactionFault(e);
     }
@@ -477,7 +476,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return new Hash(bytes);
-    } catch (InvalidValueException e)
+    } catch (IllegalArgumentException e)
     {
       throw new TransactionFault(e);
     }
@@ -500,7 +499,7 @@ public class Hash implements Comparable<Hash>
     try
     {
       return ofBase64String(string);
-    } catch (InvalidValueException e)
+    } catch (IllegalArgumentException e)
     {
       throw new TransactionFault(e);
     }
@@ -570,9 +569,9 @@ public class Hash implements Comparable<Hash>
    * 
    * @return The Hash represented by the given encoding.
    * 
-   * @throws InvalidValueException If the given encoding is invalid.
+   * @throws IllegalArgumentException If the given encoding is invalid.
    */
-  public static Hash build(ByteString byteString) throws InvalidValueException
+  public static Hash build(ByteString byteString)
   {
     return new Hash(byteString);
   }
@@ -596,9 +595,9 @@ public class Hash implements Comparable<Hash>
    * 
    * @return The Hash represented by the given encoding.
    * 
-   * @throws InvalidValueException If the given encoding is invalid.
+   * @throws IllegalArgumentException If the given encoding is invalid.
    */
-  public static Hash build(ImmutableByteArray byteString) throws InvalidValueException
+  public static Hash build(ImmutableByteArray byteString)
   {
     return new Hash(byteString);
   }

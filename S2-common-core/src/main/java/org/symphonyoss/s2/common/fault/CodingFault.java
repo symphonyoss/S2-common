@@ -42,20 +42,39 @@ public class CodingFault extends ProgramFault
 {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Default constructor.
+   */
   public CodingFault()
   {
   }
   
+  /**
+   * Constructor with message.
+   * 
+   * @param message A message describing the detail of the fault.
+   */
   public CodingFault(String message)
   {
     super(message);
   }
 
+  /**
+   * Constructor with cause.
+   * 
+   * @param cause The underlying cause of the fault.
+   */
   public CodingFault(Throwable cause)
   {
     super(cause);
   }
 
+  /**
+   * Constructor with message and cause.
+   * 
+   * @param message A message describing the detail of the fault.
+   * @param cause The underlying cause of the fault.
+   */
   public CodingFault(String message, Throwable cause)
   {
     super(message, cause);

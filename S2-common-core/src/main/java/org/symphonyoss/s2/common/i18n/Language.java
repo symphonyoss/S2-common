@@ -25,7 +25,6 @@ package org.symphonyoss.s2.common.i18n;
 
 import java.util.Locale;
 
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 
 public class Language
@@ -38,12 +37,12 @@ public class Language
   private final String variant_;
   private final Locale locale_;
   
-  public Language(String languageTag) throws InvalidValueException
+  public Language(String languageTag)
   {
     String[] parts = languageTag.split("-");
     
     if(parts.length > 3)
-      throw new InvalidValueException("Language tag is of format language-region-variant e.g. en-GB");
+      throw new IllegalArgumentException("Language tag is of format language-region-variant e.g. en-GB");
     
     languageTag_ = languageTag;
     language_ = parts[0];
@@ -108,14 +107,7 @@ public class Language
 
   public static Language newInstance(String languageTag)
   {
-    try
-    {
-      return new Language(languageTag);
-    }
-    catch (InvalidValueException e)
-    {
-      throw new TransactionFault(e);
-    }
+    return new Language(languageTag);
   }
 
   public String asString()

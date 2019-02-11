@@ -40,7 +40,6 @@ import org.symphonyoss.s2.common.dom.IIntegerProvider;
 import org.symphonyoss.s2.common.dom.ILongProvider;
 import org.symphonyoss.s2.common.dom.IStringProvider;
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 import com.google.protobuf.ByteString;
 
@@ -328,25 +327,25 @@ public abstract class JsonObject<N extends IJsonDomNode> implements IJsonObject<
    * 
    * @return The value of the field.
    * 
-   * @throws InvalidValueException if the field does not exist or is not a string value.
+   * @throws IllegalArgumentException if the field does not exist or is not a string value.
    * 
    * @deprecated call getRequiredString() instead.
    */
   @Deprecated
-  public String getString(String name) throws InvalidValueException
+  public String getString(String name)
   {
     N node = get(name);
     
     if(node == null)
-      throw new InvalidValueException("\"" + name + "\" does not exist");
+      throw new IllegalArgumentException("\"" + name + "\" does not exist");
     
     if(node instanceof IStringProvider)
       return ((IStringProvider) node).asString();
     
-    throw new InvalidValueException("\"" + name + "\" is not a String");
+    throw new IllegalArgumentException("\"" + name + "\" is not a String");
   }
 
-  public <T> List<T> getListOf(Class<T> type, String name) throws InvalidValueException
+  public <T> List<T> getListOf(Class<T> type, String name)
   {
     List<T> result = new LinkedList<>();
     IJsonDomNode node = get(name); 

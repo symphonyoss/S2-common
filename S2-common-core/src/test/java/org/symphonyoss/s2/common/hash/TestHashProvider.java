@@ -26,7 +26,6 @@ package org.symphonyoss.s2.common.hash;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.hash.Hash;
 import org.symphonyoss.s2.common.hash.HashProvider;
 import org.junit.Assert;
@@ -34,7 +33,7 @@ import org.junit.Assert;
 public class TestHashProvider
 {
   @Test
-  public void testType2Hash() throws InvalidValueException
+  public void testType2Hash()
   {
     String  plainText = "Hello World!";
     
@@ -54,7 +53,7 @@ public class TestHashProvider
   }
   
   @Test
-  public void testCompositeHash() throws InvalidValueException
+  public void testCompositeHash()
   {
     testCompositeHash("EE54B1846CF852E62EFD3CA1725F17372A39F2C9B04ADA70105F90EE046B650E11",
         "Principal",

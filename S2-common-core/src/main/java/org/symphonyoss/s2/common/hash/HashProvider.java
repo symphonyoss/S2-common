@@ -25,8 +25,6 @@ package org.symphonyoss.s2.common.hash;
 
 import javax.annotation.Nonnull;
 
-import org.symphonyoss.s2.common.exception.InvalidValueException;
-import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
 /**
@@ -47,17 +45,9 @@ public class HashProvider
   {
     factories_= new HashFactory[HashType.hashTypes_.length];
     
-    try
+    for(int i=1 ; i<factories_.length ; i++)
     {
-      for(int i=1 ; i<factories_.length ; i++)
-      {
-        factories_[i] = new HashFactory(i);
-      }
-    }
-    catch (InvalidValueException e)
-    {
-      // "Can't happen"
-      throw new CodingFault(e);
+      factories_[i] = new HashFactory(i);
     }
   }
   
@@ -99,12 +89,12 @@ public class HashProvider
    * @param hashType  The type of the required hash 
    * @param bytes     A value to be hashed.
    * @return The hash of the given value.
-   * @throws InvalidValueException If the requested hash type is not valid.
+   * @throws IllegalArgumentException If the requested hash type is not valid.
    */
-  public static @Nonnull Hash getHashOf(int hashType, byte[] bytes) throws InvalidValueException
+  public static @Nonnull Hash getHashOf(int hashType, byte[] bytes)
   {
     if(hashType < 1 || hashType >= factories_.length)
-      throw new InvalidValueException("Invalid hash type ID " + hashType);
+      throw new IllegalArgumentException("Invalid hash type ID " + hashType);
     
     HashFactory factory = factories_[hashType];
     
@@ -122,12 +112,12 @@ public class HashProvider
    * 
    * @return The hash of the given value.
    * 
-   * @throws InvalidValueException If the requested hash type is not valid.
+   * @throws IllegalArgumentException If the requested hash type is not valid.
    */
-  public static @Nonnull Hash getHashOf(int hashType, ImmutableByteArray bytes) throws InvalidValueException
+  public static @Nonnull Hash getHashOf(int hashType, ImmutableByteArray bytes)
   {
     if(hashType < 1 || hashType >= factories_.length)
-      throw new InvalidValueException("Invalid hash type ID " + hashType);
+      throw new IllegalArgumentException("Invalid hash type ID " + hashType);
     
     HashFactory factory = factories_[hashType];
     
@@ -147,12 +137,12 @@ public class HashProvider
    * 
    * @return The hash of the given value.
    * 
-   * @throws InvalidValueException If the requested hash type is not valid.
+   * @throws IllegalArgumentException If the requested hash type is not valid.
    */
-  public static @Nonnull Hash getCompositeHashOf(int hashType, Object ...parts) throws InvalidValueException
+  public static @Nonnull Hash getCompositeHashOf(int hashType, Object ...parts)
   {
     if(hashType < 1 || hashType >= factories_.length)
-      throw new InvalidValueException("Invalid hash type ID " + hashType);
+      throw new IllegalArgumentException("Invalid hash type ID " + hashType);
     
     HashFactory factory = factories_[hashType];
     

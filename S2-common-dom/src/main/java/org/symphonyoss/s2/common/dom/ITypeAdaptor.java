@@ -24,9 +24,8 @@
 package org.symphonyoss.s2.common.dom;
 
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 
 public interface ITypeAdaptor<T>
 {
-  T adapt(IJsonDomNode node) throws InvalidValueException;
+  T adapt(IJsonDomNode node);
 }

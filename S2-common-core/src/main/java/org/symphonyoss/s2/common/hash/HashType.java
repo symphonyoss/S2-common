@@ -26,7 +26,6 @@ package org.symphonyoss.s2.common.hash;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.symphonyoss.s2.common.exception.InvalidValueException;
 import org.symphonyoss.s2.common.fault.CodingFault;
 
 /* package */ class HashType extends AbstractHashType
@@ -99,15 +98,15 @@ import org.symphonyoss.s2.common.fault.CodingFault;
     return hashTypes_[defaultHashTypeId_];
   }
   
-  /* package */ static @Nonnull HashType  getHashType(int typeId) throws InvalidValueException
+  /* package */ static @Nonnull HashType  getHashType(int typeId)
   {
     if(typeId < 0 || typeId > hashTypes_.length - 1)
-      throw new InvalidValueException("Invalid hash type ID " + typeId);
+      throw new IllegalArgumentException("Invalid hash type ID " + typeId);
     
     return hashTypes_[typeId];
   }
 
-  /* package */ @Nonnull byte[] encode(int typeId, byte[] rawDigest)
+  /* package */ @Nonnull byte[] encode(byte[] rawDigest)
   {
     byte[] hashBytes = new byte[rawDigest.length + typeIdAsBytes_.length + 1];
 
