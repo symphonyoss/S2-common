@@ -28,8 +28,17 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Unit test for ImmutableByteArray
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public class TestImmutableByteArray
 {
+  /**
+   * Test implementation of Comparable
+   */
   @Test
   public void testCompare()
   {
@@ -49,10 +58,6 @@ public class TestImmutableByteArray
     ImmutableByteArray ib = ImmutableByteArray.newInstance(b);
     
     System.err.println("ia " + ia.getClass());
-    
-    Comparable ca = (Comparable)ia;
-    
-    System.err.println("ca " + ca.getClass());
     
     int ic = ia.compareTo(ib);
     int c = a.compareTo(b);
