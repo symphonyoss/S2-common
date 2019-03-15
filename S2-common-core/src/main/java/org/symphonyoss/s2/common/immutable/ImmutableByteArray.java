@@ -54,7 +54,7 @@ import com.google.protobuf.ByteString;
  *
  */
 @Immutable
-public abstract class ImmutableByteArray implements Iterable<Byte>
+public abstract class ImmutableByteArray implements Iterable<Byte>, Comparable<ImmutableByteArray>
 {
   /**
    * An empty (zero length) array of bytes.
@@ -262,5 +262,26 @@ public abstract class ImmutableByteArray implements Iterable<Byte>
       }
     }
     return false;
+  }
+
+  @Override
+  public int compareTo(ImmutableByteArray other)
+  {
+    for(int i=0 ; i<length() ; i++)
+    {
+      if(i >= other.length())
+        return 1;
+      
+      if(byteAt(i) < other.byteAt(i))
+        return -1;
+      
+      if(byteAt(i) > other.byteAt(i))
+        return 1;
+    }
+    
+    if(length() < other.length())
+      return -1;
+    
+    return 0;
   }
 }
