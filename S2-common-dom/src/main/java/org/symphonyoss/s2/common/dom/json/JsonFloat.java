@@ -26,8 +26,8 @@ package org.symphonyoss.s2.common.dom.json;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import org.symphonyoss.s2.common.dom.IFloatProvider;
-import org.symphonyoss.s2.common.dom.IDoubleProvider;
+import org.symphonyoss.s2.common.type.provider.IDoubleProvider;
+import org.symphonyoss.s2.common.type.provider.IFloatProvider;
 
 @Immutable
 public class JsonFloat extends JsonValue<Float, JsonFloat> implements IDoubleProvider, IFloatProvider

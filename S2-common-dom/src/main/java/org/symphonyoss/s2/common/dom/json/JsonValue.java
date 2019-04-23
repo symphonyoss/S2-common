@@ -31,6 +31,7 @@ import javax.annotation.concurrent.Immutable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+import org.symphonyoss.s2.common.type.provider.IValueProvider;
 
 /**
  * An immutable JsonDomNode for a simple value.
@@ -41,7 +42,7 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
  * @param <N> The concrete type of the node so that fluent methods are possible.
  */
 @Immutable
-public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomNode
+public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomNode, IValueProvider
 {
   private final @Nonnull T                  value_;
   private final @Nonnull String             quotedValue_;

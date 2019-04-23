@@ -21,11 +21,9 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom;
+package org.symphonyoss.s2.common.type.provider;
 
-import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
-
-public interface IImmutableByteArrayProvider
+public interface IBooleanProvider extends IValueProvider
 {
-  ImmutableByteArray asImmutableByteArray();
+  Boolean asBoolean();
 }

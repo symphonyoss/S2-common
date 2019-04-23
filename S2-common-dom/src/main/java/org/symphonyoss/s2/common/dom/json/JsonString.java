@@ -26,7 +26,7 @@ package org.symphonyoss.s2.common.dom.json;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import org.symphonyoss.s2.common.dom.IStringProvider;
+import org.symphonyoss.s2.common.type.provider.IStringProvider;
 
 @Immutable
 public class JsonString extends JsonValue<String, JsonString> implements IStringProvider

@@ -29,6 +29,8 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.fault.TransactionFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+import org.symphonyoss.s2.common.type.provider.IImmutableByteArrayProvider;
+import org.symphonyoss.s2.common.type.provider.IValueProvider;
 
 import com.google.protobuf.ByteString;
 
@@ -574,6 +576,27 @@ public class Hash implements Comparable<Hash>
   public static Hash build(ByteString byteString)
   {
     return new Hash(byteString);
+  }
+  
+  /**
+   * Return a Hash value decoded from the given ByteString value.
+   * 
+   * @param valueProvider An encoded Hash.
+   * 
+   * @return The Hash represented by the given encoding.
+   * 
+   * @throws IllegalArgumentException If the given encoding is invalid.
+   */
+  public static Hash build(IValueProvider valueProvider)
+  {
+    if(valueProvider instanceof IImmutableByteArrayProvider)
+    {
+      return build(((IImmutableByteArrayProvider)valueProvider).asImmutableByteArray());
+    }
+    else
+    {
+      throw new IllegalArgumentException("Hash must be an instance of ImmutableByteArray not " + valueProvider.getClass().getName());
+    }
   }
 
   /**

@@ -21,9 +21,28 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom;
+package org.symphonyoss.s2.common.type.provider;
 
-public interface IDoubleProvider
+/**
+ * A builder of values from a value provider
+ * 
+ * @author Bruce Skingle
+ *
+ * @param <M> The model (TypeDef) type.
+ */
+@FunctionalInterface
+public interface IValueProviderBuilder<M>
 {
-  Double asDouble();
+  /**
+   * Build an instance of the typedef class from the value provided by the given JsonValue.
+   * 
+   * @param jsonValue A JsonValue whose value is to be wrapped in a typedef.
+   * 
+   * @return an instance of the typedef class from the value provided by the given JsonValue.
+   * 
+   * @throws IllegalArgumentException if the value is of the incorrect type of is null or otherwise invalid.
+   * This may be the case if the schema defines limits on the magnitude of the value, or if a facade
+   * has been written for the type.
+   */
+  M build(IValueProvider jsonValue);
 }

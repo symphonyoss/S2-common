@@ -21,24 +21,11 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.type.provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
 
-import org.symphonyoss.s2.common.type.provider.IBooleanProvider;
-
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+public interface IImmutableByteArrayProvider extends IValueProvider
 {
-  public JsonBoolean(@Nonnull Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
-
-  @Override
-  public @Nonnull Boolean asBoolean()
-  {
-    return getValue();
-  }
+  ImmutableByteArray asImmutableByteArray();
 }

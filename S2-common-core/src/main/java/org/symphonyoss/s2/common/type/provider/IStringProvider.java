@@ -21,11 +21,9 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom;
+package org.symphonyoss.s2.common.type.provider;
 
-import com.google.protobuf.ByteString;
-
-public interface IByteStringProvider
+public interface IStringProvider extends IValueProvider
 {
-  ByteString asByteString();
+  String asString();
 }

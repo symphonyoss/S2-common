@@ -21,9 +21,9 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom;
+package org.symphonyoss.s2.common.type.provider;
 
-public interface IFloatProvider
+public interface IFloatProvider extends IValueProvider
 {
   Float asFloat();
 }

@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright 2017 Symphony Communication Services, LLC.
+ * Copyright 2019 Symphony Communication Services, LLC.
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,24 +21,14 @@
  * under the License.
  */
 
-package org.symphonyoss.s2.common.dom.json;
+package org.symphonyoss.s2.common.type.provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import org.symphonyoss.s2.common.type.provider.IBooleanProvider;
-
-@Immutable
-public class JsonBoolean extends JsonValue<Boolean, JsonBoolean> implements IBooleanProvider
+/**
+ * An empty super type for value providers.
+ * 
+ * @author Bruce Skingle
+ *
+ */
+public interface IValueProvider
 {
-  public JsonBoolean(@Nonnull Boolean value)
-  {
-    super(value, String.valueOf(value));
-  }
-
-  @Override
-  public @Nonnull Boolean asBoolean()
-  {
-    return getValue();
-  }
 }

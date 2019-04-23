@@ -30,6 +30,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.symphonyoss.s2.common.dom.json.IJsonDomNode;
 import org.symphonyoss.s2.common.fault.CodingFault;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+import org.symphonyoss.s2.common.type.provider.IBooleanProvider;
+import org.symphonyoss.s2.common.type.provider.IDoubleProvider;
+import org.symphonyoss.s2.common.type.provider.IFloatProvider;
+import org.symphonyoss.s2.common.type.provider.IIntegerProvider;
+import org.symphonyoss.s2.common.type.provider.ILongProvider;
+import org.symphonyoss.s2.common.type.provider.IStringProvider;
 
 import com.google.protobuf.ByteString;
 

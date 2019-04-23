@@ -26,8 +26,8 @@ package org.symphonyoss.s2.common.dom.json;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import org.symphonyoss.s2.common.dom.IIntegerProvider;
-import org.symphonyoss.s2.common.dom.ILongProvider;
+import org.symphonyoss.s2.common.type.provider.IIntegerProvider;
+import org.symphonyoss.s2.common.type.provider.ILongProvider;
 
 @Immutable
 public class JsonInteger extends JsonValue<Integer, JsonInteger> implements ILongProvider, IIntegerProvider

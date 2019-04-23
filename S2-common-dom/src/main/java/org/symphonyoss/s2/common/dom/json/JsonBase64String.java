@@ -24,8 +24,8 @@
 package org.symphonyoss.s2.common.dom.json;
 
 import org.apache.commons.codec.binary.Base64;
-import org.symphonyoss.s2.common.dom.IImmutableByteArrayProvider;
 import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
+import org.symphonyoss.s2.common.type.provider.IImmutableByteArrayProvider;
 
 public class JsonBase64String extends JsonString implements IImmutableByteArrayProvider
 {

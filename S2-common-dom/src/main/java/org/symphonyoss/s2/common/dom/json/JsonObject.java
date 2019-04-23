@@ -32,14 +32,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.symphonyoss.s2.common.dom.DomWriter;
-import org.symphonyoss.s2.common.dom.IBooleanProvider;
-import org.symphonyoss.s2.common.dom.IByteStringProvider;
-import org.symphonyoss.s2.common.dom.IDoubleProvider;
-import org.symphonyoss.s2.common.dom.IFloatProvider;
-import org.symphonyoss.s2.common.dom.IIntegerProvider;
-import org.symphonyoss.s2.common.dom.ILongProvider;
-import org.symphonyoss.s2.common.dom.IStringProvider;
 import org.symphonyoss.s2.common.dom.TypeAdaptor;
+import org.symphonyoss.s2.common.type.provider.IBooleanProvider;
+import org.symphonyoss.s2.common.type.provider.IByteStringProvider;
+import org.symphonyoss.s2.common.type.provider.IDoubleProvider;
+import org.symphonyoss.s2.common.type.provider.IFloatProvider;
+import org.symphonyoss.s2.common.type.provider.IIntegerProvider;
+import org.symphonyoss.s2.common.type.provider.ILongProvider;
+import org.symphonyoss.s2.common.type.provider.IStringProvider;
 
 import com.google.protobuf.ByteString;
 
