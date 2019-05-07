@@ -24,6 +24,7 @@
 package org.symphonyoss.s2.common.fault;
 
 import java.io.Closeable;
+import java.util.Collection;
 
 /**
  * A fault accumulator.
@@ -59,7 +60,7 @@ public class FaultAccumulator implements Closeable
   }
   
   /**
-   * Record the given error.
+   * Record an error if the given object is null.
    * 
    * @param value A value which must not be null.
    * @param name  The name of the value to be used in an error if reported.
@@ -70,6 +71,24 @@ public class FaultAccumulator implements Closeable
   {
     if(value == null)
       error(name + " is required.");
+    
+    return this;
+  }
+  
+
+  
+  /**
+   * Record an error if the given collection is null or empty.
+   * 
+   * @param value A value which must not be null.
+   * @param name  The name of the value to be used in an error if reported.
+   * 
+   * @return this (fluent method)
+   */
+  public FaultAccumulator checkNotNull(Collection<?> value, String name)
+  {
+    if(value == null || value.isEmpty())
+      error("At least one " + name + " is required.");
     
     return this;
   }
