@@ -33,7 +33,7 @@ import org.symphonyoss.s2.common.fault.CodingFault;
 /**
  * A minimal example implementation of IPersistentEnum
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public enum ExamplePersistentEnum implements IPersistentEnum 

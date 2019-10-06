@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * 
  * This would include cases where an HTTP 500 Server Error status has been returned.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class TransactionFault extends AbstractFault

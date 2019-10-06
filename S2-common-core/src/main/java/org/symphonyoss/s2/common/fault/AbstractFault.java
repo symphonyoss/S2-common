@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 /**
  * Root class of the Fault hierarchy.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public abstract class AbstractFault extends RuntimeException

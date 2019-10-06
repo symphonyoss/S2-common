@@ -22,7 +22,7 @@
  */
 
 /**
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 @javax.annotation.ParametersAreNonnullByDefault

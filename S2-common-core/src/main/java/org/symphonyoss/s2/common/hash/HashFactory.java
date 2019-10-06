@@ -34,7 +34,7 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
  * 
  * THIS CLASS IS NOT THREAD SAFE.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 @NotThreadSafe

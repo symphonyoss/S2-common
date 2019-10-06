@@ -34,7 +34,7 @@ import org.symphonyoss.s2.common.immutable.ImmutableByteArray;
  * performant to create a HashFactory (which is not thread-safe) as
  * opposed to using this class.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class HashProvider

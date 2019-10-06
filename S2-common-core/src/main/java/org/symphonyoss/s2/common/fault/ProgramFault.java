@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * such errors should be allowed to unwind the stack and terminate the 
  * JVM normally.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class ProgramFault extends AbstractFault

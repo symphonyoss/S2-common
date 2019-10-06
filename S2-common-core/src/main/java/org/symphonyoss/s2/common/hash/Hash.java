@@ -84,7 +84,7 @@ import com.google.protobuf.ByteString;
  * This class is expected to be called frequently and has been optimised for
  * performance at the expense of some duplication of code between methods.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 @Immutable

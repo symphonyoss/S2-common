@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * A type of TransactionFault resulting from an operation which
  * should not be retried.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class FatalTransactionFault extends TransactionFault

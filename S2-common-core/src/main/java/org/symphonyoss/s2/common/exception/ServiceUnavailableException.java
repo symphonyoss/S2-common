@@ -33,7 +33,7 @@ package org.symphonyoss.s2.common.exception;
  * On catching this exception the caller should attempt to use an alternative
  * service implementation if there is one.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class ServiceUnavailableException extends S2Exception

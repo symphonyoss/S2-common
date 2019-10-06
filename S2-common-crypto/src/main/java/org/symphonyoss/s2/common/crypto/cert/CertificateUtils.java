@@ -48,7 +48,7 @@ import org.symphonyoss.s2.common.fault.TransactionFault;
 /**
  * General certificate utility functions.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 /* package */ class CertificateUtils

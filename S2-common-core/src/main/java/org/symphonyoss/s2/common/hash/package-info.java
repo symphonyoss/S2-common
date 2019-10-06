@@ -24,7 +24,7 @@
 /**
  * Instances of Hash are used as identifiers throughout the system.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 @ParametersAreNonnullByDefault

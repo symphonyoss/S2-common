@@ -26,7 +26,7 @@ package org.symphonyoss.s2.common.http;
 /**
  * A provider of servlets.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  *
  * @deprecated Moved to org.symphonyoss.s2.fugue.http

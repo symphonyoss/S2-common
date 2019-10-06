@@ -35,7 +35,7 @@ package org.symphonyoss.s2.common.fault;
  * if any argument to the called code was invalid, in such cases {@link NullPointerException}
  * or {@link IllegalArgumentException} should be thrown instead.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  */
 public class CodingFault extends ProgramFault

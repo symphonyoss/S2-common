@@ -37,7 +37,7 @@ package org.symphonyoss.s2.common.type;
  * 
  * For an example implementation of this Interface see ExamplePersistentEnum.
  * 
- * @author bruce.skingle
+ * @author Bruce Skingle
  *
  * param T The concrete type of the enum
  */
