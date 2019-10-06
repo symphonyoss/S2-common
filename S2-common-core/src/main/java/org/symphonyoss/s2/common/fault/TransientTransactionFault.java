@@ -24,6 +24,7 @@
 package org.symphonyoss.s2.common.fault;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -31,18 +32,26 @@ import javax.annotation.Nullable;
  * A type of TransactionFault resulting from an operation which, if
  * retried may be successful.
  * 
- * @author bruce.skingle
+ * This exception allows the thrower to indicate how long it thinks the caller should
+ * wait before retrying.
+ * 
+ * @author Bruce Skingle
  *
  */
 public class TransientTransactionFault extends TransactionFault
 {
   private static final long serialVersionUID = 1L;
 
+  private final TimeUnit  retryTimeUnit_;
+  private final Long      retryTime_;
+
   /**
    * Default constructor.
    */
   public TransientTransactionFault()
   {
+    retryTimeUnit_ = null;
+    retryTime_ = null;
   }
 
   /**
@@ -53,6 +62,23 @@ public class TransientTransactionFault extends TransactionFault
   public TransientTransactionFault(String message)
   {
     super(message);
+    retryTimeUnit_ = null;
+    retryTime_ = null;
+  }
+
+  /**
+   * Constructor with message.
+   * 
+   * @param message       A message describing the detail of the fault.
+   * @param retryTimeUnit Units of suggested delay before a retry should be attempted.
+   * @param retryTime     The suggested delay before a retry should be attempted.
+   */
+  public TransientTransactionFault(String message, TimeUnit retryTimeUnit, Long retryTime)
+  {
+    super(message);
+    
+    retryTimeUnit_ = retryTimeUnit;
+    retryTime_ = retryTime;
   }
 
   /**
@@ -66,6 +92,27 @@ public class TransientTransactionFault extends TransactionFault
   public TransientTransactionFault(String message, Collection<Exception> parallelCauses)
   {
     super(message, parallelCauses);
+    
+    TimeUnit retryTimeUnit = null;
+    Long retryTime = null;
+    
+    for(Exception cause : parallelCauses)
+    {
+      if(cause instanceof TransientTransactionFault)
+      {
+        TransientTransactionFault c = (TransientTransactionFault) cause;
+        
+        if(retryTime == null || retryTimeUnit==null || 
+            c.getRetryTimeUnit().toMicros(c.getRetryTime()) > retryTimeUnit.toMicros(retryTime))
+        {
+          retryTime = c.getRetryTime();
+          retryTimeUnit = c.getRetryTimeUnit();
+        }
+      }
+    }
+
+    retryTimeUnit_ = retryTimeUnit;
+    retryTime_ = retryTime;
   }
 
   /**
@@ -76,6 +123,8 @@ public class TransientTransactionFault extends TransactionFault
   public TransientTransactionFault(Throwable cause)
   {
     super(cause);
+    retryTimeUnit_ = null;
+    retryTime_ = null;
   }
 
   /**
@@ -87,6 +136,39 @@ public class TransientTransactionFault extends TransactionFault
   public TransientTransactionFault(String message, Throwable cause)
   {
     super(message, cause);
+    retryTimeUnit_ = null;
+    retryTime_ = null;
+  }
+
+  /**
+   * Constructor with cause.
+   * 
+   * @param cause         The underlying cause of the fault.
+   * @param retryTimeUnit Units of suggested delay before a retry should be attempted.
+   * @param retryTime     The suggested delay before a retry should be attempted.
+   */
+  public TransientTransactionFault(Throwable cause, TimeUnit retryTimeUnit, Long retryTime)
+  {
+    super(cause);
+    
+    retryTimeUnit_ = retryTimeUnit;
+    retryTime_ = retryTime;
+  }
+
+  /**
+   * Constructor with message and cause.
+   * 
+   * @param message       A message describing the detail of the fault.
+   * @param cause         The underlying cause of the fault.
+   * @param retryTimeUnit Units of suggested delay before a retry should be attempted.
+   * @param retryTime     The suggested delay before a retry should be attempted.
+   */
+  public TransientTransactionFault(String message, Throwable cause, TimeUnit retryTimeUnit, Long retryTime)
+  {
+    super(message, cause);
+    
+    retryTimeUnit_ = retryTimeUnit;
+    retryTime_ = retryTime;
   }
   
   /**
@@ -104,6 +186,23 @@ public class TransientTransactionFault extends TransactionFault
       boolean writableStackTrace)
   {
     super(message, cause, enableSuppression, writableStackTrace);
+    retryTimeUnit_ = null;
+    retryTime_ = null;
   }
 
+  /**
+   * @return The units of suggested delay before a retry should be attempted.
+   */
+  public @Nullable TimeUnit getRetryTimeUnit()
+  {
+    return retryTimeUnit_;
+  }
+
+  /**
+   * @return The suggested delay before a retry should be attempted.
+   */
+  public @Nullable Long getRetryTime()
+  {
+    return retryTime_;
+  }
 }
