@@ -32,7 +32,7 @@
 
 	<groupId>org.symphonyoss.s2.common</groupId>
 	<artifactId>S2-common</artifactId>
-	<version>0.2.5</version>
+	<version>0.2.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<url>https://github.com/symphonyoss/S2-common</url>
