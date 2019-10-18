@@ -46,12 +46,15 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
 {
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
-  private final ImmutableMap<String, IImmutableJsonDomNode> children_;
-  private final ImmutableList<String>                       names_;
-  private final ImmutableSet<String>                        sortedNames_;
-  private final int                                         maxNameLen_;
-  private final @Nonnull String                             asString_;
-  private final @Nonnull ImmutableByteArray                 asBytes_;
+//  private final ImmutableMap<String, IImmutableJsonDomNode> children_;
+//  private final ImmutableList<String>                       names_;
+  private final IImmutableJsonDomNode[]      children_;
+//  private final ImmutableSet<String>                        sortedNames_;
+
+  private final String[]                     sortedNames_;
+  private final int                          maxNameLen_;
+  private String                             asString_;
+  private ImmutableByteArray                 asBytes_;
   
   public ImmutableJsonObject(Map<String, IJsonDomNode> children, LinkedList<String> names, TreeSet<String> sortedNames)
   {
@@ -71,20 +74,23 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
       }
     }
     
-    children_     = ImmutableMap.copyOf(c);
-    names_        = ImmutableList.copyOf(names);
-    sortedNames_  = ImmutableSet.copyOf(sortedNames);
+//    children_     = ImmutableMap.copyOf(c);
+//    names_        = ImmutableList.copyOf(names);
+//    sortedNames_  = ImmutableSet.copyOf(sortedNames);
+    sortedNames_  = new String[sortedNames.size()];
+    children_     = new IImmutableJsonDomNode[sortedNames.size()];
     
     int maxNameLen = 0;
+    int i=0;
 
-    for(String name : sortedNames_)
+    for(String name : sortedNames)
     {
-      maxNameLen = Math.max(maxNameLen, name.length());
+      sortedNames_[i] = name = name.intern();
+      maxNameLen      = Math.max(maxNameLen, name.length());
+      children_[i++]  = c.get(name);
     }
     
     maxNameLen_ = maxNameLen + QUOTE_MARGIN;
-    asString_ = SERIALIZER.serialize(this);
-    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -97,9 +103,13 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   public MutableJsonObject newMutableCopy()
   {
     MutableJsonObject result = new MutableJsonObject();
+
+    int i=0;
     
-    for(String name : names_)
-      result.add(name, children_.get(name).newMutableCopy());
+    for(String name : sortedNames_)
+    {
+      result.add(name, children_[i++].newMutableCopy());
+    }
     
     return result;
   }
@@ -119,54 +129,104 @@ public class ImmutableJsonObject extends JsonObject<IImmutableJsonDomNode> imple
   @Override
   public boolean containsKey(String name)
   {
-    return children_.containsKey(name);
+//    return children_.containsKey(name);
+    for(String n : sortedNames_)
+    {
+      if(n.equals(name))
+        return true;
+    }
+    return false;
   }
 
   @Override
   public @Nullable IImmutableJsonDomNode  get(String name)
   {
-    return children_.get(name);
+//    return children_.get(name);
+    
+    int i=0;
+    
+    for(String n : sortedNames_)
+    {
+      if(n.equals(name))
+        return children_[i];
+      
+      i++;
+    }
+    
+    return null;
   }
   
   @Override
   public Iterator<String> getSortedNameIterator()
   {
-    return sortedNames_.iterator();
+//    return sortedNames_.iterator();
+    return new ArrayIterator(sortedNames_);
   }
   
   @Override
   public Iterator<String> getNameIterator()
   {
-    return names_.iterator();
+//    return sortedNames_.iterator();
+    return new ArrayIterator(sortedNames_);
+  }
+  
+  class ArrayIterator implements Iterator<String>
+  {
+    private int index_ = 0;
+    private String[] array_;
+    
+    public ArrayIterator(String[] array)
+    {
+      array_ = array;
+    }
+
+    @Override
+    public boolean hasNext()
+    {
+      return index_ < array_.length;
+    }
+
+    @Override
+    public String next()
+    {
+      return array_[index_++];
+    }
+    
   }
   
   @Override
   public @Nonnull ImmutableByteArray serialize()
   {
+    if(asBytes_ == null)
+      asBytes_ = ImmutableByteArray.newInstance(toString());
+    
     return asBytes_;
   }
   
   @Override
-  public @Nonnull String toString()
+  public synchronized @Nonnull String toString()
   {
+    if(asString_ == null)
+      asString_ = SERIALIZER.serialize(this);
+    
     return asString_;
   }
   
   @Override
   public int hashCode()
   {
-    return asString_.hashCode();
+    return toString().hashCode();
   }
 
   @Override
   public boolean equals(Object other)
   {
-    return other instanceof ImmutableJsonObject && asString_.equals(((ImmutableJsonObject)other).asString_);
+    return other instanceof ImmutableJsonObject && toString().equals(((ImmutableJsonObject)other).toString());
   }
 
   @Override
   public int compareTo(IImmutableJsonDomNode other)
   {
-    return asString_.compareTo(other.toString());
+    return toString().compareTo(other.toString());
   }
 }

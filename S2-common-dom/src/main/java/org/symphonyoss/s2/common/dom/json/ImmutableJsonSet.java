@@ -41,8 +41,8 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
   private final ImmutableSet<IImmutableJsonDomNode>   children_;
-  private final @Nonnull String                      asString_;
-  private final @Nonnull ImmutableByteArray          asBytes_;
+  private String                      asString_;
+  private ImmutableByteArray          asBytes_;
   
   public ImmutableJsonSet(Set<IJsonDomNode> children)
   {
@@ -60,8 +60,6 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
       }
     }
     children_ = ImmutableSet.copyOf(c);
-    asString_ = SERIALIZER.serialize(this);
-    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -96,30 +94,36 @@ public class ImmutableJsonSet extends JsonSet<IImmutableJsonDomNode> implements 
   @Override
   public @Nonnull ImmutableByteArray serialize()
   {
+    if(asBytes_ == null)
+      asBytes_ = ImmutableByteArray.newInstance(toString());
+    
     return asBytes_;
   }
   
   @Override
-  public @Nonnull String toString()
+  public synchronized @Nonnull String toString()
   {
+    if(asString_ == null)
+      asString_ = SERIALIZER.serialize(this);
+    
     return asString_;
   }
   
   @Override
   public int hashCode()
   {
-    return asString_.hashCode();
+    return toString().hashCode();
   }
 
   @Override
   public boolean equals(Object other)
   {
-    return other instanceof ImmutableJsonSet && asString_.equals(((ImmutableJsonSet)other).asString_);
+    return other instanceof ImmutableJsonSet && toString().equals(((ImmutableJsonSet)other).toString());
   }
 
   @Override
   public int compareTo(IImmutableJsonDomNode other)
   {
-    return asString_.compareTo(other.toString());
+    return toString().compareTo(other.toString());
   }
 }

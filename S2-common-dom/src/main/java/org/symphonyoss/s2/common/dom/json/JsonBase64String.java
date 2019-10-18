@@ -35,12 +35,15 @@ public class JsonBase64String extends JsonString implements IImmutableByteArrayP
   {
     super(value);
     
-    immutableByteArray_ = ImmutableByteArray.newInstance(Base64.decodeBase64(value));
+    
   }
 
   @Override
-  public ImmutableByteArray asImmutableByteArray()
+  public synchronized ImmutableByteArray asImmutableByteArray()
   {
+    if(immutableByteArray_ == null)
+      immutableByteArray_ = ImmutableByteArray.newInstance(Base64.decodeBase64(getValue()));
+    
     return immutableByteArray_;
   }
 

@@ -47,8 +47,8 @@ public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implement
   protected static final DomSerializer SERIALIZER = DomSerializer.newBuilder().withCanonicalMode(true).build();
 
   private final ImmutableList<IImmutableJsonDomNode> children_;
-  private final @Nonnull String                      asString_;
-  private final @Nonnull ImmutableByteArray          asBytes_;
+  private String                      asString_;
+  private ImmutableByteArray          asBytes_;
   
   /**
    * Create a list with the given children, if the children are immutable then they are added directly
@@ -72,8 +72,6 @@ public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implement
       }
     }
     children_ = ImmutableList.copyOf(c);
-    asString_ = SERIALIZER.serialize(this);
-    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -108,30 +106,36 @@ public class ImmutableJsonList extends JsonList<IImmutableJsonDomNode> implement
   @Override
   public @Nonnull ImmutableByteArray serialize()
   {
+    if(asBytes_ == null)
+      asBytes_ = ImmutableByteArray.newInstance(toString());
+    
     return asBytes_;
   }
   
   @Override
-  public @Nonnull String toString()
+  public synchronized @Nonnull String toString()
   {
+    if(asString_ == null)
+      asString_ = SERIALIZER.serialize(this);
+    
     return asString_;
   }
   
   @Override
   public int hashCode()
   {
-    return asString_.hashCode();
+    return toString().hashCode();
   }
 
   @Override
   public boolean equals(Object other)
   {
-    return other instanceof ImmutableJsonList && asString_.equals(((ImmutableJsonList)other).asString_);
+    return other instanceof ImmutableJsonList && toString().equals(((ImmutableJsonList)other).toString());
   }
 
   @Override
   public int compareTo(IImmutableJsonDomNode other)
   {
-    return asString_.compareTo(other.toString());
+    return toString().compareTo(other.toString());
   }
 }

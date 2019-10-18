@@ -46,8 +46,8 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
 {
   private final @Nonnull T                  value_;
   private final @Nonnull String             quotedValue_;
-  private final @Nonnull String             asString_;
-  private final @Nonnull ImmutableByteArray asBytes_;
+  private String             asString_;
+  private ImmutableByteArray asBytes_;
   
   /**
    * Constructor.
@@ -59,8 +59,6 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
   {
     value_ = value;
     quotedValue_ = quotedValue;
-    asString_ =value_.toString();
-    asBytes_ = ImmutableByteArray.newInstance(asString_);
   }
 
   @Override
@@ -102,14 +100,20 @@ public class JsonValue<T,N extends JsonValue<T,N>> implements IImmutableJsonDomN
   }
   
   @Override
-  public @Nonnull ImmutableByteArray serialize()
+  public synchronized @Nonnull ImmutableByteArray serialize()
   {
+    if(asBytes_ == null)
+      asBytes_ = ImmutableByteArray.newInstance(toString());
+    
     return asBytes_;
   }
   
   @Override
-  public @Nonnull String toString()
+  public synchronized @Nonnull String toString()
   {
+    if(asString_ == null)
+      asString_ =value_.toString();
+
     return asString_;
   }
   

@@ -54,11 +54,11 @@ public abstract class BaseAbstractBuilder<T extends IBuilder<T,B>, B> extends Fl
     try(FaultAccumulator faultAccumulator = new FaultAccumulator())
     {
       validate(faultAccumulator);
-      
-      B result = construct();
-      
-      return result;
     }
+    
+    B result = construct();
+    
+    return result;
   }
 
   /**
