@@ -60,6 +60,33 @@ public class FaultAccumulator implements Closeable
   }
   
   /**
+   * Record an error if more than the given number of values is non-null.
+   * 
+   * @param names   The names of the values to be used in an error if reported.
+   * @param min     The minimum number of values which may be defined (non-null)
+   * @param max     The maximum number of values which may be defined (non-null)
+   * @param values  A list of values. 
+   * 
+   * @return this (fluent method)
+   */
+  public FaultAccumulator checkValueCount(String names, int min, int max, Object ...values)
+  {
+    int cnt=0;
+    
+    for(Object value : values)
+      if(value != null)
+        cnt++;
+    
+    if(cnt < min)
+      error("at least " + min + " of " + names + " must be given.");
+    
+    if(cnt > max)
+      error("at most " + max + " of " + names + " may be given.");
+    
+    return this;
+  }
+  
+  /**
    * Record an error if the given object is null.
    * 
    * @param value A value which must not be null.
@@ -74,8 +101,6 @@ public class FaultAccumulator implements Closeable
     
     return this;
   }
-  
-
   
   /**
    * Record an error if the given collection is null or empty.
