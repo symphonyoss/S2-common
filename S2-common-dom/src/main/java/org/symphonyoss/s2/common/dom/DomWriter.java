@@ -224,11 +224,13 @@ public class DomWriter extends DomConsumer<DomWriter> implements IDomWriterOrBui
     out_.write(name);
     out_.write(closeQuote);
     
-    width = width - openQuote.length() - name.length() - closeQuote.length();
-    
-    while(width-- > 0)
-      out_.write(' ');
-    
+    if(!isCompactMode())
+    {
+      width = width - openQuote.length() - name.length() - closeQuote.length();
+      
+      while(width-- > 0)
+        out_.write(' ');
+    }
     return this;
   }
 }
